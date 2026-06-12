@@ -1,0 +1,42 @@
+
+// ==========================================
+// MODULE 3, 4, 5 - SUPPLEMENTARY MODELS
+// ==========================================
+
+model QuotationApproval {
+  id          String    @id @default(uuid())
+  quotationId String
+  quotation   Quotation @relation(fields: [quotationId], references: [id])
+  approverId  String
+  status      String    @default("Pending")
+  comments    String?
+  date        DateTime  @default(now())
+}
+
+model ShipmentStatus {
+  id         String   @id @default(uuid())
+  shipmentId String
+  shipment   Shipment @relation(fields: [shipmentId], references: [id])
+  status     String
+  location   String?
+  timestamp  DateTime @default(now())
+}
+
+model CarrierContract {
+  id          String   @id @default(uuid())
+  carrierId   String
+  carrier     Carrier  @relation(fields: [carrierId], references: [id])
+  contractRef String
+  validFrom   DateTime
+  validTo     DateTime
+  terms       String?
+}
+
+model BookingItem {
+  id        String  @id @default(uuid())
+  bookingId String
+  booking   Booking @relation(fields: [bookingId], references: [id])
+  itemCode  String
+  quantity  Int
+  weight    Float?
+}

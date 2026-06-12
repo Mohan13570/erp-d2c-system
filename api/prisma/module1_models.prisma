@@ -1,0 +1,71 @@
+
+// ==========================================
+// MODULE 1 - MASTER DATA EXTENSIONS
+// ==========================================
+model Currency {
+  code      String   @id
+  name      String
+  symbol    String?
+  createdAt DateTime @default(now())
+}
+
+model Country {
+  id           String   @id @default(uuid())
+  code         String   @unique
+  name         String
+  currencyCode String?
+  states       State[]
+}
+
+model State {
+  id        String   @id @default(uuid())
+  name      String
+  countryId String
+  country   Country  @relation(fields: [countryId], references: [id])
+  cities    City[]
+}
+
+model City {
+  id        String   @id @default(uuid())
+  name      String
+  stateId   String
+  state     State    @relation(fields: [stateId], references: [id])
+  branches  Branch[]
+  ports     Port[]
+  airports  Airport[]
+}
+
+model Branch {
+  id          String   @id @default(uuid())
+  name        String
+  companyName String
+  company     Company  @relation(fields: [companyName], references: [name])
+  cityId      String?
+  city        City?    @relation(fields: [cityId], references: [id])
+  isActive    Boolean  @default(true)
+}
+
+model Port {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  name      String
+  type      String   @default("Ocean")
+  cityId    String?
+  city      City?    @relation(fields: [cityId], references: [id])
+}
+
+model Airport {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  name      String
+  cityId    String?
+  city      City?    @relation(fields: [cityId], references: [id])
+}
+
+model TaxConfiguration {
+  id        String   @id @default(uuid())
+  name      String
+  rate      Float
+  country   String   @default("Global")
+  isActive  Boolean  @default(true)
+}

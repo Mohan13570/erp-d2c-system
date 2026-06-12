@@ -1,0 +1,282 @@
+// ==========================================
+// MODULE 3 - SALES & QUOTATION
+// ==========================================
+model RFQ {
+  id             String    @id @default(uuid())
+  customerId     String?
+  customer       Customer? @relation(fields: [customerId], references: [id])
+  requestDate    DateTime  @default(now())
+  status         String    @default("Open") // Open, Quoted, Closed
+  origin         String
+  destination    String
+  freightType    String    // Air, Ocean, Road, Rail
+  expectedWeight Float?
+  expectedVolume Float?
+  quotations     Quotation[]
+}
+
+model Quotation {
+  id          String   @id @default(uuid())
+  rfqId       String
+  rfq         RFQ      @relation(fields: [rfqId], references: [id])
+  quoteDate   DateTime @default(now())
+  validUntil  DateTime
+  totalAmount Float    @default(0.0)
+  status      String   @default("Draft") // Draft, Sent, Accepted, Rejected
+  items       QuotationItem[]
+}
+
+model QuotationItem {
+  id          String    @id @default(uuid())
+  quotationId String
+  quotation   Quotation @relation(fields: [quotationId], references: [id])
+  description String
+  quantity    Float
+  unitPrice   Float
+  total       Float
+}
+
+// ==========================================
+// MODULE 4 - SHIPMENT MANAGEMENT
+// ==========================================
+model Shipment {
+  id             String    @id @default(uuid())
+  trackingNumber String    @unique
+  customerId     String?
+  customer       Customer? @relation(fields: [customerId], references: [id])
+  origin         String
+  destination    String
+  status         String    @default("Pending")
+  freightType    String
+  departureDate  DateTime?
+  arrivalDate    DateTime?
+  items          ShipmentItem[]
+  milestones     ShipmentMilestone[]
+  trackingEvents TrackingEvent[]
+}
+
+model ShipmentItem {
+  id          String   @id @default(uuid())
+  shipmentId  String
+  shipment    Shipment @relation(fields: [shipmentId], references: [id])
+  description String
+  weight      Float
+  volume      Float
+  quantity    Int
+}
+
+model ShipmentMilestone {
+  id          String   @id @default(uuid())
+  shipmentId  String
+  shipment    Shipment @relation(fields: [shipmentId], references: [id])
+  location    String
+  event       String
+  timestamp   DateTime @default(now())
+}
+
+// ==========================================
+// MODULE 5 - FREIGHT OPERATIONS
+// ==========================================
+model Carrier {
+  id           String   @id @default(uuid())
+  name         String
+  carrierType  String   // Ocean Line, Airline, Trucking
+  contactEmail String?
+  contactPhone String?
+  bookings     Booking[]
+}
+
+model Booking {
+  id         String   @id @default(uuid())
+  carrierId  String
+  carrier    Carrier  @relation(fields: [carrierId], references: [id])
+  bookingRef String   @unique
+  status     String   @default("Confirmed")
+  vesselName String?
+  flightNo   String?
+  departure  DateTime?
+  arrival    DateTime?
+}
+
+// ==========================================
+// MODULE 6 - OCEAN FREIGHT
+// ==========================================
+model Vessel {
+  id       String   @id @default(uuid())
+  name     String
+  imoNo    String   @unique
+  capacity Int
+  voyages  Voyage[]
+}
+
+model Voyage {
+  id          String   @id @default(uuid())
+  vesselId    String
+  vessel      Vessel   @relation(fields: [vesselId], references: [id])
+  voyageNo    String
+  origin      String
+  destination String
+  etd         DateTime?
+  eta         DateTime?
+}
+
+model Container {
+  id           String   @id @default(uuid())
+  containerNo  String   @unique
+  type         String   // 20GP, 40HC
+  status       String   @default("Empty")
+  movements    ContainerMovement[]
+}
+
+model ContainerMovement {
+  id          String    @id @default(uuid())
+  containerId String
+  container   Container @relation(fields: [containerId], references: [id])
+  location    String
+  status      String
+  timestamp   DateTime  @default(now())
+}
+
+// ==========================================
+// MODULE 7 - AIR FREIGHT
+// ==========================================
+model AirWaybill {
+  id          String   @id @default(uuid())
+  awbNumber   String   @unique
+  origin      String
+  destination String
+  weight      Float
+  status      String   @default("Issued")
+}
+
+model Flight {
+  id          String   @id @default(uuid())
+  flightNo    String
+  airline     String
+  departure   DateTime
+  arrival     DateTime
+  origin      String
+  destination String
+}
+
+// ==========================================
+// MODULE 8 & 9 - ROAD TRANSPORT & FLEET
+// ==========================================
+model Vehicle {
+  id           String   @id @default(uuid())
+  plateNumber  String   @unique
+  type         String
+  capacity     Float
+  status       String   @default("Available")
+  trips        Trip[]
+  maintenance  VehicleMaintenance[]
+  fuelLogs     FuelLog[]
+}
+
+model Driver {
+  id           String   @id @default(uuid())
+  name         String
+  licenseNo    String   @unique
+  phone        String?
+  status       String   @default("Active")
+  trips        Trip[]
+}
+
+model Trip {
+  id          String   @id @default(uuid())
+  vehicleId   String
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+  driverId    String
+  driver      Driver   @relation(fields: [driverId], references: [id])
+  origin      String
+  destination String
+  status      String   @default("Scheduled")
+  startTime   DateTime?
+  endTime     DateTime?
+}
+
+model VehicleMaintenance {
+  id          String   @id @default(uuid())
+  vehicleId   String
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+  date        DateTime @default(now())
+  description String
+  cost        Float
+}
+
+model FuelLog {
+  id          String   @id @default(uuid())
+  vehicleId   String
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+  date        DateTime @default(now())
+  liters      Float
+  cost        Float
+}
+
+// ==========================================
+// MODULE 11 - CUSTOMS CLEARANCE
+// ==========================================
+model CustomsDeclaration {
+  id             String   @id @default(uuid())
+  referenceNo    String   @unique
+  type           String   // Import, Export
+  status         String   @default("Submitted")
+  submissionDate DateTime @default(now())
+  clearanceDate  DateTime?
+  duties         Duty[]
+}
+
+model Duty {
+  id            String             @id @default(uuid())
+  declarationId String
+  declaration   CustomsDeclaration @relation(fields: [declarationId], references: [id])
+  type          String
+  amount        Float
+  status        String             @default("Unpaid")
+}
+
+// ==========================================
+// MODULE 12 - DOCUMENT MANAGEMENT
+// ==========================================
+model Document {
+  id           String   @id @default(uuid())
+  entityType   String   // Shipment, Quotation
+  entityId     String
+  documentType String   // BOL, AWB, Commercial Invoice
+  fileUrl      String
+  uploadedAt   DateTime @default(now())
+}
+
+// ==========================================
+// MODULE 17 - INSURANCE
+// ==========================================
+model InsurancePolicy {
+  id          String   @id @default(uuid())
+  policyNo    String   @unique
+  provider    String
+  coverage    Float
+  premium     Float
+  validUntil  DateTime
+  claims      InsuranceClaim[]
+}
+
+model InsuranceClaim {
+  id          String          @id @default(uuid())
+  policyId    String
+  policy      InsurancePolicy @relation(fields: [policyId], references: [id])
+  claimDate   DateTime        @default(now())
+  amount      Float
+  status      String          @default("Filed")
+}
+
+// ==========================================
+// MODULE 18 - TRACKING
+// ==========================================
+model TrackingEvent {
+  id          String   @id @default(uuid())
+  shipmentId  String
+  shipment    Shipment @relation(fields: [shipmentId], references: [id])
+  location    String
+  description String
+  timestamp   DateTime @default(now())
+}

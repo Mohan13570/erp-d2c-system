@@ -1,0 +1,1348 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ==========================================
+// PLATFORM: COMPANY & MULTI-TENANCY
+// ==========================================
+model Company {
+  name               String              @id
+  abbr               String?
+  defaultCurrency    String              @default("USD")
+  country            String              @default("US")
+  taxId              String?
+  fiscalYearStart    String              @default("01-01")
+  logoUrl            String?
+  items              Item[]
+  employees          Employee[]
+  accounts           Account[]
+  salesOrders        SalesOrder[]
+  vendors            Vendor[]
+  purchaseOrders     PurchaseOrder[]
+  assets             Asset[]
+  projects           Project[]
+  fiscalPeriods      FiscalPeriod[]
+  departments        Department[]
+  payrollRuns        PayrollRun[]
+  warehouses         Warehouse[]
+  marketingCampaigns MarketingCampaign[]
+  branches           Branch[]
+}
+
+// ==========================================
+// AUTH & RBAC
+// ==========================================
+model User {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  roleId       String?
+  role         Role?      @relation(fields: [roleId], references: [id])
+  isActive     Boolean    @default(true)
+  lastLogin    DateTime?
+  createdAt    DateTime   @default(now())
+  auditLogs    AuditLog[]
+}
+
+model Role {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  description String?
+  isSystem    Boolean      @default(false)
+  users       User[]
+  permissions Permission[]
+}
+
+model Permission {
+  id     String @id @default(uuid())
+  module String
+  action String
+  roleId String
+  role   Role   @relation(fields: [roleId], references: [id])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  tableName String
+  recordId  String
+  oldValue  String?
+  newValue  String?
+  ipAddress String?
+  createdAt DateTime @default(now())
+}
+
+// ==========================================
+// D2C CUSTOMER ACCOUNTS
+// ==========================================
+model D2CCustomer {
+  id            String            @id @default(uuid())
+  email         String            @unique
+  phone         String?
+  passwordHash  String?
+  firstName     String
+  lastName      String
+  isGuest       Boolean           @default(false)
+  loyaltyPoints Int               @default(0)
+  tier          String            @default("Bronze")
+  createdAt     DateTime          @default(now())
+  orders        SalesOrder[]
+  carts         Cart[]
+  returns       Return[]
+  addresses     CustomerAddress[]
+}
+
+model CustomerAddress {
+  id         String      @id @default(uuid())
+  customerId String
+  customer   D2CCustomer @relation(fields: [customerId], references: [id])
+  label      String      @default("Home")
+  line1      String
+  line2      String?
+  city       String
+  state      String?
+  country    String
+  postalCode String
+  isDefault  Boolean     @default(false)
+}
+
+// ==========================================
+// ERP CUSTOMER (B2B / CRM)
+// ==========================================
+model Customer {
+  id            String             @id @default(uuid())
+  customerName  String
+  customerGroup String             @default("Commercial")
+  territory     String?
+  email         String?
+  phone         String?
+  salesOrders   SalesOrder[]
+  invoices      Invoice[]
+  rfqs          RFQ[]
+  shipments     Shipment[]
+  contacts      CustomerContact[]
+  contracts     CustomerContract[]
+  opportunities Opportunity[]
+  activities    LeadActivity[]
+  supportTickets SupportTicket[]
+}
+
+model Supplier {
+  id            String   @id @default(uuid())
+  supplierName  String
+  supplierGroup String   @default("Local")
+  email         String?
+  phone         String?
+  vendors       Vendor[]
+}
+
+// ==========================================
+// SUPPLY CHAIN / PROCUREMENT
+// ==========================================
+model Vendor {
+  id             String          @id @default(uuid())
+  name           String
+  supplierId     String?
+  supplier       Supplier?       @relation(fields: [supplierId], references: [id])
+  companyName    String?
+  company        Company?        @relation(fields: [companyName], references: [name])
+  email          String?
+  phone          String?
+  country        String?
+  paymentTerms   String?
+  purchaseOrders PurchaseOrder[]
+  vendorBills    VendorBill[]
+  createdAt      DateTime        @default(now())
+}
+
+model PurchaseOrder {
+  id           String             @id @default(uuid())
+  vendorId     String
+  vendor       Vendor             @relation(fields: [vendorId], references: [id])
+  companyName  String?
+  company      Company?           @relation(fields: [companyName], references: [name])
+  status       String             @default("Draft")
+  orderDate    DateTime           @default(now())
+  expectedDate DateTime?
+  grandTotal   Float              @default(0.0)
+  items        POItem[]
+  grns         GoodsReceiptNote[]
+}
+
+model POItem {
+  id              String        @id @default(uuid())
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+  itemCode        String
+  item            Item          @relation(fields: [itemCode], references: [itemCode])
+  qty             Float
+  rate            Float
+  amount          Float
+}
+
+model GoodsReceiptNote {
+  id              String        @id @default(uuid())
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+  receivedDate    DateTime      @default(now())
+  status          String        @default("Draft")
+  items           GRNItem[]
+}
+
+model GRNItem {
+  id                 String           @id @default(uuid())
+  goodsReceiptNoteId String
+  goodsReceiptNote   GoodsReceiptNote @relation(fields: [goodsReceiptNoteId], references: [id])
+  itemCode           String
+  item               Item             @relation(fields: [itemCode], references: [itemCode])
+  qtyReceived        Float
+  qtyRejected        Float            @default(0)
+}
+
+// ==========================================
+// INVENTORY (ITEM MASTER & STOCK)
+// ==========================================
+model Item {
+  itemCode      String             @id
+  itemName      String
+  itemGroup     String             @default("Products")
+  description   String?
+  stockUom      String             @default("Nos")
+  standardRate  Float              @default(0.0)
+  valuationRate Float              @default(0.0)
+  imageUrl      String?
+  companyName   String?
+  company       Company?           @relation(fields: [companyName], references: [name])
+  isActive      Boolean            @default(true)
+  isD2cVisible  Boolean            @default(true)
+  taxRate       Float              @default(0.0)
+  weight        Float?
+  stockEntries  StockLedgerEntry[]
+  orderItems    SalesOrderItem[]
+  stockLevels   StockLevel[]
+  variants      ProductVariant[]
+  bomItems      BOMItem[]
+  bom           BOM?
+  poItems       POItem[]
+  grnItems      GRNItem[]
+  createdAt     DateTime           @default(now())
+}
+
+model ProductVariant {
+  id            String   @id @default(uuid())
+  itemCode      String
+  item          Item     @relation(fields: [itemCode], references: [itemCode])
+  sku           String   @unique
+  attributes    String // JSON: {"size":"L","color":"Blue"}
+  priceOverride Float?
+  barcode       String?
+  createdAt     DateTime @default(now())
+}
+
+model Warehouse {
+  name         String             @id
+  code         String?            @unique
+  companyName  String
+  company      Company            @relation(fields: [companyName], references: [name])
+  stockEntries StockLedgerEntry[]
+  stockLevels  StockLevel[]
+  locations    WarehouseLocation[]
+}
+
+model StockLevel {
+  id            String    @id @default(uuid())
+  itemCode      String
+  item          Item      @relation(fields: [itemCode], references: [itemCode])
+  warehouseName String
+  warehouse     Warehouse @relation(fields: [warehouseName], references: [name])
+  qtyOnHand     Float     @default(0.0)
+  qtyReserved   Float     @default(0.0)
+  qtyAvailable  Float     @default(0.0)
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([itemCode, warehouseName])
+}
+
+model StockLedgerEntry {
+  id           String    @id @default(uuid())
+  itemCode     String
+  item         Item      @relation(fields: [itemCode], references: [itemCode])
+  warehouse    String
+  warehouseRef Warehouse @relation(fields: [warehouse], references: [name])
+  qty          Float
+  voucherType  String
+  voucherNo    String
+  postingDate  DateTime  @default(now())
+}
+
+// ==========================================
+// MANUFACTURING
+// ==========================================
+model BOM {
+  id         String      @id @default(uuid())
+  itemCode   String      @unique
+  item       Item        @relation(fields: [itemCode], references: [itemCode])
+  quantity   Float       @default(1.0)
+  isActive   Boolean     @default(true)
+  bomItems   BOMItem[]
+  workOrders WorkOrder[]
+  createdAt  DateTime    @default(now())
+}
+
+model BOMItem {
+  id       String @id @default(uuid())
+  bomId    String
+  bom      BOM    @relation(fields: [bomId], references: [id])
+  itemCode String
+  item     Item   @relation(fields: [itemCode], references: [itemCode])
+  qty      Float
+  uom      String @default("Nos")
+}
+
+model WorkOrder {
+  id           String    @id @default(uuid())
+  bomId        String
+  bom          BOM       @relation(fields: [bomId], references: [id])
+  plannedQty   Float
+  producedQty  Float     @default(0.0)
+  status       String    @default("Draft")
+  plannedStart DateTime?
+  plannedEnd   DateTime?
+  actualStart  DateTime?
+  actualEnd    DateTime?
+  createdAt    DateTime  @default(now())
+}
+
+// ==========================================
+// PROJECT MANAGEMENT
+// ==========================================
+model Project {
+  id          String    @id @default(uuid())
+  name        String
+  status      String    @default("Open")
+  companyName String?
+  company     Company?  @relation(fields: [companyName], references: [name])
+  budget      Float?
+  startDate   DateTime?
+  endDate     DateTime?
+  customerId  String?
+  tasks       Task[]
+  createdAt   DateTime  @default(now())
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  projectId   String
+  project     Project   @relation(fields: [projectId], references: [id])
+  subject     String
+  status      String    @default("Open")
+  priority    String    @default("Medium")
+  assignedTo  String?
+  dueDate     DateTime?
+  completedOn DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+// ==========================================
+// ASSET MANAGEMENT
+// ==========================================
+model Asset {
+  id                 String    @id @default(uuid())
+  assetName          String
+  assetCategory      String
+  companyName        String?
+  company            Company?  @relation(fields: [companyName], references: [name])
+  purchaseDate       DateTime?
+  purchaseAmount     Float     @default(0.0)
+  currentValue       Float     @default(0.0)
+  depreciationMethod String    @default("Straight Line")
+  usefulLifeYears    Int       @default(5)
+  status             String    @default("Active")
+  location           String?
+  createdAt          DateTime  @default(now())
+}
+
+// ==========================================
+// FINANCE (GENERAL LEDGER, INVOICES, PAYMENTS)
+// ==========================================
+model FiscalPeriod {
+  id          String   @id @default(uuid())
+  name        String
+  startDate   DateTime
+  endDate     DateTime
+  status      String   @default("Open")
+  year        Int
+  companyName String?
+  company     Company? @relation(fields: [companyName], references: [name])
+}
+
+model Account {
+  name           String             @id
+  code           String?
+  accountType    String
+  rootType       String
+  parentId       String?
+  currency       String             @default("USD")
+  isActive       Boolean            @default(true)
+  companyName    String?
+  company        Company?           @relation(fields: [companyName], references: [name])
+  glEntries      GLEntry[]
+  journalLines   JournalEntryLine[]
+  debitInvoices  Invoice[]          @relation("DebitAccount")
+  creditInvoices Invoice[]          @relation("CreditAccount")
+}
+
+model JournalEntry {
+  id          String             @id @default(uuid())
+  reference   String?
+  date        DateTime           @default(now())
+  description String?
+  status      String             @default("Draft")
+  period      String?
+  createdBy   String?
+  postedAt    DateTime?
+  lines       JournalEntryLine[]
+}
+
+model JournalEntryLine {
+  id             String       @id @default(uuid())
+  journalEntryId String
+  journalEntry   JournalEntry @relation(fields: [journalEntryId], references: [id])
+  accountName    String
+  account        Account      @relation(fields: [accountName], references: [name])
+  debit          Float        @default(0.0)
+  credit         Float        @default(0.0)
+  currency       String       @default("USD")
+  exchangeRate   Float        @default(1.0)
+  description    String?
+}
+
+model Invoice {
+  id                String    @id @default(uuid())
+  type              String // "AP" or "AR"
+  customerId        String?
+  customer          Customer? @relation(fields: [customerId], references: [id])
+  date              DateTime  @default(now())
+  dueDate           DateTime?
+  status            String    @default("Draft")
+  subtotal          Float     @default(0.0)
+  tax               Float     @default(0.0)
+  total             Float     @default(0.0)
+  currency          String    @default("USD")
+  debitAccountName  String?
+  debitAccount      Account?  @relation("DebitAccount", fields: [debitAccountName], references: [name])
+  creditAccountName String?
+  creditAccount     Account?  @relation("CreditAccount", fields: [creditAccountName], references: [name])
+  payments          Payment[]
+}
+
+model Payment {
+  id         String   @id @default(uuid())
+  invoiceId  String
+  invoice    Invoice  @relation(fields: [invoiceId], references: [id])
+  amount     Float
+  method     String   @default("Bank Transfer")
+  reference  String?
+  gatewayId  String?
+  status     String   @default("Pending")
+  reconciled Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model GLEntry {
+  id          String   @id @default(uuid())
+  account     String
+  accountRef  Account  @relation(fields: [account], references: [name])
+  debit       Float    @default(0.0)
+  credit      Float    @default(0.0)
+  voucherType String
+  voucherNo   String
+  postingDate DateTime @default(now())
+}
+
+// ==========================================
+// HR & PAYROLL
+// ==========================================
+model Department {
+  id          String     @id @default(uuid())
+  name        String
+  parentId    String?
+  companyName String?
+  company     Company?   @relation(fields: [companyName], references: [name])
+  employees   Employee[]
+}
+
+model Employee {
+  employee       String          @id @default(uuid())
+  userId         String?
+  employeeName   String
+  companyName    String?
+  company        Company?        @relation(fields: [companyName], references: [name])
+  departmentId   String?
+  department     Department?     @relation(fields: [departmentId], references: [id])
+  designation    String?
+  managerId      String?
+  employmentType String          @default("Full-time")
+  joinDate       DateTime        @default(now())
+  salary         Float?
+  status         String          @default("Active")
+  attendanceLogs AttendanceLog[]
+  payslips       Payslip[]
+  attendances    Attendance[]
+  payrolls       Payroll[]
+  createdAt      DateTime        @default(now())
+}
+
+model AttendanceLog {
+  id          String    @id @default(uuid())
+  employeeId  String
+  employee    Employee  @relation(fields: [employeeId], references: [employee])
+  date        DateTime
+  clockIn     DateTime?
+  clockOut    DateTime?
+  source      String    @default("Manual")
+  hoursWorked Float?
+}
+
+model PayrollRun {
+  id              String    @id @default(uuid())
+  period          String
+  status          String    @default("Draft")
+  totalGross      Float     @default(0.0)
+  totalNet        Float     @default(0.0)
+  totalDeductions Float     @default(0.0)
+  approvedBy      String?
+  processedAt     DateTime?
+  companyName     String?
+  company         Company?  @relation(fields: [companyName], references: [name])
+  payslips        Payslip[]
+  createdAt       DateTime  @default(now())
+}
+
+model Payslip {
+  id           String     @id @default(uuid())
+  payrollRunId String
+  payrollRun   PayrollRun @relation(fields: [payrollRunId], references: [id])
+  employeeId   String
+  employee     Employee   @relation(fields: [employeeId], references: [employee])
+  gross        Float
+  net          Float
+  deductions   String? // JSON
+  pdfUrl       String?
+  status       String     @default("Draft")
+}
+
+// ==========================================
+// SALES ORDER MANAGEMENT
+// ==========================================
+model SalesOrder {
+  id              String           @id @default(uuid())
+  customerId      String?
+  customer        Customer?        @relation(fields: [customerId], references: [id])
+  d2cCustomerId   String?
+  d2cCustomer     D2CCustomer?     @relation(fields: [d2cCustomerId], references: [id])
+  companyName     String?
+  company         Company?         @relation(fields: [companyName], references: [name])
+  transactionDate DateTime         @default(now())
+  status          String           @default("Draft")
+  grandTotal      Float            @default(0.0)
+  channel         String           @default("D2C")
+  addressJson     String?
+  items           SalesOrderItem[]
+  returns         Return[]
+}
+
+model SalesOrderItem {
+  id           String     @id @default(uuid())
+  salesOrderId String
+  salesOrder   SalesOrder @relation(fields: [salesOrderId], references: [id])
+  itemCode     String
+  item         Item       @relation(fields: [itemCode], references: [itemCode])
+  qty          Float
+  rate         Float
+  discount     Float      @default(0.0)
+  amount       Float
+}
+
+// ==========================================
+// CART (D2C)
+// ==========================================
+model Cart {
+  id          String       @id @default(uuid())
+  customerId  String?
+  d2cCustomer D2CCustomer? @relation(fields: [customerId], references: [id])
+  sessionId   String?
+  couponCode  String?
+  expiresAt   DateTime?
+  createdAt   DateTime     @default(now())
+  items       CartItem[]
+}
+
+model CartItem {
+  id        String  @id @default(uuid())
+  cartId    String
+  cart      Cart    @relation(fields: [cartId], references: [id])
+  itemCode  String
+  variantId String?
+  qty       Int
+  unitPrice Float
+}
+
+// ==========================================
+// RETURNS & REVERSE LOGISTICS
+// ==========================================
+model Return {
+  id           String       @id @default(uuid())
+  salesOrderId String
+  salesOrder   SalesOrder   @relation(fields: [salesOrderId], references: [id])
+  customerId   String?
+  d2cCustomer  D2CCustomer? @relation(fields: [customerId], references: [id])
+  status       String       @default("Requested")
+  reason       String?
+  resolution   String? // Refund, Exchange, Store Credit
+  refundAmount Float        @default(0.0)
+  createdAt    DateTime     @default(now())
+  items        ReturnItem[]
+}
+
+model ReturnItem {
+  id        String @id @default(uuid())
+  returnId  String
+  return    Return @relation(fields: [returnId], references: [id])
+  itemCode  String
+  qty       Float
+  condition String @default("Good")
+}
+
+// ==========================================
+// EQUITY & STOCK MARKET
+// ==========================================
+model CompanyStock {
+  ticker            String   @id
+  companyName       String
+  sharesOutstanding BigInt   @default(10000000)
+  currentPrice      Float    @default(50.00)
+  marketCap         Float    @default(500000000.00)
+  lastUpdated       DateTime @default(now())
+}
+
+model CorporateAction {
+  id         String   @id @default(uuid())
+  ticker     String
+  actionType String // "Buyback", "Issue Shares", "Dividend"
+  quantity   Float    @default(0.0)
+  price      Float    @default(0.0)
+  totalValue Float    @default(0.0)
+  date       DateTime @default(now())
+  status     String   @default("Completed")
+}
+
+// ==========================================
+// MARKETING
+// ==========================================
+model MarketingCampaign {
+  id          String    @id @default(uuid())
+  name        String
+  channel     String    @default("Email")
+  status      String    @default("Draft")
+  budget      Float     @default(0.0)
+  spend       Float     @default(0.0)
+  impressions Int       @default(0)
+  clicks      Int       @default(0)
+  conversions Int       @default(0)
+  startDate   DateTime  @default(now())
+  endDate     DateTime?
+  companyName String?
+  company     Company?  @relation(fields: [companyName], references: [name])
+}
+
+// ==========================================
+// MODULE 3 - SALES & QUOTATION
+// ==========================================
+model RFQ {
+  id             String      @id @default(uuid())
+  customerId     String?
+  customer       Customer?   @relation(fields: [customerId], references: [id])
+  requestDate    DateTime    @default(now())
+  status         String      @default("Open") // Open, Quoted, Closed
+  origin         String
+  destination    String
+  freightType    String // Air, Ocean, Road, Rail
+  expectedWeight Float?
+  expectedVolume Float?
+  quotations     Quotation[]
+}
+
+model Quotation {
+  id          String              @id @default(uuid())
+  rfqId       String
+  rfq         RFQ                 @relation(fields: [rfqId], references: [id])
+  quoteDate   DateTime            @default(now())
+  validUntil  DateTime
+  totalAmount Float               @default(0.0)
+  status      String              @default("Draft") // Draft, Sent, Accepted, Rejected
+  items       QuotationItem[]
+  approvals   QuotationApproval[]
+}
+
+model QuotationItem {
+  id          String    @id @default(uuid())
+  quotationId String
+  quotation   Quotation @relation(fields: [quotationId], references: [id])
+  description String
+  quantity    Float
+  unitPrice   Float
+  total       Float
+}
+
+// ==========================================
+// MODULE 4 - SHIPMENT MANAGEMENT
+// ==========================================
+model Shipment {
+  id             String              @id @default(uuid())
+  trackingNumber String              @unique
+  customerId     String?
+  customer       Customer?           @relation(fields: [customerId], references: [id])
+  origin         String
+  destination    String
+  status         String              @default("Pending")
+  freightType    String
+  departureDate  DateTime?
+  arrivalDate    DateTime?
+  items          ShipmentItem[]
+  milestones     ShipmentMilestone[]
+  trackingEvents TrackingEvent[]
+  statuses       ShipmentStatus[]
+}
+
+model ShipmentItem {
+  id          String   @id @default(uuid())
+  shipmentId  String
+  shipment    Shipment @relation(fields: [shipmentId], references: [id])
+  description String
+  weight      Float
+  volume      Float
+  quantity    Int
+}
+
+model ShipmentMilestone {
+  id         String   @id @default(uuid())
+  shipmentId String
+  shipment   Shipment @relation(fields: [shipmentId], references: [id])
+  location   String
+  event      String
+  timestamp  DateTime @default(now())
+}
+
+// ==========================================
+// MODULE 5 - FREIGHT OPERATIONS
+// ==========================================
+model Carrier {
+  id           String            @id @default(uuid())
+  name         String
+  carrierType  String // Ocean Line, Airline, Trucking
+  contactEmail String?
+  contactPhone String?
+  bookings     Booking[]
+  contracts    CarrierContract[]
+}
+
+model Booking {
+  id         String        @id @default(uuid())
+  carrierId  String
+  carrier    Carrier       @relation(fields: [carrierId], references: [id])
+  bookingRef String        @unique
+  status     String        @default("Confirmed")
+  vesselName String?
+  flightNo   String?
+  departure  DateTime?
+  arrival    DateTime?
+  items      BookingItem[]
+}
+
+// ==========================================
+// MODULE 6 - OCEAN FREIGHT
+// ==========================================
+model Vessel {
+  id       String   @id @default(uuid())
+  name     String
+  imoNo    String   @unique
+  capacity Int
+  voyages  Voyage[]
+}
+
+model Voyage {
+  id          String    @id @default(uuid())
+  vesselId    String
+  vessel      Vessel    @relation(fields: [vesselId], references: [id])
+  voyageNo    String
+  origin      String
+  destination String
+  etd         DateTime?
+  eta         DateTime?
+}
+
+model Container {
+  id          String              @id @default(uuid())
+  containerNo String              @unique
+  type        String // 20GP, 40HC
+  status      String              @default("Empty")
+  movements   ContainerMovement[]
+}
+
+model ContainerMovement {
+  id          String    @id @default(uuid())
+  containerId String
+  container   Container @relation(fields: [containerId], references: [id])
+  location    String
+  status      String
+  timestamp   DateTime  @default(now())
+}
+
+// ==========================================
+// MODULE 7 - AIR FREIGHT
+// ==========================================
+model AirWaybill {
+  id          String        @id @default(uuid())
+  awbNumber   String        @unique
+  origin      String
+  destination String
+  weight      Float
+  status      String        @default("Issued")
+  shipments   AirShipment[]
+}
+
+model Flight {
+  id          String        @id @default(uuid())
+  flightNo    String
+  airline     String
+  departure   DateTime
+  arrival     DateTime
+  origin      String
+  destination String
+  shipments   AirShipment[]
+}
+
+// ==========================================
+// MODULE 8 & 9 - ROAD TRANSPORT & FLEET
+// ==========================================
+model Vehicle {
+  id          String               @id @default(uuid())
+  plateNumber String               @unique
+  type        String
+  capacity    Float
+  status      String               @default("Available")
+  trips       Trip[]
+  maintenance VehicleMaintenance[]
+  fuelLogs    FuelLog[]
+}
+
+model Driver {
+  id        String  @id @default(uuid())
+  name      String
+  licenseNo String  @unique
+  phone     String?
+  status      String  @default("Active")
+  trips       Trip[]
+  performance DriverPerformance[]
+}
+
+model Trip {
+  id          String      @id @default(uuid())
+  vehicleId   String
+  vehicle     Vehicle     @relation(fields: [vehicleId], references: [id])
+  driverId    String
+  driver      Driver      @relation(fields: [driverId], references: [id])
+  origin      String
+  destination String
+  status      String      @default("Scheduled")
+  startTime   DateTime?
+  endTime     DateTime?
+  events      TripEvent[]
+}
+
+model VehicleMaintenance {
+  id          String   @id @default(uuid())
+  vehicleId   String
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+  date        DateTime @default(now())
+  description String
+  cost        Float
+}
+
+model FuelLog {
+  id        String   @id @default(uuid())
+  vehicleId String
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+  date      DateTime @default(now())
+  liters    Float
+  cost      Float
+}
+
+// ==========================================
+// MODULE 11 - CUSTOMS CLEARANCE
+// ==========================================
+model CustomsDeclaration {
+  id             String    @id @default(uuid())
+  referenceNo    String    @unique
+  type           String // Import, Export
+  status         String    @default("Submitted")
+  submissionDate DateTime  @default(now())
+  clearanceDate  DateTime?
+  duties         Duty[]
+}
+
+model Duty {
+  id            String             @id @default(uuid())
+  declarationId String
+  declaration   CustomsDeclaration @relation(fields: [declarationId], references: [id])
+  type          String
+  amount        Float
+  status        String             @default("Unpaid")
+}
+
+// ==========================================
+// MODULE 12 - DOCUMENT MANAGEMENT
+// ==========================================
+model Document {
+  id           String   @id @default(uuid())
+  entityType   String // Shipment, Quotation
+  entityId     String
+  documentType String // BOL, AWB, Commercial Invoice
+  fileUrl      String
+  uploadedAt   DateTime @default(now())
+  versions     DocumentVersion[]
+}
+
+// ==========================================
+// MODULE 17 - INSURANCE
+// ==========================================
+model InsurancePolicy {
+  id         String           @id @default(uuid())
+  policyNo   String           @unique
+  provider   String
+  coverage   Float
+  premium    Float
+  validUntil DateTime
+  claims     InsuranceClaim[]
+}
+
+model InsuranceClaim {
+  id        String          @id @default(uuid())
+  policyId  String
+  policy    InsurancePolicy @relation(fields: [policyId], references: [id])
+  claimDate DateTime        @default(now())
+  amount    Float
+  status    String          @default("Filed")
+}
+
+// ==========================================
+// MODULE 18 - TRACKING
+// ==========================================
+model TrackingEvent {
+  id          String   @id @default(uuid())
+  shipmentId  String
+  shipment    Shipment @relation(fields: [shipmentId], references: [id])
+  location    String
+  description String
+  timestamp   DateTime @default(now())
+}
+
+// ==========================================
+// MODULE 1 - MASTER DATA EXTENSIONS
+// ==========================================
+model Currency {
+  code      String   @id
+  name      String
+  symbol    String?
+  createdAt DateTime @default(now())
+}
+
+model Country {
+  id           String  @id @default(uuid())
+  code         String  @unique
+  name         String
+  currencyCode String?
+  states       State[]
+}
+
+model State {
+  id        String  @id @default(uuid())
+  name      String
+  countryId String
+  country   Country @relation(fields: [countryId], references: [id])
+  cities    City[]
+}
+
+model City {
+  id       String    @id @default(uuid())
+  name     String
+  stateId  String
+  state    State     @relation(fields: [stateId], references: [id])
+  branches Branch[]
+  ports    Port[]
+  airports Airport[]
+}
+
+model Branch {
+  id          String  @id @default(uuid())
+  name        String
+  companyName String
+  company     Company @relation(fields: [companyName], references: [name])
+  cityId      String?
+  city        City?   @relation(fields: [cityId], references: [id])
+  isActive    Boolean @default(true)
+}
+
+model Port {
+  id     String  @id @default(uuid())
+  code   String  @unique
+  name   String
+  type   String  @default("Ocean")
+  cityId String?
+  city   City?   @relation(fields: [cityId], references: [id])
+}
+
+model Airport {
+  id     String  @id @default(uuid())
+  code   String  @unique
+  name   String
+  cityId String?
+  city   City?   @relation(fields: [cityId], references: [id])
+}
+
+model TaxConfiguration {
+  id       String  @id @default(uuid())
+  name     String
+  rate     Float
+  country  String  @default("Global")
+  isActive Boolean @default(true)
+}
+
+// ==========================================
+// MODULE 2 - CRM (LEADS & OPPORTUNITIES)
+// ==========================================
+model Lead {
+  id            String         @id @default(uuid())
+  firstName     String
+  lastName      String
+  email         String?
+  phone         String?
+  companyName   String?
+  source        String         @default("Website")
+  status        String         @default("New")
+  assignedTo    String?
+  createdAt     DateTime       @default(now())
+  activities    LeadActivity[]
+  opportunities Opportunity[]
+}
+
+model LeadActivity {
+  id         String    @id @default(uuid())
+  leadId     String?
+  lead       Lead?     @relation(fields: [leadId], references: [id])
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id])
+  type       String    @default("Note")
+  notes      String
+  date       DateTime  @default(now())
+}
+
+model Opportunity {
+  id            String    @id @default(uuid())
+  leadId        String?
+  lead          Lead?     @relation(fields: [leadId], references: [id])
+  customerId    String?
+  customer      Customer? @relation(fields: [customerId], references: [id])
+  name          String
+  amount        Float     @default(0.0)
+  stage         String    @default("Prospecting")
+  expectedClose DateTime?
+  createdAt     DateTime  @default(now())
+}
+
+model CustomerContact {
+  id          String   @id @default(uuid())
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id])
+  firstName   String
+  lastName    String
+  email       String?
+  phone       String?
+  designation String?
+  isPrimary   Boolean  @default(false)
+}
+
+model CustomerContract {
+  id          String   @id @default(uuid())
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id])
+  title       String
+  startDate   DateTime
+  endDate     DateTime
+  value       Float    @default(0.0)
+  status      String   @default("Active")
+  documentUrl String?
+}
+
+// ==========================================
+// MODULE 3, 4, 5 - SUPPLEMENTARY MODELS
+// ==========================================
+
+model QuotationApproval {
+  id          String    @id @default(uuid())
+  quotationId String
+  quotation   Quotation @relation(fields: [quotationId], references: [id])
+  approverId  String
+  status      String    @default("Pending")
+  comments    String?
+  date        DateTime  @default(now())
+}
+
+model ShipmentStatus {
+  id         String   @id @default(uuid())
+  shipmentId String
+  shipment   Shipment @relation(fields: [shipmentId], references: [id])
+  status     String
+  location   String?
+  timestamp  DateTime @default(now())
+}
+
+model CarrierContract {
+  id          String   @id @default(uuid())
+  carrierId   String
+  carrier     Carrier  @relation(fields: [carrierId], references: [id])
+  contractRef String
+  validFrom   DateTime
+  validTo     DateTime
+  terms       String?
+}
+
+model BookingItem {
+  id        String  @id @default(uuid())
+  bookingId String
+  booking   Booking @relation(fields: [bookingId], references: [id])
+  itemCode  String
+  quantity  Int
+  weight    Float?
+}
+
+// ==========================================
+// MODULE 7 & 8 SUPPLEMENTARY MODELS
+// ==========================================
+model AirShipment {
+  id          String     @id @default(uuid())
+  awbId       String
+  awb         AirWaybill @relation(fields: [awbId], references: [id])
+  flightId    String?
+  flight      Flight?    @relation(fields: [flightId], references: [id])
+  description String
+  weight      Float
+  status      String     @default("Booked")
+}
+
+model TripEvent {
+  id          String   @id @default(uuid())
+  tripId      String
+  trip        Trip     @relation(fields: [tripId], references: [id])
+  driverId    String?
+  eventType   String?  // Started, Arrived, Delivered, Delayed
+  location    String?
+  proofUrl    String?  // Image URL for proof of delivery
+  status      String   @default("In Transit")
+  timestamp   DateTime @default(now())
+}
+
+// ==========================================
+// MODULE 9-12 SUPPLEMENTARY MODELS
+// ==========================================
+model DriverPerformance {
+  id        String   @id @default(uuid())
+  driverId  String
+  driver    Driver   @relation(fields: [driverId], references: [id])
+  date      DateTime @default(now())
+  rating    Int
+  comments  String?
+}
+
+model WarehouseLocation {
+  id            String    @id @default(uuid())
+  warehouseName String
+  warehouse     Warehouse @relation(fields: [warehouseName], references: [name])
+  zone          String
+  rack          String
+  bin           String
+  barcode       String    @unique
+}
+
+model PickList {
+  id         String   @id @default(uuid())
+  orderRef   String
+  status     String   @default("Pending")
+  assignedTo String?
+  createdAt  DateTime @default(now())
+}
+
+model PackingList {
+  id        String   @id @default(uuid())
+  pickId    String
+  status    String   @default("Pending")
+  createdAt DateTime @default(now())
+}
+
+model ComplianceRule {
+  id          String   @id @default(uuid())
+  countryCode String
+  ruleType    String
+  description String
+  isActive    Boolean  @default(true)
+}
+
+model DocumentVersion {
+  id         String   @id @default(uuid())
+  documentId String
+  document   Document @relation(fields: [documentId], references: [id])
+  versionNum Int
+  fileUrl    String
+  uploadedAt DateTime @default(now())
+}
+
+// ==========================================
+// MODULE 13 - CONTAINER MANAGEMENT
+// ==========================================
+model ContainerStatus {
+  id          String   @id @default(uuid())
+  containerNo String
+  status      String   // Stuffing, Destuffing, Empty, Returned
+  location    String
+  timestamp   DateTime @default(now())
+}
+
+// ==========================================
+// MODULE 14 - PROCUREMENT
+// ==========================================
+model PurchaseRequisition {
+  id          String   @id @default(uuid())
+  department  String
+  item        String
+  quantity    Int
+  status      String   @default("Pending")
+  requestDate DateTime @default(now())
+}
+
+model VendorBill {
+  id        String   @id @default(uuid())
+  vendorId  String
+  vendor    Vendor   @relation(fields: [vendorId], references: [id])
+  amount    Float
+  status    String   @default("Unpaid")
+  dueDate   DateTime
+}
+
+// ==========================================
+// MODULE 15 - FINANCE & ACCOUNTING
+// ==========================================
+model TaxRecord {
+  id          String   @id @default(uuid())
+  type        String   // GST, TDS
+  amount      Float
+  status      String   @default("Pending")
+  date        DateTime @default(now())
+}
+
+// ==========================================
+// MODULE 16 - BILLING
+// ==========================================
+model CreditDebitNote {
+  id          String   @id @default(uuid())
+  type        String   // Credit, Debit
+  invoiceId   String
+  amount      Float
+  reason      String
+  date        DateTime @default(now())
+}
+
+// ==========================================
+// MODULE 18 - TRACKING (DEVICES)
+// ==========================================
+model TrackingDevice {
+  id          String   @id @default(uuid())
+  deviceId    String   @unique
+  type        String   // GPS, IoT
+  attachedTo  String   // Vehicle Plate or Container No
+  status      String   @default("Active")
+}
+
+// ==========================================
+// MODULE 19 - CUSTOMER PORTAL
+// ==========================================
+model SupportTicket {
+  id          String   @id @default(uuid())
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id])
+  subject     String
+  description String
+  status      String   @default("Open")
+  createdAt   DateTime @default(now())
+}
+
+// ==========================================
+// MODULE 21 - EMPLOYEE PORTAL (HR)
+// ==========================================
+model Attendance {
+  id          String   @id @default(uuid())
+  employeeId  String
+  employee    Employee @relation(fields: [employeeId], references: [employee])
+  date        DateTime @default(now())
+  status      String   // Present, Absent, Half-Day
+  checkIn     DateTime?
+  checkOut    DateTime?
+}
+
+model Payroll {
+  id          String   @id @default(uuid())
+  employeeId  String
+  employee    Employee @relation(fields: [employeeId], references: [employee])
+  month       String
+  baseSalary  Float
+  bonus       Float    @default(0.0)
+  deductions  Float    @default(0.0)
+  netPay      Float
+  status      String   @default("Pending") // Pending, Paid
+}
+
+// ==========================================
+// MODULE 22 - NOTIFICATIONS
+// ==========================================
+model NotificationLog {
+  id          String   @id @default(uuid())
+  channel     String   // Email, SMS, WhatsApp
+  recipient   String
+  subject     String?
+  message     String
+  status      String   @default("Sent")
+  sentAt      DateTime @default(now())
+}
+
+
+
+// ==========================================
+// MODULE 25 - AI HUB
+// ==========================================
+model AIQueryLog {
+  id          String   @id @default(uuid())
+  userId      String?
+  query       String
+  response    String
+  module      String   // General, Shipments, Forecasting
+  timestamp   DateTime @default(now())
+}
