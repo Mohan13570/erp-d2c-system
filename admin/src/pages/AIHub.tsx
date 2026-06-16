@@ -2,12 +2,30 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Bot, Sparkles, Send, Box, BrainCircuit, Activity } from 'lucide-react';
 
 export default function AIHub() {
-  const [messages, setMessages] = useState<{role: string, text: string, module?: string}[]>([
-    { role: 'ai', text: 'Hello! I am Aura, your AI assistant. I can forecast demand, analyze shipments, and optimize routes. How can I help?' }
-  ]);
+  const [messages, setMessages] = useState<{role: string, text: string, module?: string}[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Fetch Historical Chat Logs
+    fetch('/api/ai/logs')
+      .then(r => r.json())
+      .then((logs: any[]) => {
+        if (!logs || logs.length === 0) {
+          setMessages([{ role: 'ai', text: 'Hello! I am Aura, your local AI assistant. I can forecast demand, analyze shipments, and optimize routes. How can I help?' }]);
+          return;
+        }
+        // Logs are returned desc (newest first). Reverse to oldest first.
+        const history: any[] = [];
+        logs.reverse().forEach(log => {
+          history.push({ role: 'user', text: log.query });
+          history.push({ role: 'ai', text: log.response, module: log.module });
+        });
+        setMessages(history);
+      })
+      .catch(console.error);
+  }, []);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
