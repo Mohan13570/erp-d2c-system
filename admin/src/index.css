@@ -2,15 +2,71 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 220 33% 98%;
     --foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 243 75% 59%;
     --primary-foreground: 210 40% 98%;
   }
 }
 
 body {
-  background-color: hsl(var(--background));
+  font-family: 'Inter', system-ui, sans-serif;
+  background: linear-gradient(-45deg, #f8fafc, #e0e7ff, #f3e8ff, #f8fafc);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
   color: hsl(var(--foreground));
-  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+}
+
+.glass-sidebar {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 2px 0 20px 0 rgba(0, 0, 0, 0.03);
+}
+
+/* Global Component Enhancements */
+.bg-white {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.1) !important;
+}
+
+input, select, textarea {
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+input:focus, select:focus, textarea:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.15) !important;
+  border-color: #6366f1 !important;
+}
+
+button {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: scale(0.96);
 }
