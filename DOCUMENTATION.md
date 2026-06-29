@@ -99,4 +99,21 @@ Rather than building entirely separate applications, the system restricts the ma
 
 ---
 
+## Part 5: Recent Expansions (Fleet & Massive Ocean Freight Modules)
+
+### 1. Fleet & Live GPS Engine Expansion
+- **Live Telematics**: Deployed WebSocket-powered GIS mapping and heartbeat tracking for fleets.
+- **Geofence Studio**: Engineered Polygon restricted zones and automatic transit violation alerts (dwell times, SOS alerts, overspeed).
+- **Route Optimization**: Connected Trip assignments with dynamic GPS routes for complete logistical oversight.
+
+### 2. Global Ocean Freight Forwarding Suite
+A monumental expansion to manage international maritime shipping natively:
+- **Maritime Master Data**: Complete standard data for Vessels, Ports, Terminals, and Shipping Lines.
+- **Booking Workflows**: Advanced NVOCC freight routing catering to FCL, LCL, Hazmat (Dangerous Goods), and Reefer cargo.
+- **Yard & Port Operations**: Digital twins of CY operations. Supports Gate-in/Gate-out scanning, crane assignment, and comprehensive container inventory mapping.
+- **Customs & Finance**: Bills of Entry tracking, specific Duty calculators, and real-time AR/AP net margin calculations dynamically linked to maritime charges (BAF, CAF, THC).
+- **Executive BI & GIS Map**: High-level C-Suite KPI aggregators (Total Revenue, Active Vessels) and Carrier reliability tracking. Features a live GeoJSON Leaflet map tracking vessels globally on OpenStreetMap.
+
+---
+
 *This document serves as the absolute blueprint of the Aura ERP ecosystem.*
