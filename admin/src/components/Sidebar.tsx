@@ -1,6 +1,7 @@
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
-  LayoutDashboard, Users, UserCog, Settings, Package, Tags, Briefcase, Handshake, Mail, Map, Link as LinkIcon, Database, TrendingUp, Anchor, Plane, Truck, Globe, Car, Building2, ShieldCheck, FileText, Box, ShoppingCart, Landmark, ReceiptText, Shield, Crosshair, DollarSign, Command, RotateCcw, Megaphone, UserCheck, BarChart3, FolderKanban, Cpu, LogOut, Layers, UserCircle, UsersRound, BrainCircuit, Smartphone
+  LayoutDashboard, Users, UserCog, Settings, Package, Tags, Briefcase, Handshake, Mail, Map, Link as LinkIcon, Database, TrendingUp, Anchor, Plane, Truck, Globe, Car, Building2, ShieldCheck, FileText, Box, ShoppingCart, Landmark, ReceiptText, Shield, Crosshair, DollarSign, Command, RotateCcw, Megaphone, UserCheck, BarChart3, FolderKanban, Cpu, LogOut, Layers, UserCircle, UsersRound, BrainCircuit, Smartphone, Plus, Navigation, ChevronDown, ChevronRight, Activity
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -19,13 +20,41 @@ const navSections = [
   {
     label: 'Logistics & Freight',
     items: [
-      { name: 'Shipments', path: '/shipments', icon: Globe },
-      { name: 'Ocean Freight', path: '/ocean-freight', icon: Anchor },
+      { name: 'Driver Master', path: '/drivers', icon: Users },
+      { name: 'Vehicle Master', path: '/vehicles', icon: Car },
+      { name: 'Shipment Dashboard', path: '/shipments', icon: LayoutDashboard },
+      { name: 'Shipment List', path: '/shipments/list', icon: Globe },
+      { name: 'Create Shipment', path: '/shipments/create', icon: Plus },
+      { 
+        name: 'GPS Controller', 
+        icon: Map,
+        subItems: [
+          { name: 'Trip Master', path: '/trips', icon: Navigation },
+          { name: 'Advanced GIS Map', path: '/gps', icon: Map },
+          { name: 'Geofence Studio', path: '/geofences', icon: ShieldCheck },
+          { name: 'Route Optimizer', path: '/routes/plan', icon: Crosshair },
+          { name: 'Alert Center', path: '/alerts', icon: Megaphone },
+          { name: 'GPS Hardware', path: '/gps/devices', icon: Cpu },
+          { name: 'BI Reports', path: '/reports/bi', icon: BarChart3 },
+          { name: 'Real-Time Tracking', path: '/tracking', icon: Crosshair },
+        ]
+      },
+      { 
+        name: 'Ocean Freight', 
+        icon: Anchor,
+        subItems: [
+          { name: 'Executive Dashboard', path: '/ocean/executive/dashboard', icon: Activity },
+          { name: 'Global Map Tracking', path: '/ocean/tracking/map', icon: Crosshair },
+          { name: 'Ocean Bookings', path: '/ocean/bookings', icon: Anchor },
+          { name: 'Port Operations', path: '/ocean/ops/yard', icon: Box },
+          { name: 'Finance & Billing', path: '/ocean/finance/billing', icon: DollarSign },
+          { name: 'Customs Clearance', path: '/ocean/customs', icon: ShieldCheck },
+        ]
+      },
       { name: 'Air Freight', path: '/air-freight', icon: Plane },
       { name: 'Road Transport', path: '/road-transport', icon: Truck },
       { name: 'Fleet Maintenance', path: '/fleet-management', icon: Car },
       { name: 'Container Management', path: '/containers', icon: Box },
-      { name: 'Real-Time Tracking', path: '/tracking', icon: Crosshair },
     ]
   },
   {
@@ -95,11 +124,21 @@ export default function Sidebar() {
   const location = useLocation();
   const { logout, user } = useAuth();
   const navigate = useNavigate();
+  const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
+
+  const toggleMenu = (menuName: string) => {
+    setOpenMenus(prev => ({ ...prev, [menuName]: !prev[menuName] }));
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('erp_user');
     logout();
     navigate('/login');
+  };
+
+  const hasPermission = (itemName: string) => {
+    if (user?.role === 'System Admin' || user?.role === 'Admin') return true;
+    return user?.permissions?.includes(itemName) || user?.permissions?.includes('All Modules');
   };
 
   return (
@@ -116,22 +155,54 @@ export default function Sidebar() {
             if (user?.role === 'System Admin' || user?.role === 'Admin') return true;
             if (!user?.permissions) return section.label === 'Core';
             
-            // Check if user has permission for ANY item in this section
-            const hasPermission = section.items.some(item => 
-              user.permissions?.includes(item.name) || user.permissions?.includes('All Modules')
+            // Check if user has permission for ANY item in this section (including subitems)
+            return section.items.some(item => 
+              hasPermission(item.name) || (item.subItems && item.subItems.some(sub => hasPermission(sub.name)))
             );
-            return hasPermission;
           })
           .map(section => (
           <div key={section.label}>
             <p className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{section.label}</p>
             <div className="space-y-0.5">
               {section.items
-                .filter(item => user?.role === 'System Admin' || user?.role === 'Admin' || user?.permissions?.includes(item.name) || user?.permissions?.includes('All Modules'))
+                .filter(item => hasPermission(item.name) || (item.subItems && item.subItems.some(sub => hasPermission(sub.name))))
                 .map(item => {
+                
+                if (item.subItems) {
+                   const isOpen = openMenus[item.name];
+                   const isActive = item.subItems.some(sub => location.pathname === sub.path);
+                   return (
+                      <div key={item.name} className="space-y-0.5">
+                         <button 
+                            onClick={() => toggleMenu(item.name)}
+                            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-150 font-medium text-sm ${isActive ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}
+                         >
+                            <div className="flex items-center space-x-3">
+                               <item.icon size={17} className={isActive ? 'text-indigo-600' : 'text-gray-400'} />
+                               <span>{item.name}</span>
+                            </div>
+                            {isOpen ? <ChevronDown size={14} className="text-gray-400"/> : <ChevronRight size={14} className="text-gray-400"/>}
+                         </button>
+                         {isOpen && (
+                            <div className="pl-9 space-y-0.5 mt-1 relative before:absolute before:left-5 before:top-2 before:bottom-2 before:w-px before:bg-gray-200">
+                               {item.subItems.filter(sub => hasPermission(sub.name)).map(sub => {
+                                  const isSubActive = location.pathname === sub.path;
+                                  return (
+                                     <Link key={sub.name} to={sub.path!} className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-all duration-150 font-medium text-sm ${isSubActive ? 'text-indigo-600 bg-white shadow-sm' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}>
+                                        <sub.icon size={14} className={isSubActive ? 'text-indigo-600' : 'text-gray-400'} />
+                                        <span>{sub.name}</span>
+                                     </Link>
+                                  );
+                               })}
+                            </div>
+                         )}
+                      </div>
+                   );
+                }
+
                 const isActive = location.pathname === item.path;
                 return (
-                  <Link key={item.name} to={item.path}
+                  <Link key={item.name} to={item.path!}
                     className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all duration-150 font-medium text-sm ${isActive ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}>
                     <item.icon size={17} className={isActive ? 'text-indigo-600' : 'text-gray-400'} />
                     <span>{item.name}</span>

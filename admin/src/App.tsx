@@ -19,7 +19,10 @@ import RBAC from './pages/RBAC';
 import CompanyStock from './pages/CompanyStock';
 import EmployeeAccess from './pages/EmployeeAccess';
 import Fleet from './pages/Fleet';
-import Shipments from './pages/Shipments';
+import ShipmentDashboard from './pages/shipments/ShipmentDashboard';
+import ShipmentList from './pages/shipments/ShipmentList';
+import CreateShipmentWizard from './pages/shipments/CreateShipmentWizard';
+import ShipmentDetail from './pages/shipments/ShipmentDetail';
 import CompanyManagement from './pages/CompanyManagement';
 import Quotations from './pages/Quotations';
 import OceanFreight from './pages/OceanFreight';
@@ -41,6 +44,41 @@ import BIDashboard from './pages/BIDashboard';
 import AIHub from './pages/AIHub';
 import DriverApp from './pages/mobile/DriverApp';
 import WarehouseApp from './pages/mobile/WarehouseApp';
+import GPSDashboard from './pages/gps/GPSDashboard';
+import VehicleDashboard from './pages/vehicles/VehicleDashboard';
+import VehicleList from './pages/vehicles/VehicleList';
+import VehicleRegistration from './pages/vehicles/VehicleRegistration';
+import VehicleDetail from './pages/vehicles/VehicleDetail';
+import DriverDashboard from './pages/drivers/DriverDashboard';
+import DriverList from './pages/drivers/DriverList';
+import DriverRegistration from './pages/drivers/DriverRegistration';
+import DriverProfile from './pages/drivers/DriverProfile';
+import GPSDeviceList from './pages/gps/GPSDeviceList';
+import GPSDeviceDetail from './pages/gps/GPSDeviceDetail';
+import AdvancedLiveMap from './pages/maps/AdvancedLiveMap';
+import TripDashboard from './pages/trips/TripDashboard';
+import TripList from './pages/trips/TripList';
+import TripWizard from './pages/trips/TripWizard';
+import TripDetail from './pages/trips/TripDetail';
+import GeofenceMapEditor from './pages/geofences/GeofenceMapEditor';
+import RoutePlanner from './pages/routes/RoutePlanner';
+import AlertDashboard from './pages/alerts/AlertDashboard';
+import BIReports from './pages/reports/BIReports';
+import BookingDashboard from './pages/ocean/BookingDashboard';
+import CreateBookingWizard from './pages/ocean/CreateBookingWizard';
+import BookingWorkspace from './pages/ocean/BookingWorkspace';
+import YardDashboard from './pages/ocean/operations/YardDashboard';
+import ContainerInventory from './pages/ocean/operations/ContainerInventory';
+import GateOperations from './pages/ocean/operations/GateOperations';
+import PortPlanning from './pages/ocean/operations/PortPlanning';
+import BillingDashboard from './pages/ocean/finance/BillingDashboard';
+import InvoiceManager from './pages/ocean/finance/InvoiceManager';
+import ProfitabilityAnalysis from './pages/ocean/finance/ProfitabilityAnalysis';
+import CustomsWorkspace from './pages/ocean/finance/CustomsWorkspace';
+import ExecutiveDashboard from './pages/ocean/executive/ExecutiveDashboard';
+import PerformanceAnalytics from './pages/ocean/executive/PerformanceAnalytics';
+import LiveTrackingMap from './pages/ocean/tracking/LiveTrackingMap';
+import ShipmentTimeline from './pages/ocean/tracking/ShipmentTimeline';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isInitializing } = useAuth();
@@ -78,7 +116,45 @@ function App() {
                   <Route path="/returns" element={<Returns />} />
                   <Route path="/crm" element={<CRM />} />
                   <Route path="/quotations" element={<Quotations />} />
-                  <Route path="/shipments" element={<Shipments />} />
+                  {/* Logistics & Fleet */}
+                  <Route path="/trips" element={<TripDashboard />} />
+                  <Route path="/trips/list" element={<TripList />} />
+                  <Route path="/trips/plan" element={<TripWizard />} />
+                  <Route path="/trips/:id" element={<TripDetail />} />
+                  <Route path="/gps" element={<AdvancedLiveMap />} />
+                  <Route path="/gps/devices" element={<GPSDeviceList />} />
+                  <Route path="/gps/devices/:id" element={<GPSDeviceDetail />} />
+                  <Route path="/geofences" element={<GeofenceMapEditor />} />
+                  <Route path="/routes/plan" element={<RoutePlanner />} />
+                  <Route path="/alerts" element={<AlertDashboard />} />
+                  <Route path="/reports/bi" element={<BIReports />} />
+                  <Route path="/ocean/bookings" element={<BookingDashboard />} />
+                  <Route path="/ocean/bookings/new" element={<CreateBookingWizard />} />
+                  <Route path="/ocean/bookings/:id" element={<BookingWorkspace />} />
+                  <Route path="/ocean/ops/yard" element={<YardDashboard />} />
+                  <Route path="/ocean/ops/inventory" element={<ContainerInventory />} />
+                  <Route path="/ocean/ops/gate" element={<GateOperations />} />
+                  <Route path="/ocean/ops/planning" element={<PortPlanning />} />
+                  <Route path="/ocean/finance/billing" element={<BillingDashboard />} />
+                  <Route path="/ocean/finance/invoices/new" element={<InvoiceManager />} />
+                  <Route path="/ocean/finance/profitability" element={<ProfitabilityAnalysis />} />
+                  <Route path="/ocean/customs" element={<CustomsWorkspace />} />
+                  <Route path="/ocean/executive/dashboard" element={<ExecutiveDashboard />} />
+                  <Route path="/ocean/executive/performance" element={<PerformanceAnalytics />} />
+                  <Route path="/ocean/tracking/map" element={<LiveTrackingMap />} />
+                  <Route path="/ocean/tracking/timeline" element={<ShipmentTimeline />} />
+                  <Route path="/vehicles" element={<VehicleDashboard />} />
+                  <Route path="/vehicles/list" element={<VehicleList />} />
+                  <Route path="/vehicles/register" element={<VehicleRegistration />} />
+                  <Route path="/vehicles/:id" element={<VehicleDetail />} />
+                  <Route path="/drivers" element={<DriverDashboard />} />
+                  <Route path="/drivers/list" element={<DriverList />} />
+                  <Route path="/drivers/register" element={<DriverRegistration />} />
+                  <Route path="/drivers/:id" element={<DriverProfile />} />
+                  <Route path="/shipments" element={<ShipmentDashboard />} />
+                  <Route path="/shipments/list" element={<ShipmentList />} />
+                  <Route path="/shipments/create" element={<CreateShipmentWizard />} />
+                  <Route path="/shipments/:id" element={<ShipmentDetail />} />
                   <Route path="/fleet" element={<Fleet />} />
                   <Route path="/ocean-freight" element={<OceanFreight />} />
                   <Route path="/air-freight" element={<AirFreight />} />

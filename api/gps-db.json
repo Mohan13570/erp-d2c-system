@@ -1,0 +1,198 @@
+[
+  {
+    "id": "SH-001",
+    "name": "Logistics Titan",
+    "type": "marine",
+    "description": "High-Value Semiconductor Cargo (200 Units)",
+    "status": "In Transit",
+    "routeKey": "shanghai_rotterdam",
+    "speedKmh": 42,
+    "lat": 31.2304,
+    "lon": 121.4737,
+    "heading": "135.0",
+    "sensors": {
+      "temp": 18.2,
+      "humidity": 45.1,
+      "shock": 0.02,
+      "battery": 98.5,
+      "latchClosed": true
+    },
+    "history": {
+      "temp": [
+        18,
+        18.1,
+        18.3,
+        18.2
+      ],
+      "humidity": [
+        44.8,
+        45,
+        45.2,
+        45.1
+      ],
+      "shock": [
+        0.01,
+        0.02,
+        0.01,
+        0.02
+      ],
+      "battery": [
+        100,
+        99.5,
+        99,
+        98.5
+      ]
+    },
+    "alerts": [],
+    "anomalyActive": true,
+    "anomalyType": "temperature_breach",
+    "rawNmea": []
+  },
+  {
+    "id": "SH-002",
+    "name": "Logistics Express Flight 802",
+    "type": "air",
+    "description": "Pharma Vaccines (Temperature-Sensitive)",
+    "status": "In Transit",
+    "routeKey": "frankfurt_newyork",
+    "speedKmh": 860,
+    "lat": 50.0379,
+    "lon": 8.5622,
+    "heading": "270.0",
+    "sensors": {
+      "temp": 4.1,
+      "humidity": 50.2,
+      "shock": 0.1,
+      "battery": 89.1,
+      "latchClosed": true
+    },
+    "history": {
+      "temp": [
+        4,
+        4.2,
+        3.9,
+        4.1
+      ],
+      "humidity": [
+        49.8,
+        50,
+        50.4,
+        50.2
+      ],
+      "shock": [
+        0.12,
+        0.08,
+        0.15,
+        0.1
+      ],
+      "battery": [
+        92,
+        91,
+        90,
+        89.1
+      ]
+    },
+    "alerts": [],
+    "anomalyActive": false,
+    "anomalyType": null,
+    "rawNmea": []
+  },
+  {
+    "id": "SH-003",
+    "name": "Logistics Overland 44",
+    "type": "truck",
+    "description": "Lithium-Ion Batteries (Hazardous Class 9)",
+    "status": "In Transit",
+    "routeKey": "losangeles_chicago",
+    "speedKmh": 105,
+    "lat": 34.0522,
+    "lon": -118.2437,
+    "heading": "45.0",
+    "sensors": {
+      "temp": 24.5,
+      "humidity": 35.8,
+      "shock": 0.25,
+      "battery": 92.4,
+      "latchClosed": true
+    },
+    "history": {
+      "temp": [
+        23.9,
+        24.1,
+        24.3,
+        24.5
+      ],
+      "humidity": [
+        36.2,
+        36,
+        35.9,
+        35.8
+      ],
+      "shock": [
+        0.22,
+        0.24,
+        0.31,
+        0.25
+      ],
+      "battery": [
+        95,
+        94.1,
+        93.3,
+        92.4
+      ]
+    },
+    "alerts": [],
+    "anomalyActive": false,
+    "anomalyType": null,
+    "rawNmea": []
+  },
+  {
+    "id": "SH-004",
+    "name": "Logistics Rail Eurasian E1",
+    "type": "rail",
+    "description": "Premium Consumer Electronics & EVs",
+    "status": "In Transit",
+    "routeKey": "xian_duisburg",
+    "speedKmh": 80,
+    "lat": 34.3416,
+    "lon": 108.9398,
+    "heading": "290.0",
+    "sensors": {
+      "temp": 19.8,
+      "humidity": 55.4,
+      "shock": 0.12,
+      "battery": 95,
+      "latchClosed": true
+    },
+    "history": {
+      "temp": [
+        19.2,
+        19.5,
+        19.7,
+        19.8
+      ],
+      "humidity": [
+        56.1,
+        55.8,
+        55.5,
+        55.4
+      ],
+      "shock": [
+        0.08,
+        0.14,
+        0.1,
+        0.12
+      ],
+      "battery": [
+        97.5,
+        96.6,
+        95.8,
+        95
+      ]
+    },
+    "alerts": [],
+    "anomalyActive": false,
+    "anomalyType": null,
+    "rawNmea": []
+  }
+]

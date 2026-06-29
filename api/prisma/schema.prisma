@@ -119,20 +119,20 @@ model CustomerAddress {
 // ERP CUSTOMER (B2B / CRM)
 // ==========================================
 model Customer {
-  id            String             @id @default(uuid())
-  customerName  String
-  customerGroup String             @default("Commercial")
-  territory     String?
-  email         String?
-  phone         String?
-  salesOrders   SalesOrder[]
-  invoices      Invoice[]
-  rfqs          RFQ[]
-  shipments     Shipment[]
-  contacts      CustomerContact[]
-  contracts     CustomerContract[]
-  opportunities Opportunity[]
-  activities    LeadActivity[]
+  id             String             @id @default(uuid())
+  customerName   String
+  customerGroup  String             @default("Commercial")
+  territory      String?
+  email          String?
+  phone          String?
+  salesOrders    SalesOrder[]
+  invoices       Invoice[]
+  rfqs           RFQ[]
+  shipments      Shipment[]
+  contacts       CustomerContact[]
+  contracts      CustomerContract[]
+  opportunities  Opportunity[]
+  activities     LeadActivity[]
   supportTickets SupportTicket[]
 }
 
@@ -249,10 +249,10 @@ model ProductVariant {
 }
 
 model Warehouse {
-  name         String             @id
-  code         String?            @unique
+  name         String              @id
+  code         String?             @unique
   companyName  String
-  company      Company            @relation(fields: [companyName], references: [name])
+  company      Company             @relation(fields: [companyName], references: [name])
   stockEntries StockLedgerEntry[]
   stockLevels  StockLevel[]
   locations    WarehouseLocation[]
@@ -708,39 +708,113 @@ model QuotationItem {
 // MODULE 4 - SHIPMENT MANAGEMENT
 // ==========================================
 model Shipment {
-  id             String              @id @default(uuid())
-  trackingNumber String              @unique
+  id             String    @id @default(uuid())
+  trackingNumber String    @unique
   customerId     String?
-  customer       Customer?           @relation(fields: [customerId], references: [id])
-  origin         String
-  destination    String
-  status         String              @default("Pending")
+  customer       Customer? @relation(fields: [customerId], references: [id])
+  shipper        String?
+  consignee      String?
+  notifyParty    String?
+  incoterms      String?
+  priority       String    @default("Standard")
   freightType    String
-  departureDate  DateTime?
-  arrivalDate    DateTime?
-  items          ShipmentItem[]
-  milestones     ShipmentMilestone[]
-  trackingEvents TrackingEvent[]
-  statuses       ShipmentStatus[]
+  transportMode  String?
+  status         String    @default("Draft")
+
+  expectedPickup   DateTime?
+  expectedDelivery DateTime?
+  actualPickup     DateTime?
+  actualDelivery   DateTime?
+
+  insuranceRequired Boolean @default(false)
+  dangerousGoods    Boolean @default(false)
+  tempControlled    Boolean @default(false)
+  remarks           String?
+
+  // Relations
+  cargo     ShipmentCargo[]
+  locations ShipmentLocation[]
+  carrier   ShipmentCarrier?
+  charges   ShipmentCharges?
+  documents ShipmentDocument[]
+  timeline  ShipmentTimelineEvent[]
 }
 
-model ShipmentItem {
-  id          String   @id @default(uuid())
-  shipmentId  String
-  shipment    Shipment @relation(fields: [shipmentId], references: [id])
-  description String
-  weight      Float
-  volume      Float
-  quantity    Int
+model ShipmentCargo {
+  id               String   @id @default(uuid())
+  shipmentId       String
+  shipment         Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  commodity        String
+  hsCode           String?
+  description      String?
+  grossWeight      Float?
+  netWeight        Float?
+  chargeableWeight Float?
+  volume           Float?
+  packagesCount    Int?
+  packageType      String?
+  hazmatClass      String?
 }
 
-model ShipmentMilestone {
+model ShipmentLocation {
+  id             String   @id @default(uuid())
+  shipmentId     String
+  shipment       Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  type           String // "Pickup" or "Destination"
+  warehouseName  String?
+  address        String?
+  contactName    String?
+  contactPhone   String?
+  gpsCoordinates String?
+}
+
+model ShipmentCarrier {
+  id            String    @id @default(uuid())
+  shipmentId    String    @unique
+  shipment      Shipment  @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  carrierId     String?
+  bookingNumber String?
+  vessel        String?
+  voyage        String?
+  flight        String?
+  truck         String?
+  eta           DateTime?
+  etd           DateTime?
+}
+
+model ShipmentCharges {
+  id              String   @id @default(uuid())
+  shipmentId      String   @unique
+  shipment        Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  freight         Float    @default(0)
+  fuel            Float    @default(0)
+  customs         Float    @default(0)
+  insurance       Float    @default(0)
+  handling        Float    @default(0)
+  tax             Float    @default(0)
+  discount        Float    @default(0)
+  margin          Float    @default(0)
+  totalCost       Float    @default(0)
+  expectedRevenue Float    @default(0)
+}
+
+model ShipmentDocument {
   id         String   @id @default(uuid())
   shipmentId String
-  shipment   Shipment @relation(fields: [shipmentId], references: [id])
-  location   String
-  event      String
+  shipment   Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  type       String
+  url        String
+  uploadedAt DateTime @default(now())
+}
+
+model ShipmentTimelineEvent {
+  id         String   @id @default(uuid())
+  shipmentId String
+  shipment   Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  status     String
   timestamp  DateTime @default(now())
+  remarks    String?
+  gps        String?
 }
 
 // ==========================================
@@ -773,22 +847,28 @@ model Booking {
 // MODULE 6 - OCEAN FREIGHT
 // ==========================================
 model Vessel {
-  id       String   @id @default(uuid())
-  name     String
-  imoNo    String   @unique
-  capacity Int
-  voyages  Voyage[]
+  id                 String              @id @default(uuid())
+  name               String
+  imoNo              String              @unique
+  capacity           Int
+  voyages            Voyage[]
+  oceanBookings      OceanBooking[]
+  portOperationCalls PortOperationCall[]
+  vesselLocations    VesselLocation[]
 }
 
 model Voyage {
-  id          String    @id @default(uuid())
-  vesselId    String
-  vessel      Vessel    @relation(fields: [vesselId], references: [id])
-  voyageNo    String
-  origin      String
-  destination String
-  etd         DateTime?
-  eta         DateTime?
+  id                 String              @id @default(uuid())
+  vesselId           String
+  vessel             Vessel              @relation(fields: [vesselId], references: [id])
+  voyageNo           String
+  origin             String
+  destination        String
+  etd                DateTime?
+  eta                DateTime?
+  Schedule           Schedule[]
+  oceanBookings      OceanBooking[]
+  portOperationCalls PortOperationCall[]
 }
 
 model Container {
@@ -836,38 +916,201 @@ model Flight {
 // MODULE 8 & 9 - ROAD TRANSPORT & FLEET
 // ==========================================
 model Vehicle {
-  id          String               @id @default(uuid())
-  plateNumber String               @unique
-  type        String
-  capacity    Float
-  status      String               @default("Available")
-  trips       Trip[]
-  maintenance VehicleMaintenance[]
-  fuelLogs    FuelLog[]
+  id            String  @id @default(uuid())
+  plateNumber   String  @unique
+  category      String? // e.g., 'Heavy Truck', 'Van'
+  make          String?
+  model         String?
+  year          Int?
+  type          String
+  capacity      Float
+  fuelType      String? // e.g., 'Diesel', 'Electric'
+  tyreDetails   String?
+  ownershipType String? @default("Owned") // Owned, Leased
+  status        String  @default("Available")
+
+  // Identifiers
+  qrCode  String? @unique
+  barcode String? @unique
+
+  // Assignments
+  assignedDriverId String?
+  assignedDriver   Driver? @relation(fields: [assignedDriverId], references: [id])
+  assignedShipment String?
+
+  // Retirement / Soft Delete
+  isRetired        Boolean   @default(false)
+  retiredAt        DateTime?
+  retirementReason String?
+
+  // Relations
+  trips         Trip[]
+  maintenance   VehicleMaintenance[]
+  fuelLogs      FuelLog[]
+  GPSDevice     GPSDevice?
+  TrackingAlert TrackingAlert[]
+  documents     VehicleDocument[]
+  auditLogs     VehicleAuditLog[]
+  RouteLog      RouteLog[]
+}
+
+model VehicleDocument {
+  id         String    @id @default(uuid())
+  vehicleId  String
+  vehicle    Vehicle   @relation(fields: [vehicleId], references: [id])
+  type       String // 'RC', 'Insurance', 'Fitness', 'Emission'
+  documentNo String?
+  issueDate  DateTime?
+  expiryDate DateTime?
+  fileUrl    String?
+  status     String    @default("Valid")
+  createdAt  DateTime  @default(now())
+}
+
+model VehicleAuditLog {
+  id          String   @id @default(uuid())
+  vehicleId   String
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+  action      String // 'StatusChanged', 'DriverAssigned', 'Retired'
+  description String
+  timestamp   DateTime @default(now())
 }
 
 model Driver {
-  id        String  @id @default(uuid())
-  name      String
-  licenseNo String  @unique
-  phone     String?
-  status      String  @default("Active")
-  trips       Trip[]
-  performance DriverPerformance[]
+  id           String  @id @default(uuid())
+  name         String
+  phone        String?
+  email        String? @unique
+  passwordHash String? // For Mobile App Login
+
+  // Licenses & Credentials
+  licenseNo         String    @unique
+  licenseExpiry     DateTime?
+  medicalCertExpiry DateTime?
+
+  // HR & Emergency
+  emergencyContact String?
+  emergencyPhone   String?
+  bloodGroup       String?
+  payrollId        String? @unique
+  hourlyRate       Float?
+
+  // Metrics & Status
+  rating       Float? @default(5.0)
+  status       String @default("Active") // Active, On Leave, Suspended, Terminated
+  availability String @default("Available") // Available, On Duty, Resting
+
+  // Relations
+  trips            Trip[]
+  performance      DriverPerformance[]
+  assignedVehicles Vehicle[]
+
+  documents  DriverDocument[]
+  shifts     DriverShift[]
+  violations DriverViolation[]
+  auditLogs  DriverAuditLog[]
+}
+
+model DriverDocument {
+  id         String    @id @default(uuid())
+  driverId   String
+  driver     Driver    @relation(fields: [driverId], references: [id])
+  type       String // 'License', 'Medical', 'BackgroundCheck', 'Training'
+  documentNo String?
+  issueDate  DateTime?
+  expiryDate DateTime?
+  fileUrl    String?
+  status     String    @default("Valid")
+  createdAt  DateTime  @default(now())
+}
+
+model DriverShift {
+  id         String    @id @default(uuid())
+  driverId   String
+  driver     Driver    @relation(fields: [driverId], references: [id])
+  startTime  DateTime
+  endTime    DateTime?
+  dutyHours  Float?
+  breakHours Float?    @default(0)
+  status     String    @default("Active") // Active, Completed
+}
+
+model DriverViolation {
+  id            String   @id @default(uuid())
+  driverId      String
+  driver        Driver   @relation(fields: [driverId], references: [id])
+  date          DateTime @default(now())
+  violationType String // 'Overspeeding', 'Harsh Braking', 'Traffic Ticket'
+  description   String?
+  penaltyAmount Float?   @default(0)
+  deducted      Boolean  @default(false)
+}
+
+model DriverAuditLog {
+  id          String   @id @default(uuid())
+  driverId    String
+  driver      Driver   @relation(fields: [driverId], references: [id])
+  action      String // 'StatusChanged', 'LeaveApproved', 'PenaltyApplied'
+  description String
+  timestamp   DateTime @default(now())
 }
 
 model Trip {
-  id          String      @id @default(uuid())
-  vehicleId   String
-  vehicle     Vehicle     @relation(fields: [vehicleId], references: [id])
-  driverId    String
-  driver      Driver      @relation(fields: [driverId], references: [id])
+  id         String @id @default(uuid())
+  tripNumber String @unique @default(uuid()) // A readable number in production
+
+  // Assignments
+  vehicleId String
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
+  driverId  String
+  driver    Driver  @relation(fields: [driverId], references: [id])
+
+  // Route
   origin      String
   destination String
-  status      String      @default("Scheduled")
-  startTime   DateTime?
-  endTime     DateTime?
-  events      TripEvent[]
+
+  // Timeline & Status
+  status    String    @default("Planned") // Planned, Assigned, Dispatched, InTransit, Completed, Cancelled
+  startTime DateTime?
+  endTime   DateTime?
+
+  // Logistics & Financials
+  totalDistanceKm Float? @default(0)
+  estimatedHours  Float?
+  fuelCost        Float? @default(0)
+  tollExpenses    Float? @default(0)
+  otherExpenses   Float? @default(0)
+  revenue         Float? @default(0)
+
+  // Relations
+  stops     TripStop[]
+  events    TripEvent[]
+  auditLogs TripAuditLog[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model TripStop {
+  id           String    @id @default(uuid())
+  tripId       String
+  trip         Trip      @relation(fields: [tripId], references: [id])
+  type         String // 'Pickup' or 'Delivery'
+  locationName String
+  latitude     Float?
+  longitude    Float?
+  sequence     Int       @default(0)
+  plannedTime  DateTime?
+  actualTime   DateTime?
+  status       String    @default("Pending") // Pending, Arrived, Completed, Skipped
+}
+
+model TripAuditLog {
+  id          String   @id @default(uuid())
+  tripId      String
+  trip        Trip     @relation(fields: [tripId], references: [id])
+  action      String // 'Created', 'Assigned', 'StatusChanged'
+  description String
+  timestamp   DateTime @default(now())
 }
 
 model VehicleMaintenance {
@@ -914,12 +1157,12 @@ model Duty {
 // MODULE 12 - DOCUMENT MANAGEMENT
 // ==========================================
 model Document {
-  id           String   @id @default(uuid())
+  id           String            @id @default(uuid())
   entityType   String // Shipment, Quotation
   entityId     String
   documentType String // BOL, AWB, Commercial Invoice
   fileUrl      String
-  uploadedAt   DateTime @default(now())
+  uploadedAt   DateTime          @default(now())
   versions     DocumentVersion[]
 }
 
@@ -948,23 +1191,18 @@ model InsuranceClaim {
 // ==========================================
 // MODULE 18 - TRACKING
 // ==========================================
-model TrackingEvent {
-  id          String   @id @default(uuid())
-  shipmentId  String
-  shipment    Shipment @relation(fields: [shipmentId], references: [id])
-  location    String
-  description String
-  timestamp   DateTime @default(now())
-}
 
 // ==========================================
 // MODULE 1 - MASTER DATA EXTENSIONS
 // ==========================================
 model Currency {
-  code      String   @id
-  name      String
-  symbol    String?
-  createdAt DateTime @default(now())
+  code          String         @id
+  name          String
+  symbol        String?
+  createdAt     DateTime       @default(now())
+  oceanInvoices OceanInvoice[]
+  exchangeRates ExchangeRate[] @relation("BaseCurrency")
+  targetRates   ExchangeRate[] @relation("TargetCurrency")
 }
 
 model Country {
@@ -1004,12 +1242,20 @@ model Branch {
 }
 
 model Port {
-  id     String  @id @default(uuid())
-  code   String  @unique
-  name   String
-  type   String  @default("Ocean")
-  cityId String?
-  city   City?   @relation(fields: [cityId], references: [id])
+  id                 String                    @id @default(uuid())
+  code               String                    @unique
+  name               String
+  type               String                    @default("Ocean")
+  cityId             String?
+  city               City?                     @relation(fields: [cityId], references: [id])
+  Terminal           Terminal[]
+  polBookings        OceanBooking[]            @relation("PolRelation")
+  podBookings        OceanBooking[]            @relation("PodRelation")
+  finalDestBookings  OceanBooking[]            @relation("FinalDestRelation")
+  assetLocations     ContainerAsset[]          @relation("PortAssetRelation")
+  yardLocations      YardLocation[]            @relation("PortYardRelation")
+  portOperationCalls PortOperationCall[]       @relation("PortOperationCallRelation")
+  customsClearances  OceanCustomsDeclaration[] @relation("CustomsPortRelation")
 }
 
 model Airport {
@@ -1108,15 +1354,6 @@ model QuotationApproval {
   date        DateTime  @default(now())
 }
 
-model ShipmentStatus {
-  id         String   @id @default(uuid())
-  shipmentId String
-  shipment   Shipment @relation(fields: [shipmentId], references: [id])
-  status     String
-  location   String?
-  timestamp  DateTime @default(now())
-}
-
 model CarrierContract {
   id          String   @id @default(uuid())
   carrierId   String
@@ -1151,27 +1388,27 @@ model AirShipment {
 }
 
 model TripEvent {
-  id          String   @id @default(uuid())
-  tripId      String
-  trip        Trip     @relation(fields: [tripId], references: [id])
-  driverId    String?
-  eventType   String?  // Started, Arrived, Delivered, Delayed
-  location    String?
-  proofUrl    String?  // Image URL for proof of delivery
-  status      String   @default("In Transit")
-  timestamp   DateTime @default(now())
+  id        String   @id @default(uuid())
+  tripId    String
+  trip      Trip     @relation(fields: [tripId], references: [id])
+  driverId  String?
+  eventType String? // Started, Arrived, Delivered, Delayed
+  location  String?
+  proofUrl  String? // Image URL for proof of delivery
+  status    String   @default("In Transit")
+  timestamp DateTime @default(now())
 }
 
 // ==========================================
 // MODULE 9-12 SUPPLEMENTARY MODELS
 // ==========================================
 model DriverPerformance {
-  id        String   @id @default(uuid())
-  driverId  String
-  driver    Driver   @relation(fields: [driverId], references: [id])
-  date      DateTime @default(now())
-  rating    Int
-  comments  String?
+  id       String   @id @default(uuid())
+  driverId String
+  driver   Driver   @relation(fields: [driverId], references: [id])
+  date     DateTime @default(now())
+  rating   Int
+  comments String?
 }
 
 model WarehouseLocation {
@@ -1200,11 +1437,11 @@ model PackingList {
 }
 
 model ComplianceRule {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   countryCode String
   ruleType    String
   description String
-  isActive    Boolean  @default(true)
+  isActive    Boolean @default(true)
 }
 
 model DocumentVersion {
@@ -1222,7 +1459,7 @@ model DocumentVersion {
 model ContainerStatus {
   id          String   @id @default(uuid())
   containerNo String
-  status      String   // Stuffing, Destuffing, Empty, Returned
+  status      String // Stuffing, Destuffing, Empty, Returned
   location    String
   timestamp   DateTime @default(now())
 }
@@ -1240,46 +1477,167 @@ model PurchaseRequisition {
 }
 
 model VendorBill {
-  id        String   @id @default(uuid())
-  vendorId  String
-  vendor    Vendor   @relation(fields: [vendorId], references: [id])
-  amount    Float
-  status    String   @default("Unpaid")
-  dueDate   DateTime
+  id       String   @id @default(uuid())
+  vendorId String
+  vendor   Vendor   @relation(fields: [vendorId], references: [id])
+  amount   Float
+  status   String   @default("Unpaid")
+  dueDate  DateTime
 }
 
 // ==========================================
 // MODULE 15 - FINANCE & ACCOUNTING
 // ==========================================
 model TaxRecord {
-  id          String   @id @default(uuid())
-  type        String   // GST, TDS
-  amount      Float
-  status      String   @default("Pending")
-  date        DateTime @default(now())
+  id     String   @id @default(uuid())
+  type   String // GST, TDS
+  amount Float
+  status String   @default("Pending")
+  date   DateTime @default(now())
 }
 
 // ==========================================
 // MODULE 16 - BILLING
 // ==========================================
 model CreditDebitNote {
-  id          String   @id @default(uuid())
-  type        String   // Credit, Debit
-  invoiceId   String
-  amount      Float
-  reason      String
-  date        DateTime @default(now())
+  id        String   @id @default(uuid())
+  type      String // Credit, Debit
+  invoiceId String
+  amount    Float
+  reason    String
+  date      DateTime @default(now())
 }
 
 // ==========================================
-// MODULE 18 - TRACKING (DEVICES)
+// MODULE 18 - ADVANCED GPS & TELEMETRY
 // ==========================================
-model TrackingDevice {
-  id          String   @id @default(uuid())
-  deviceId    String   @unique
-  type        String   // GPS, IoT
-  attachedTo  String   // Vehicle Plate or Container No
-  status      String   @default("Active")
+model GPSDevice {
+  id          String    @id @default(uuid())
+  imei        String    @unique
+  simNumber   String?
+  simProvider String?
+  status      String    @default("Active")
+  isOnline    Boolean   @default(false)
+  lastPing    DateTime?
+
+  // Hardware Health
+  batteryHealth   Float   @default(100.0)
+  signalStrength  Int     @default(100) // 0-100%
+  firmwareVersion String? @default("1.0.0")
+
+  // Relations
+  vehicleId String?  @unique
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id])
+
+  configuration GPSConfiguration?
+  telemetry     VehicleTelemetry[]
+  logs          GPSLog[]
+}
+
+model GPSConfiguration {
+  id              String    @id @default(uuid())
+  deviceId        String    @unique
+  device          GPSDevice @relation(fields: [deviceId], references: [id])
+  pollingRateSec  Int       @default(5)
+  dataCompression Boolean   @default(true)
+  speedLimitKmh   Float     @default(80)
+  lastCalibrated  DateTime  @default(now())
+}
+
+model GPSLog {
+  id        String    @id @default(uuid())
+  deviceId  String
+  device    GPSDevice @relation(fields: [deviceId], references: [id])
+  type      String // 'Reboot', 'FirmwareUpdate', 'Diagnostic'
+  message   String
+  timestamp DateTime  @default(now())
+}
+
+model VehicleTelemetry {
+  id        String    @id @default(uuid())
+  deviceId  String
+  device    GPSDevice @relation(fields: [deviceId], references: [id])
+  latitude  Float
+  longitude Float
+  speed     Float     @default(0.0)
+  heading   Float     @default(0.0)
+  engineOn  Boolean   @default(false)
+  fuelLevel Float?
+
+  // Live Tracking Engine Properties
+  estimatedETA     DateTime?
+  distanceToDestKm Float?
+  isBatched        Boolean   @default(false)
+  bufferSequence   Int       @default(0)
+
+  timestamp DateTime @default(now())
+}
+
+model Geofence {
+  id          String          @id @default(uuid())
+  name        String
+  category    String          @default("Warehouse") // Warehouse, Customer, Port, Restricted, Zone
+  type        String          @default("Polygon") // Polygon, Circle
+  coordinates String // JSON array of lat/lng
+  radiusMeter Float? // For circular geofences
+  color       String          @default("#6366f1") // UI rendering color
+  alerts      TrackingAlert[]
+  createdAt   DateTime        @default(now())
+}
+
+model AlertRule {
+  id             String          @id @default(uuid())
+  name           String
+  eventType      String // Overspeed, GeofenceEntry, GeofenceExit, Idle, SOS
+  condition      String // ">", "<", "=="
+  threshold      Float?
+  isActive       Boolean         @default(true)
+  escalationType String // None, Email, SMS, WhatsApp
+  contactIds     String // JSON array of user IDs
+  alerts         TrackingAlert[]
+}
+
+model TrackingAlert {
+  id        String  @id @default(uuid())
+  vehicleId String
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
+  type      String // "Overspeed", "GeofenceEntry", "HarshBraking", "SOS"
+  severity  String  @default("Medium") // Low, Medium, High, Critical
+  status    String  @default("Open") // Open, Acknowledged, Resolved
+  message   String
+
+  geofenceId String?
+  geofence   Geofence? @relation(fields: [geofenceId], references: [id])
+
+  ruleId String?
+  rule   AlertRule? @relation(fields: [ruleId], references: [id])
+
+  escalations AlertEscalation[]
+  timestamp   DateTime          @default(now())
+}
+
+model AlertEscalation {
+  id      String        @id @default(uuid())
+  alertId String
+  alert   TrackingAlert @relation(fields: [alertId], references: [id])
+  channel String // Email, SMS, WhatsApp
+  status  String // Sent, Failed, Delivered
+  sentAt  DateTime      @default(now())
+}
+
+model RouteLog {
+  id              String   @id @default(uuid())
+  vehicleId       String
+  vehicle         Vehicle  @relation(fields: [vehicleId], references: [id])
+  origin          String
+  destination     String
+  plannedDistance Float
+  plannedTimeHrs  Float
+  actualDistance  Float?
+  actualTimeHrs   Float?
+  isDeviation     Boolean  @default(false)
+  waypoints       String // JSON Array
+  createdAt       DateTime @default(now())
 }
 
 // ==========================================
@@ -1299,50 +1657,587 @@ model SupportTicket {
 // MODULE 21 - EMPLOYEE PORTAL (HR)
 // ==========================================
 model Attendance {
-  id          String   @id @default(uuid())
-  employeeId  String
-  employee    Employee @relation(fields: [employeeId], references: [employee])
-  date        DateTime @default(now())
-  status      String   // Present, Absent, Half-Day
-  checkIn     DateTime?
-  checkOut    DateTime?
+  id         String    @id @default(uuid())
+  employeeId String
+  employee   Employee  @relation(fields: [employeeId], references: [employee])
+  date       DateTime  @default(now())
+  status     String // Present, Absent, Half-Day
+  checkIn    DateTime?
+  checkOut   DateTime?
 }
 
 model Payroll {
-  id          String   @id @default(uuid())
-  employeeId  String
-  employee    Employee @relation(fields: [employeeId], references: [employee])
-  month       String
-  baseSalary  Float
-  bonus       Float    @default(0.0)
-  deductions  Float    @default(0.0)
-  netPay      Float
-  status      String   @default("Pending") // Pending, Paid
+  id         String   @id @default(uuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [employee])
+  month      String
+  baseSalary Float
+  bonus      Float    @default(0.0)
+  deductions Float    @default(0.0)
+  netPay     Float
+  status     String   @default("Pending") // Pending, Paid
 }
 
 // ==========================================
 // MODULE 22 - NOTIFICATIONS
 // ==========================================
 model NotificationLog {
-  id          String   @id @default(uuid())
-  channel     String   // Email, SMS, WhatsApp
-  recipient   String
-  subject     String?
-  message     String
-  status      String   @default("Sent")
-  sentAt      DateTime @default(now())
+  id        String   @id @default(uuid())
+  channel   String // Email, SMS, WhatsApp
+  recipient String
+  subject   String?
+  message   String
+  status    String   @default("Sent")
+  sentAt    DateTime @default(now())
 }
-
-
 
 // ==========================================
 // MODULE 25 - AI HUB
 // ==========================================
 model AIQueryLog {
-  id          String   @id @default(uuid())
-  userId      String?
-  query       String
-  response    String
-  module      String   // General, Shipments, Forecasting
-  timestamp   DateTime @default(now())
+  id        String   @id @default(uuid())
+  userId    String?
+  query     String
+  response  String
+  module    String // General, Shipments, Forecasting
+  timestamp DateTime @default(now())
+}
+
+// ==========================================
+// MODULE 21 - OCEAN FREIGHT MASTER DATA
+// ==========================================
+
+model ExchangeRate {
+  id           String    @id @default(uuid())
+  currencyId   String
+  currency     Currency  @relation("BaseCurrency", fields: [currencyId], references: [code])
+  targetCurrId String
+  targetCurr   Currency  @relation("TargetCurrency", fields: [targetCurrId], references: [code])
+  rateToBase   Float
+  validFrom    DateTime
+  validTo      DateTime?
+  isDeleted    Boolean   @default(false)
+}
+
+model Incoterm {
+  id          String  @id @default(uuid())
+  code        String  @unique
+  description String
+  isDeleted   Boolean @default(false)
+}
+
+model Terminal {
+  id                 String              @id @default(uuid())
+  portId             String
+  port               Port                @relation(fields: [portId], references: [id])
+  code               String
+  name               String
+  berths             Berth[]
+  isDeleted          Boolean             @default(false)
+  portOperationCalls PortOperationCall[]
+}
+
+model Berth {
+  id                 String              @id @default(uuid())
+  terminalId         String
+  terminal           Terminal            @relation(fields: [terminalId], references: [id])
+  code               String
+  maxDraft           Float?
+  isDeleted          Boolean             @default(false)
+  portOperationCalls PortOperationCall[]
+}
+
+model ShippingLine {
+  id            String         @id @default(uuid())
+  scac          String         @unique
+  name          String
+  isDeleted     Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  oceanBookings OceanBooking[]
+}
+
+model ShippingAgent {
+  id          String  @id @default(uuid())
+  name        String
+  contactName String?
+  email       String?
+  phone       String?
+  isDeleted   Boolean @default(false)
+}
+
+model Schedule {
+  id         String    @id @default(uuid())
+  voyageId   String
+  voyage     Voyage    @relation(fields: [voyageId], references: [id])
+  portId     String
+  eta        DateTime?
+  etd        DateTime?
+  cutOffTime DateTime?
+  isDeleted  Boolean   @default(false)
+}
+
+model TradeLane {
+  id        String          @id @default(uuid())
+  code      String          @unique
+  name      String
+  routes    ShippingRoute[]
+  isDeleted Boolean         @default(false)
+}
+
+model ShippingRoute {
+  id           String    @id @default(uuid())
+  tradeLaneId  String
+  tradeLane    TradeLane @relation(fields: [tradeLaneId], references: [id])
+  originPortId String
+  destPortId   String
+  transitDays  Int?
+  isDeleted    Boolean   @default(false)
+}
+
+model ContainerType {
+  id                     String                  @id @default(uuid())
+  code                   String                  @unique
+  name                   String
+  sizes                  ContainerSize[]
+  isDeleted              Boolean                 @default(false)
+  oceanBookingContainers OceanBookingContainer[]
+  containerAssets        ContainerAsset[]
+}
+
+model ContainerSize {
+  id                     String                  @id @default(uuid())
+  containerTypeId        String
+  containerType          ContainerType           @relation(fields: [containerTypeId], references: [id])
+  code                   String
+  teu                    Float
+  tareWeightKg           Float?
+  isDeleted              Boolean                 @default(false)
+  oceanBookingContainers OceanBookingContainer[]
+  containerAssets        ContainerAsset[]
+}
+
+model CargoType {
+  id                 String              @id @default(uuid())
+  code               String              @unique
+  name               String
+  isDeleted          Boolean             @default(false)
+  oceanBookingCargos OceanBookingCargo[]
+}
+
+model DangerousGoodsClass {
+  id                 String              @id @default(uuid())
+  imoClass           String              @unique
+  description        String
+  isDeleted          Boolean             @default(false)
+  oceanBookingCargos OceanBookingCargo[]
+}
+
+model TemperatureClass {
+  id                 String              @id @default(uuid())
+  code               String              @unique
+  minTempC           Float
+  maxTempC           Float
+  isDeleted          Boolean             @default(false)
+  oceanBookingCargos OceanBookingCargo[]
+}
+
+model PackageType {
+  id                 String              @id @default(uuid())
+  code               String              @unique
+  name               String
+  isDeleted          Boolean             @default(false)
+  oceanBookingCargos OceanBookingCargo[]
+}
+
+model SealType {
+  id              String           @id @default(uuid())
+  name            String
+  isDeleted       Boolean          @default(false)
+  containerEvents ContainerEvent[]
+}
+
+model ChargeMaster {
+  id                String             @id @default(uuid())
+  code              String             @unique
+  name              String
+  category          String
+  isDeleted         Boolean            @default(false)
+  oceanInvoiceLines OceanInvoiceLine[]
+}
+
+model ServiceType {
+  id        String  @id @default(uuid())
+  code      String  @unique
+  name      String
+  isDeleted Boolean @default(false)
+}
+
+model OceanFreightStatus {
+  id        String  @id @default(uuid())
+  code      String  @unique
+  name      String
+  isDeleted Boolean @default(false)
+}
+
+// ==========================================
+// MODULE 22 - OCEAN BOOKING & SHIPMENT
+// ==========================================
+
+model OceanBooking {
+  id            String  @id @default(uuid())
+  bookingNumber String  @unique
+  status        String  @default("Draft") // Draft, Pending Approval, Confirmed, Gated In, Loaded
+  isNvocc       Boolean @default(false)
+  freightType   String // FCL, LCL, BreakBulk, RORO
+
+  // Routing
+  polId       String?
+  pol         Port?   @relation("PolRelation", fields: [polId], references: [id])
+  podId       String?
+  pod         Port?   @relation("PodRelation", fields: [podId], references: [id])
+  finalDestId String?
+  finalDest   Port?   @relation("FinalDestRelation", fields: [finalDestId], references: [id])
+
+  // Assets
+  shippingLineId String?
+  shippingLine   ShippingLine? @relation(fields: [shippingLineId], references: [id])
+  vesselId       String?
+  vessel         Vessel?       @relation(fields: [vesselId], references: [id])
+  voyageId       String?
+  voyage         Voyage?       @relation(fields: [voyageId], references: [id])
+
+  // Parties (Text for flexibility, or relation if linked to CRM)
+  shipper          String?
+  consignee        String?
+  notifyParty      String?
+  freightForwarder String?
+
+  // Timings
+  expectedDeparture DateTime?
+  expectedArrival   DateTime?
+
+  // Relations
+  cargos              OceanBookingCargo[]
+  containers          OceanBookingContainer[]
+  documents           OceanDocument[]
+  events              OceanBookingEvent[]
+  containerEvents     ContainerEvent[]
+  customsDeclarations OceanCustomsDeclaration[]
+  invoices            OceanInvoice[]
+  alerts              OceanAlert[]
+
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OceanBookingCargo {
+  id        String       @id @default(uuid())
+  bookingId String
+  booking   OceanBooking @relation(fields: [bookingId], references: [id])
+
+  cargoTypeId String?
+  cargoType   CargoType? @relation(fields: [cargoTypeId], references: [id])
+  description String
+
+  weightKg      Float?
+  volumeCbm     Float?
+  quantity      Int?
+  packageTypeId String?
+  packageType   PackageType? @relation(fields: [packageTypeId], references: [id])
+
+  // Hazmat / Special
+  isDangerousGoods Boolean              @default(false)
+  dgClassId        String?
+  dgClass          DangerousGoodsClass? @relation(fields: [dgClassId], references: [id])
+
+  isReefer       Boolean           @default(false)
+  tempClassId    String?
+  tempClass      TemperatureClass? @relation(fields: [tempClassId], references: [id])
+  setTemperature Float?
+
+  isDeleted Boolean @default(false)
+}
+
+model OceanBookingContainer {
+  id        String       @id @default(uuid())
+  bookingId String
+  booking   OceanBooking @relation(fields: [bookingId], references: [id])
+
+  containerTypeId String?
+  containerType   ContainerType? @relation(fields: [containerTypeId], references: [id])
+  containerSizeId String?
+  containerSize   ContainerSize? @relation(fields: [containerSizeId], references: [id])
+
+  quantity  Int     @default(1)
+  isDeleted Boolean @default(false)
+}
+
+model OceanDocument {
+  id        String       @id @default(uuid())
+  bookingId String
+  booking   OceanBooking @relation(fields: [bookingId], references: [id])
+
+  documentType   String // MBL, HBL, DO, CO, BookingConfirmation
+  documentNumber String?
+  issuedDate     DateTime?
+  payload        String? // JSON string of document data
+
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model OceanBookingEvent {
+  id        String       @id @default(uuid())
+  bookingId String
+  booking   OceanBooking @relation(fields: [bookingId], references: [id])
+
+  status      String
+  description String
+  performedBy String
+
+  createdAt DateTime @default(now())
+}
+
+// ==========================================
+// MODULE 23 - OCEAN CONTAINER & PORT OPS
+// ==========================================
+
+model ContainerAsset {
+  id              String  @id @default(uuid())
+  containerNumber String  @unique // e.g., HLXU1234567
+  qrCode          String? @unique
+
+  containerTypeId String
+  containerType   ContainerType @relation(fields: [containerTypeId], references: [id])
+  containerSizeId String
+  containerSize   ContainerSize @relation(fields: [containerSizeId], references: [id])
+
+  status    String @default("Available") // Available, Stuffed, In-Transit, Damaged, Repair
+  condition String @default("Sound") // Sound, Damaged, Total Loss
+
+  currentPortId String?
+  currentPort   Port?   @relation("PortAssetRelation", fields: [currentPortId], references: [id])
+
+  yardLocationId String?
+  yardLocation   YardLocation? @relation(fields: [yardLocationId], references: [id])
+
+  latitude  Float?
+  longitude Float?
+  lastPing  DateTime?
+
+  events ContainerEvent[]
+
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model YardLocation {
+  id     String @id @default(uuid())
+  portId String
+  port   Port   @relation("PortYardRelation", fields: [portId], references: [id])
+
+  block String
+  row   String
+  tier  String
+
+  capacity   Int     @default(1)
+  isOccupied Boolean @default(false)
+
+  assets ContainerAsset[]
+
+  isDeleted Boolean @default(false)
+}
+
+model ContainerEvent {
+  id          String         @id @default(uuid())
+  containerId String
+  container   ContainerAsset @relation(fields: [containerId], references: [id])
+
+  bookingId String?
+  booking   OceanBooking? @relation(fields: [bookingId], references: [id])
+
+  eventType   String // Gate In, Gate Out, Stuffing, Destuffing, Damage Inspected, Cleaned, Sealed, Transfer
+  description String?
+
+  sealNumber String?
+  sealTypeId String?
+  sealType   SealType? @relation(fields: [sealTypeId], references: [id])
+
+  location    String?
+  performedBy String
+
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model PortOperationCall {
+  id     String @id @default(uuid())
+  portId String
+  port   Port   @relation("PortOperationCallRelation", fields: [portId], references: [id])
+
+  vesselId String
+  vessel   Vessel @relation(fields: [vesselId], references: [id])
+
+  voyageId String
+  voyage   Voyage @relation(fields: [voyageId], references: [id])
+
+  terminalId String?
+  terminal   Terminal? @relation(fields: [terminalId], references: [id])
+
+  berthId String?
+  berth   Berth?  @relation(fields: [berthId], references: [id])
+
+  craneAssigned String?
+
+  eta DateTime?
+  ata DateTime? // Actual Time of Arrival
+  etd DateTime?
+  atd DateTime?
+
+  status          String  @default("Scheduled") // Scheduled, Arrived, Working, Departed, Delayed
+  delayReason     String?
+  congestionLevel String? // Low, Medium, High
+
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ==========================================
+// MODULE 24 - OCEAN FINANCE & CUSTOMS
+// ==========================================
+
+model OceanCustomsDeclaration {
+  id        String       @id @default(uuid())
+  bookingId String
+  booking   OceanBooking @relation(fields: [bookingId], references: [id])
+
+  billOfEntryNo  String?
+  shippingBillNo String?
+
+  portOfClearanceId String?
+  portOfClearance   Port?   @relation("CustomsPortRelation", fields: [portOfClearanceId], references: [id])
+
+  status          String @default("Pending") // Pending, Examined, Duty Paid, Cleared, Held
+  totalDutyAmount Float  @default(0)
+  totalTaxAmount  Float  @default(0)
+
+  items OceanCustomsItem[]
+
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OceanCustomsItem {
+  id            String                  @id @default(uuid())
+  declarationId String
+  declaration   OceanCustomsDeclaration @relation(fields: [declarationId], references: [id])
+
+  hsCode      String
+  description String
+
+  declaredValue   Float
+  dutyRatePercent Float
+  calculatedDuty  Float
+
+  taxRatePercent Float
+  calculatedTax  Float
+
+  isDeleted Boolean @default(false)
+}
+
+model OceanInvoice {
+  id        String       @id @default(uuid())
+  bookingId String
+  booking   OceanBooking @relation(fields: [bookingId], references: [id])
+
+  invoiceNumber String @unique
+  type          String // Receivable (Customer Invoice), Payable (Vendor Bill), Credit Note, Debit Note
+  status        String @default("Draft") // Draft, Issued, Partially Paid, Paid, Void
+
+  partyName String // Billed To or Billed By
+
+  currencyId   String?
+  currency     Currency? @relation(fields: [currencyId], references: [code])
+  exchangeRate Float     @default(1)
+
+  subTotal   Float @default(0)
+  taxTotal   Float @default(0)
+  grandTotal Float @default(0)
+  amountDue  Float @default(0)
+
+  dueDate    DateTime?
+  issuedDate DateTime?
+
+  lines    OceanInvoiceLine[]
+  payments OceanPayment[]
+
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OceanInvoiceLine {
+  id        String       @id @default(uuid())
+  invoiceId String
+  invoice   OceanInvoice @relation(fields: [invoiceId], references: [id])
+
+  chargeMasterId String?
+  chargeMaster   ChargeMaster? @relation(fields: [chargeMasterId], references: [id])
+
+  description    String
+  quantity       Float  @default(1)
+  unitPrice      Float
+  taxRatePercent Float  @default(0)
+  taxAmount      Float  @default(0)
+  lineTotal      Float
+
+  isDeleted Boolean @default(false)
+}
+
+model OceanPayment {
+  id        String       @id @default(uuid())
+  invoiceId String
+  invoice   OceanInvoice @relation(fields: [invoiceId], references: [id])
+
+  paymentReference String?
+  amount           Float
+  paymentDate      DateTime @default(now())
+  paymentMethod    String // Bank Transfer, Credit Card, Cheque
+  status           String   @default("Completed")
+
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+// ==========================================
+// MODULE 25 - OCEAN TRACKING & ANALYTICS
+// ==========================================
+
+model OceanAlert {
+  id         String   @id @default(uuid())
+  entityType String // Vessel, Container, Booking
+  entityId   String
+  alertType  String // Port Congestion, Weather Delay, ETA Deviation, Document Missing
+  severity   String // Low, Medium, High, Critical
+  message    String
+  isResolved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  booking OceanBooking? @relation(fields: [entityId], references: [id])
+}
+
+model VesselLocation {
+  id         String   @id @default(uuid())
+  vesselId   String
+  vessel     Vessel   @relation(fields: [vesselId], references: [id])
+  latitude   Float
+  longitude  Float
+  heading    Float?
+  speedKnots Float?
+  timestamp  DateTime @default(now())
 }

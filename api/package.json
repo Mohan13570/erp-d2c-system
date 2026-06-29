@@ -21,7 +21,8 @@
     "jsonwebtoken": "^9.0.3",
     "node-nlp": "^5.0.0-alpha.5",
     "pg": "^8.21.0",
-    "prisma": "^5.22.0"
+    "prisma": "^5.22.0",
+    "socket.io": "^4.8.3"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

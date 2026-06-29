@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LogisticsGPS - Cargo & Container Tracking System</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet.js Map CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- App CSS Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main Header -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="logo-glow"></div>
+                <i class="fa-solid fa-satellite-dish brand-icon"></i>
+                <div class="brand-text">
+                    <h1>LogisticsGPS</h1>
+                    <span>Telemetry & Cargo Tracking Model</span>
+                </div>
+            </div>
+            
+            <!-- Global Metrics Bar -->
+            <div class="global-stats">
+                <div class="stat-pill">
+                    <span class="pill-label">Total Shipments</span>
+                    <span class="pill-value" id="stat-total">4</span>
+                </div>
+                <div class="stat-pill warning">
+                    <span class="pill-label">Active Alerts</span>
+                    <span class="pill-value" id="stat-alerts">0</span>
+                </div>
+                <div class="stat-pill success">
+                    <span class="pill-label">Delivered</span>
+                    <span class="pill-value" id="stat-delivered">0</span>
+                </div>
+                <div class="stat-pill info">
+                    <span class="pill-label">Sim Speed</span>
+                    <span class="pill-value" id="stat-sim-speed">1x</span>
+                </div>
+            </div>
+
+            <!-- Header Actions / Simulation Control -->
+            <div class="header-controls">
+                <button id="btn-map-config" class="btn btn-secondary" title="Configure Map API Keys">
+                    <i class="fa-solid fa-key"></i> Map API
+                </button>
+                <button id="btn-pause-sim" class="btn btn-secondary" title="Pause Simulation" style="display: none;">
+                    <i class="fa-solid fa-pause"></i>
+                </button>
+                <button id="btn-speed-up" class="btn btn-secondary" title="Increase Sim Speed" style="display: none;">
+                    <i class="fa-solid fa-gauge-high"></i> Speed up
+                </button>
+                <div class="clock-display">
+                    <i class="fa-regular fa-clock"></i>
+                    <span id="simulation-clock">18:15:26</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Body Workspace -->
+        <div class="app-workspace">
+            <!-- Sidebar: Tracking List & Analytics -->
+            <aside class="sidebar">
+                <div class="panel-section search-filter-section">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="search-input" placeholder="Search cargo or container ID...">
+                    </div>
+                    <div class="filter-pills">
+                        <button class="filter-pill active" data-filter="all">All</button>
+                        <button class="filter-pill" data-filter="transit">In Transit</button>
+                        <button class="filter-pill" data-filter="alert">Alerts</button>
+                        <button class="filter-pill" data-filter="delivered">Delivered</button>
+                    </div>
+                </div>
+
+                <div class="panel-section list-section">
+                    <h3 class="section-title">ACTIVE TRACKING LIST</h3>
+                    <div class="shipment-list" id="shipment-list">
+                        <!-- Loaded dynamically via app.js -->
+                    </div>
+                </div>
+
+                <!-- Simulation Event Injector Panel -->
+                <div class="panel-section simulation-controls">
+                    <h3 class="section-title">ANOMALY SIMULATION ENGINE</h3>
+                    <p class="section-desc">Select a shipment to inject anomalies & verify GPS model responses.</p>
+                    <div class="anomaly-grid">
+                        <button class="btn-anomaly" data-anomaly="temperature_breach" disabled>
+                            <i class="fa-solid fa-thermometer-high"></i> Temp Breach
+                        </button>
+                        <button class="btn-anomaly" data-anomaly="shock_event" disabled>
+                            <i class="fa-solid fa-house-crack"></i> G-Force Impact
+                        </button>
+                        <button class="btn-anomaly" data-anomaly="tamper_event" disabled>
+                            <i class="fa-solid fa-lock-open"></i> Latch Tamper
+                        </button>
+                        <button class="btn-anomaly" data-anomaly="signal_loss" disabled>
+                            <i class="fa-solid fa-wifi-slash"></i> GPS Signal Loss
+                        </button>
+                    </div>
+                    <button id="btn-resolve-alerts" class="btn btn-primary btn-block" disabled>
+                        <i class="fa-solid fa-rotate-right"></i> Reset & Calibrate GPS Unit
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Main Map and Diagnostic Panel -->
+            <main class="main-content">
+                <!-- Map Container -->
+                <div class="map-wrapper">
+                    <div id="map"></div>
+                    <!-- Floating Map Legend -->
+                    <div class="map-legend">
+                        <div class="legend-item"><span class="legend-dot marine"></span><span>Marine</span></div>
+                        <div class="legend-item"><span class="legend-dot air"></span><span>Air</span></div>
+                        <div class="legend-item"><span class="legend-dot truck"></span><span>Overland</span></div>
+                        <div class="legend-item"><span class="legend-dot rail"></span><span>Rail Link</span></div>
+                    </div>
+                </div>
+
+                <!-- Bottom Diagnostic Workspace -->
+                <div class="diagnostic-panel">
+                    <!-- Tab headers -->
+                    <div class="diagnostic-header">
+                        <div class="tab-triggers">
+                            <button class="tab-trigger active" data-tab="telemetry">
+                                <i class="fa-solid fa-wave-square"></i> Telemetry & Diagnostic Graphs
+                            </button>
+                            <button class="tab-trigger" data-tab="nmea-terminal">
+                                <i class="fa-solid fa-terminal"></i> Live GPS NMEA Sentence Stream
+                            </button>
+                            <button class="tab-trigger" data-tab="alerts-log">
+                                <i class="fa-solid fa-bell"></i> System Alert Logs
+                            </button>
+                        </div>
+                        <div class="selected-cargo-badge" id="selected-cargo-label">
+                            No cargo selected. Select a shipment to analyze.
+                        </div>
+                    </div>
+
+                    <!-- Tab Content 1: Telemetry Data -->
+                    <div class="tab-content active" id="tab-telemetry">
+                        <div class="telemetry-layout">
+                            <!-- Telemetry Digital Readout cards -->
+                            <div class="sensor-readout-grid">
+                                <div class="sensor-card" id="card-temp">
+                                    <div class="sensor-icon"><i class="fa-solid fa-temperature-half"></i></div>
+                                    <div class="sensor-info">
+                                        <span class="sensor-label">Temperature</span>
+                                        <span class="sensor-value">--.- °C</span>
+                                        <span class="sensor-range">Target: --</span>
+                                    </div>
+                                </div>
+                                <div class="sensor-card" id="card-humidity">
+                                    <div class="sensor-icon"><i class="fa-solid fa-droplet"></i></div>
+                                    <div class="sensor-info">
+                                        <span class="sensor-label">Humidity</span>
+                                        <span class="sensor-value">--.- %</span>
+                                        <span class="sensor-range">Target: --</span>
+                                    </div>
+                                </div>
+                                <div class="sensor-card" id="card-shock">
+                                    <div class="sensor-icon"><i class="fa-solid fa-gauge"></i></div>
+                                    <div class="sensor-info">
+                                        <span class="sensor-label">Shock Level</span>
+                                        <span class="sensor-value">-.-- G</span>
+                                        <span class="sensor-range">Max allowed: --</span>
+                                    </div>
+                                </div>
+                                <div class="sensor-card" id="card-battery">
+                                    <div class="sensor-icon"><i class="fa-solid fa-battery-three-quarters"></i></div>
+                                    <div class="sensor-info">
+                                        <span class="sensor-label">Battery Level</span>
+                                        <span class="sensor-value">---.- %</span>
+                                        <span class="sensor-range">Backup battery</span>
+                                    </div>
+                                </div>
+                                <div class="sensor-card" id="card-latch">
+                                    <div class="sensor-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                                    <div class="sensor-info">
+                                        <span class="sensor-label">Container Security</span>
+                                        <span class="sensor-value">--</span>
+                                        <span class="sensor-range">Security Lock</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Telemetry Chart -->
+                            <div class="telemetry-chart-container">
+                                <canvas id="telemetryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab Content 2: Raw GPS NMEA Stream -->
+                    <div class="tab-content" id="tab-nmea-terminal">
+                        <div class="terminal-wrapper">
+                            <div class="terminal-header">
+                                <span class="terminal-title"><i class="fa-solid fa-circle"></i> RAW GPS TELEMETRY STREAM (UART PORT: COM3 / 9600 BAUD)</span>
+                                <button id="btn-clear-terminal" class="btn btn-xs btn-secondary">Clear Logs</button>
+                            </div>
+                            <div class="terminal-body" id="nmea-console-log">
+                                <div class="terminal-line system-line">[SYSTEM] LogisticsGPS receiver online. Waiting for cargo GPS connection...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab Content 3: Alerts Log -->
+                    <div class="tab-content" id="tab-alerts-log">
+                        <div class="alerts-log-wrapper">
+                            <table class="alerts-table">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Shipment ID</th>
+                                        <th>Severity</th>
+                                        <th>Diagnostic Message</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="alerts-log-body">
+                                    <tr>
+                                        <td colspan="5" class="empty-alerts">No active warnings or alerts on the selected shipment.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Leaflet.js Map JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Map Configuration Modal -->
+    <div id="map-config-modal" class="modal">
+        <div class="modal-content glass-effect">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-gears"></i> Map API Configurations</h3>
+                <span class="close-modal" id="btn-close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="input-group" style="margin-bottom: 16px;">
+                    <label for="mapbox-token-input" style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; text-transform: uppercase;">Mapbox Access Token</label>
+                    <input type="text" id="mapbox-token-input" placeholder="pk.eyJ1IjoiaG9zdCIsImEiOiJjbDF2..." style="width: 100%; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; color: var(--text-main); font-family: var(--font-ui); font-size: 13px;" />
+                    <small style="display: block; font-size: 11px; color: var(--text-dark); margin-top: 4px;">Enter a Mapbox API Key to toggle premium High-Resolution Satellite Map layers.</small>
+                </div>
+                <div class="input-group">
+                    <label for="api-key-display" style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; text-transform: uppercase;">Security Device API Key</label>
+                    <input type="text" id="api-key-display" value="logistics-secure-device-key-2026" readonly style="width: 100%; background: rgba(15, 23, 42, 0.4); border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; color: var(--color-info); font-family: var(--font-mono); font-size: 13px; cursor: default;" />
+                    <small style="display: block; font-size: 11px; color: var(--text-dark); margin-top: 4px;">Used by physical tracker hardware to authenticate pings to <code>/api/telemetry</code>.</small>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin-top: 20px; display: flex; justify-content: flex-end;">
+                <button id="btn-save-map-config" class="btn btn-primary">Apply Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet.js Map JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Main App Controller -->
+    <script src="app.js"></script>
+</body>
+</html>
