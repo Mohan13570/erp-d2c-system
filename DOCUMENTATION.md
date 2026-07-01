@@ -114,6 +114,14 @@ A monumental expansion to manage international maritime shipping natively:
 - **Customs & Finance**: Bills of Entry tracking, specific Duty calculators, and real-time AR/AP net margin calculations dynamically linked to maritime charges (BAF, CAF, THC).
 - **Executive BI & GIS Map**: High-level C-Suite KPI aggregators (Total Revenue, Active Vessels) and Carrier reliability tracking. Features a live GeoJSON Leaflet map tracking vessels globally on OpenStreetMap.
 
+### 3. Container Management, Tracking & Finance Suite
+An exhaustive end-to-end global asset lifecycle ecosystem handling ISO containers:
+- **Asset Foundation**: Physical geometry, ownership mapping, and strict ISO 6346 Mod 11 validation for Container numbers.
+- **Yard & Port Geometry**: A 3-dimensional digital twin mapping exact Tiers, Blocks, and Rows within Port Terminals for pinpoint spatial allocation.
+- **IoT & Live Telemetry**: Massive time-series integration for Reefer (temperature, humidity, power) monitoring and GPS coordinate tracking, beamed live via WebSockets.
+- **Financial Architecture**: Auto-aggregation of Demurrage, Detention, Storage, and Cleaning charges. Converts complex operational movements into streamlined multi-currency vendor bills and customer invoices.
+- **C-Suite BI Dashboards**: Recharts-powered interactive analytics calculating Fleet Health Scores, Yard Occupancy ratios, and Revenue vs Profit predictive trends.
+
 ---
 
 *This document serves as the absolute blueprint of the Aura ERP ecosystem.*
