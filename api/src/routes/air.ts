@@ -4,49 +4,30 @@ import { PrismaClient } from '@prisma/client';
 const router = Router();
 const prisma = new PrismaClient();
 
-router.get('/flights', async (req, res) => {
-  try {
-    const flights = await prisma.flight.findMany({ include: { shipments: true } });
-    res.json(flights);
-  } catch (error) { res.status(500).json({ error: 'Failed' }); }
-});
+import airMasterDataRouter from './air/master-data';
+import airBookingsRouter from './air/bookings';
+import airDocumentsRouter from './air/documents';
+import airOpsRouter from './air/operations';
+import airUldRouter from './air/uld-management';
+import airLoadPlanRouter from './air/load-planning';
+import airDiscrepanciesRouter from './air/discrepancies';
+import airFinancialsRouter from './air/financials';
+import airCustomsRouter from './air/customs';
+import airTrackingRouter from './air/tracking';
+import airAnalyticsRouter from './air/analytics';
 
-router.post('/flights', async (req, res) => {
-  try {
-    const data = { ...req.body };
-    if (data.departure) data.departure = new Date(data.departure);
-    if (data.arrival) data.arrival = new Date(data.arrival);
-    const f = await prisma.flight.create({ data });
-    res.json(f);
-  } catch (err: any) { res.status(400).json({ error: err.message }); }
-});
+router.use('/master-data', airMasterDataRouter);
+router.use('/bookings', airBookingsRouter);
+router.use('/documents', airDocumentsRouter);
+router.use('/operations', airOpsRouter);
+router.use('/uld', airUldRouter);
+router.use('/load-planning', airLoadPlanRouter);
+router.use('/discrepancies', airDiscrepanciesRouter);
+router.use('/finance', airFinancialsRouter);
+router.use('/customs', airCustomsRouter);
+router.use('/tracking', airTrackingRouter);
+router.use('/analytics', airAnalyticsRouter);
 
-router.get('/awbs', async (req, res) => {
-  try {
-    const awbs = await prisma.airWaybill.findMany({ include: { shipments: true } });
-    res.json(awbs);
-  } catch (error) { res.status(500).json({ error: 'Failed' }); }
-});
-
-router.post('/awbs', async (req, res) => {
-  try {
-    const awb = await prisma.airWaybill.create({ data: req.body });
-    res.json(awb);
-  } catch (err: any) { res.status(400).json({ error: err.message }); }
-});
-
-router.get('/shipments', async (req, res) => {
-  try {
-    const ships = await prisma.airShipment.findMany({ include: { awb: true, flight: true } });
-    res.json(ships);
-  } catch (error) { res.status(500).json({ error: 'Failed' }); }
-});
-
-router.post('/shipments', async (req, res) => {
-  try {
-    const ship = await prisma.airShipment.create({ data: req.body });
-    res.json(ship);
-  } catch (err: any) { res.status(400).json({ error: err.message }); }
-});
+// Legacy endpoints removed
 
 export default router;

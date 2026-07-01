@@ -871,46 +871,11 @@ model Voyage {
   portOperationCalls PortOperationCall[]
 }
 
-model Container {
-  id          String              @id @default(uuid())
-  containerNo String              @unique
-  type        String // 20GP, 40HC
-  status      String              @default("Empty")
-  movements   ContainerMovement[]
-}
-
-model ContainerMovement {
-  id          String    @id @default(uuid())
-  containerId String
-  container   Container @relation(fields: [containerId], references: [id])
-  location    String
-  status      String
-  timestamp   DateTime  @default(now())
-}
 
 // ==========================================
 // MODULE 7 - AIR FREIGHT
 // ==========================================
-model AirWaybill {
-  id          String        @id @default(uuid())
-  awbNumber   String        @unique
-  origin      String
-  destination String
-  weight      Float
-  status      String        @default("Issued")
-  shipments   AirShipment[]
-}
-
-model Flight {
-  id          String        @id @default(uuid())
-  flightNo    String
-  airline     String
-  departure   DateTime
-  arrival     DateTime
-  origin      String
-  destination String
-  shipments   AirShipment[]
-}
+// Legacy Air Models Removed
 
 // ==========================================
 // MODULE 8 & 9 - ROAD TRANSPORT & FLEET
@@ -1258,14 +1223,6 @@ model Port {
   customsClearances  OceanCustomsDeclaration[] @relation("CustomsPortRelation")
 }
 
-model Airport {
-  id     String  @id @default(uuid())
-  code   String  @unique
-  name   String
-  cityId String?
-  city   City?   @relation(fields: [cityId], references: [id])
-}
-
 model TaxConfiguration {
   id       String  @id @default(uuid())
   name     String
@@ -1376,16 +1333,7 @@ model BookingItem {
 // ==========================================
 // MODULE 7 & 8 SUPPLEMENTARY MODELS
 // ==========================================
-model AirShipment {
-  id          String     @id @default(uuid())
-  awbId       String
-  awb         AirWaybill @relation(fields: [awbId], references: [id])
-  flightId    String?
-  flight      Flight?    @relation(fields: [flightId], references: [id])
-  description String
-  weight      Float
-  status      String     @default("Booked")
-}
+// Legacy AirShipment Removed
 
 model TripEvent {
   id        String   @id @default(uuid())
@@ -2240,4 +2188,1420 @@ model VesselLocation {
   heading    Float?
   speedKnots Float?
   timestamp  DateTime @default(now())
+}
+
+// ============================================================================
+// PART 4: AIR FREIGHT FOUNDATION MODULE
+// ============================================================================
+
+model Airport {
+  id               String                  @id @default(uuid())
+  iataCode         String                  @unique
+  icaoCode         String                  @unique
+  name             String
+  cityId           String?
+  city             City?                   @relation(fields: [cityId], references: [id])
+  terminals        AirportTerminal[]
+  cargoTerminals   CargoTerminal[]
+  runways          Runway[]
+  handlingAgents   HandlingAgent[]
+  groundHandlers   GroundHandlingCompany[]
+  securityAgencies SecurityAgency[]
+  customsOffices   AirCustomsOffice[]
+  originRoutes     AirRoute[]              @relation("OriginAirport")
+  destRoutes       AirRoute[]              @relation("DestAirport")
+  bookingOrigins   AirBooking[]            @relation("BookingOrigin")
+  bookingDests     AirBooking[]            @relation("BookingDest")
+  routingFroms     AirRouting[]            @relation("RoutingFrom")
+  routingTos       AirRouting[]            @relation("RoutingTo")
+  gateAssignments  GateAssignment[]
+  weatherAlerts    AirWeatherAlert[]
+  isDeleted        Boolean                 @default(false)
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+}
+
+model AirportTerminal {
+  id           String  @id @default(uuid())
+  airportId    String
+  airport      Airport @relation(fields: [airportId], references: [id])
+  name         String
+  terminalType String // Passenger, Cargo, Both
+  isDeleted    Boolean @default(false)
+}
+
+model CargoTerminal {
+  id               String  @id @default(uuid())
+  airportId        String
+  airport          Airport @relation(fields: [airportId], references: [id])
+  name             String
+  handlingCapacity String
+  isDeleted        Boolean @default(false)
+}
+
+model Runway {
+  id          String  @id @default(uuid())
+  airportId   String
+  airport     Airport @relation(fields: [airportId], references: [id])
+  designation String
+  length      Float
+  width       Float
+  isDeleted   Boolean @default(false)
+}
+
+model AirlineAlliance {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  airlines  Airline[]
+  isDeleted Boolean   @default(false)
+}
+
+model Airline {
+  id         String           @id @default(uuid())
+  iataCode   String           @unique
+  icaoCode   String           @unique
+  name       String
+  allianceId String?
+  alliance   AirlineAlliance? @relation(fields: [allianceId], references: [id])
+  agents     AirlineAgent[]
+  schedules  FlightSchedule[]
+  uldOwned   ULDOwnership[]
+  isDeleted  Boolean          @default(false)
+}
+
+model AirlineAgent {
+  id             String  @id @default(uuid())
+  airlineId      String
+  airline        Airline @relation(fields: [airlineId], references: [id])
+  name           String
+  contactDetails String
+  isDeleted      Boolean @default(false)
+}
+
+model AircraftType {
+  id             String                  @id @default(uuid())
+  iataCode       String                  @unique
+  manufacturer   String
+  model          String
+  capacities     AircraftCapacity[]
+  configurations AircraftConfiguration[]
+  schedules      FlightSchedule[]
+  isDeleted      Boolean                 @default(false)
+}
+
+model AircraftCapacity {
+  id               String       @id @default(uuid())
+  aircraftTypeId   String
+  aircraftType     AircraftType @relation(fields: [aircraftTypeId], references: [id])
+  maxPayloadVolume Float
+  maxPayloadWeight Float
+  isDeleted        Boolean      @default(false)
+}
+
+model AircraftConfiguration {
+  id                String       @id @default(uuid())
+  aircraftTypeId    String
+  aircraftType      AircraftType @relation(fields: [aircraftTypeId], references: [id])
+  configurationType String // Freighter, Passenger, Combi
+  isDeleted         Boolean      @default(false)
+}
+
+model AirRoute {
+  id                   String           @id @default(uuid())
+  originAirportId      String
+  originAirport        Airport          @relation("OriginAirport", fields: [originAirportId], references: [id])
+  destinationAirportId String
+  destinationAirport   Airport          @relation("DestAirport", fields: [destinationAirportId], references: [id])
+  distance             Float
+  schedules            FlightSchedule[]
+  isDeleted            Boolean          @default(false)
+}
+
+model FlightSchedule {
+  id              String                @id @default(uuid())
+  airlineId       String
+  airline         Airline               @relation(fields: [airlineId], references: [id])
+  routeId         String
+  route           AirRoute              @relation(fields: [routeId], references: [id])
+  flightNumber    String
+  aircraftTypeId  String
+  aircraftType    AircraftType          @relation(fields: [aircraftTypeId], references: [id])
+  daysOfWeek      String
+  departureTime   DateTime
+  arrivalTime     DateTime
+  routings        AirRouting[]
+  uldManifests    AirULDManifest[]
+  loadingPlans    AircraftLoadingPlan[] @relation("FlightLoadPlan")
+  gateAssignments GateAssignment[]
+  trackings       AirFlightTracking[]
+  isDeleted       Boolean               @default(false)
+}
+
+model AirCargoCategory {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  description String?
+  isDeleted   Boolean @default(false)
+}
+
+model ULDType {
+  id          String           @id @default(uuid())
+  iataCode    String           @unique // AKE, PMC
+  description String?
+  sizes       ULDSize[]
+  ownership   ULDOwnership[]
+  manifests   AirULDManifest[]
+  isDeleted   Boolean          @default(false)
+}
+
+model ULDSize {
+  id             String  @id @default(uuid())
+  uldTypeId      String
+  uldType        ULDType @relation(fields: [uldTypeId], references: [id])
+  length         Float
+  width          Float
+  height         Float
+  maxGrossWeight Float
+  isDeleted      Boolean @default(false)
+}
+
+model ULDOwnership {
+  id        String  @id @default(uuid())
+  uldTypeId String
+  uldType   ULDType @relation(fields: [uldTypeId], references: [id])
+  airlineId String
+  airline   Airline @relation(fields: [airlineId], references: [id])
+  ownerCode String
+  isDeleted Boolean @default(false)
+}
+
+model AirPalletType {
+  id        String  @id @default(uuid())
+  name      String  @unique
+  maxWeight Float
+  isDeleted Boolean @default(false)
+}
+
+model HandlingAgent {
+  id        String  @id @default(uuid())
+  name      String
+  airportId String
+  airport   Airport @relation(fields: [airportId], references: [id])
+  isDeleted Boolean @default(false)
+}
+
+model GroundHandlingCompany {
+  id        String  @id @default(uuid())
+  name      String
+  airportId String
+  airport   Airport @relation(fields: [airportId], references: [id])
+  isDeleted Boolean @default(false)
+}
+
+model SecurityAgency {
+  id        String  @id @default(uuid())
+  name      String
+  airportId String
+  airport   Airport @relation(fields: [airportId], references: [id])
+  isDeleted Boolean @default(false)
+}
+
+model AirCustomsOffice {
+  id         String  @id @default(uuid())
+  officeCode String  @unique
+  name       String
+  airportId  String
+  airport    Airport @relation(fields: [airportId], references: [id])
+  isDeleted  Boolean @default(false)
+}
+
+// ============================================================================
+// PART 5: AIR FREIGHT BOOKING & SHIPMENT MODULE
+// ============================================================================
+
+model AirBooking {
+  id                      String  @id @default(uuid())
+  bookingNumber           String  @unique
+  originAirportId         String
+  originAirport           Airport @relation("BookingOrigin", fields: [originAirportId], references: [id])
+  destAirportId           String
+  destAirport             Airport @relation("BookingDest", fields: [destAirportId], references: [id])
+  shipperId               String?
+  consigneeId             String?
+  notifyPartyId           String?
+  freightForwarderId      String?
+  cargoAgentId            String?
+  status                  String  @default("Draft") // Draft, Requested, Approved, Confirmed, Rejected, Cancelled
+  totalGrossWeight        Float   @default(0)
+  totalChargeableWeight   Float   @default(0)
+  totalVolume             Float   @default(0)
+  isDangerousGoods        Boolean @default(false)
+  isPerishable            Boolean @default(false)
+  isTemperatureControlled Boolean @default(false)
+  isLiveAnimals           Boolean @default(false)
+  isValuable              Boolean @default(false)
+
+  items      AirBookingItem[]
+  routings   AirRouting[]
+  waybills   AirWaybill[]
+  documents  AirDocument[]
+  milestones AirShipmentMilestone[]
+
+  financials       AirShipmentFinancials?
+  chargeLines      AirChargeLine[]
+  invoices         AirInvoice[]
+  vendorBills      AirVendorBill[]
+  customsDeclarations AirCustomsDeclaration[]
+
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AirBookingItem {
+  id               String                @id @default(uuid())
+  bookingId        String
+  booking          AirBooking            @relation(fields: [bookingId], references: [id])
+  description      String
+  quantity         Int                   @default(1)
+  length           Float // in cm
+  width            Float // in cm
+  height           Float // in cm
+  grossWeight      Float // in kg
+  chargeableWeight Float // in kg
+  volume           Float // in cbm
+  iataCode         String? // e.g. DGR, PER, AVI
+  uldManifestId    String?
+  uldManifest      AirULDManifest?       @relation("ManifestItems", fields: [uldManifestId], references: [id])
+  operations       AirCargoOperation[]
+  discrepancies    AirCargoDiscrepancy[]
+  isDeleted        Boolean               @default(false)
+}
+
+model AirRouting {
+  id               String          @id @default(uuid())
+  bookingId        String
+  booking          AirBooking      @relation(fields: [bookingId], references: [id])
+  sequence         Int
+  flightScheduleId String?
+  flightSchedule   FlightSchedule? @relation(fields: [flightScheduleId], references: [id])
+  fromAirportId    String
+  fromAirport      Airport         @relation("RoutingFrom", fields: [fromAirportId], references: [id])
+  toAirportId      String
+  toAirport        Airport         @relation("RoutingTo", fields: [toAirportId], references: [id])
+  status           String          @default("Scheduled") // Scheduled, Departed, Arrived
+  isDeleted        Boolean         @default(false)
+}
+
+model AirWaybill {
+  id        String     @id @default(uuid())
+  bookingId String
+  booking   AirBooking @relation(fields: [bookingId], references: [id])
+  awbNumber String     @unique
+  awbType   String // HAWB, MAWB
+  issueDate DateTime   @default(now())
+  status    String     @default("Issued")
+  isDeleted Boolean    @default(false)
+}
+
+model AirDocument {
+  id             String     @id @default(uuid())
+  bookingId      String
+  booking        AirBooking @relation(fields: [bookingId], references: [id])
+  documentType   String // Commercial Invoice, Packing List, Certificate Of Origin, DGD, Security Declaration
+  documentNumber String?
+  fileUrl        String?
+  uploadDate     DateTime   @default(now())
+  status         String     @default("Uploaded") // Uploaded, Verified, Rejected
+  isDeleted      Boolean    @default(false)
+}
+
+model AirShipmentMilestone {
+  id            String     @id @default(uuid())
+  bookingId     String
+  booking       AirBooking @relation(fields: [bookingId], references: [id])
+  milestoneCode String // e.g., RCS, DEP, ARR, RCF, DLV
+  description   String
+  location      String?
+  timestamp     DateTime   @default(now())
+  isDeleted     Boolean    @default(false)
+}
+
+// ============================================================================
+// PART 6: AIR CARGO & AIRPORT OPERATIONS
+// ============================================================================
+
+model AirULDManifest {
+  id               String          @id @default(uuid())
+  uldNumber        String          @unique // e.g., AKE12345EK
+  uldTypeId        String?
+  uldType          ULDType?        @relation(fields: [uldTypeId], references: [id])
+  flightScheduleId String?
+  flightSchedule   FlightSchedule? @relation(fields: [flightScheduleId], references: [id])
+  status           String          @default("Building") // Building, Built, Weighed, Loaded, Unloaded, Broken-down
+  grossWeight      Float           @default(0)
+  netWeight        Float           @default(0)
+  tareWeight       Float           @default(0)
+  sealNumber       String?
+  isIntact         Boolean         @default(true)
+
+  items        AirBookingItem[]      @relation("ManifestItems")
+  loadingPlans AircraftLoadingPlan[]
+
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AircraftLoadingPlan {
+  id               String         @id @default(uuid())
+  flightScheduleId String
+  flightSchedule   FlightSchedule @relation("FlightLoadPlan", fields: [flightScheduleId], references: [id])
+  uldManifestId    String
+  uldManifest      AirULDManifest @relation(fields: [uldManifestId], references: [id])
+  position         String // e.g., FWD1, AFT2, BULK
+  deck             String // Main, Lower
+  status           String         @default("Planned") // Planned, Loaded, Unloaded
+  loadedAt         DateTime?
+  unloadedAt       DateTime?
+
+  isDeleted Boolean @default(false)
+}
+
+model AirCargoOperation {
+  id             String         @id @default(uuid())
+  bookingItemId  String
+  bookingItem    AirBookingItem @relation(fields: [bookingItemId], references: [id])
+  operationType  String // Acceptance, Screening, ColdStorage, Transfer, Breakdown
+  location       String
+  operatorId     String?
+  barcodeScanned String?
+  qrCodeScanned  String?
+  timestamp      DateTime       @default(now())
+  remarks        String?
+
+  isDeleted Boolean @default(false)
+}
+
+model AirCargoDiscrepancy {
+  id              String         @id @default(uuid())
+  bookingItemId   String
+  bookingItem     AirBookingItem @relation(fields: [bookingItemId], references: [id])
+  discrepancyType String // Damage, Shortage, Excess
+  severity        String // Low, Medium, High
+  description     String
+  photoUrls       String? // Comma separated
+  reportedAt      DateTime       @default(now())
+  status          String         @default("Open") // Open, Investigating, Resolved
+
+  isDeleted Boolean @default(false)
+}
+
+model GateAssignment {
+  id               String          @id @default(uuid())
+  airportId        String
+  airport          Airport         @relation(fields: [airportId], references: [id])
+  gateNumber       String
+  flightScheduleId String?
+  flightSchedule   FlightSchedule? @relation(fields: [flightScheduleId], references: [id])
+  assignedDate     DateTime
+  startTime        DateTime
+  endTime          DateTime
+  status           String          @default("Scheduled") // Scheduled, Occupied, Released
+
+  isDeleted Boolean @default(false)
+}
+
+
+// ============================================================================
+// PART 7: AIR COSTING, BILLING & CUSTOMS
+// ============================================================================
+
+model AirShipmentFinancials {
+  id               String            @id @default(uuid())
+  bookingId        String            @unique
+  booking          AirBooking        @relation(fields: [bookingId], references: [id])
+  baseCurrency     String            @default("USD")
+  totalRevenue     Float             @default(0)
+  totalCost        Float             @default(0)
+  grossMargin      Float             @default(0)
+  marginPercentage Float             @default(0)
+  
+  isDeleted        Boolean           @default(false)
+  updatedAt        DateTime          @updatedAt
+}
+
+model AirChargeLine {
+  id               String            @id @default(uuid())
+  bookingId        String
+  booking          AirBooking        @relation(fields: [bookingId], references: [id])
+  chargeCode       String            // FREIGHT, FSC, SSC, SCREENING, HANDLING, STORAGE, CUSTOMS_DUTY
+  chargeName       String
+  type             String            // REVENUE, COST
+  amount           Float
+  currency         String            @default("USD")
+  exchangeRate     Float             @default(1.0)
+  baseAmount       Float             // converted to baseCurrency
+  
+  invoiceId        String?
+  invoice          AirInvoice?       @relation(fields: [invoiceId], references: [id])
+  vendorBillId     String?
+  vendorBill       AirVendorBill?    @relation(fields: [vendorBillId], references: [id])
+
+  isDeleted        Boolean           @default(false)
+}
+
+model AirInvoice {
+  id               String            @id @default(uuid())
+  bookingId        String
+  booking          AirBooking        @relation(fields: [bookingId], references: [id])
+  invoiceNumber    String            @unique
+  customerId       String?
+  totalAmount      Float
+  currency         String            @default("USD")
+  status           String            @default("Draft") // Draft, Sent, Paid, Overdue
+  dueDate          DateTime?
+  
+  chargeLines      AirChargeLine[]
+  isDeleted        Boolean           @default(false)
+  createdAt        DateTime          @default(now())
+}
+
+model AirVendorBill {
+  id               String            @id @default(uuid())
+  bookingId        String
+  booking          AirBooking        @relation(fields: [bookingId], references: [id])
+  billNumber       String            @unique
+  vendorId         String?           // Airline or Handler
+  totalAmount      Float
+  currency         String            @default("USD")
+  status           String            @default("Draft") // Draft, Approved, Paid
+  dueDate          DateTime?
+  
+  chargeLines      AirChargeLine[]
+  isDeleted        Boolean           @default(false)
+  createdAt        DateTime          @default(now())
+}
+
+model AirCustomsDeclaration {
+  id               String            @id @default(uuid())
+  bookingId        String
+  booking          AirBooking        @relation(fields: [bookingId], references: [id])
+  declarationType  String            // Import, Export
+  hsCode           String?
+  declarationNum   String?           @unique
+  declaredValue    Float             @default(0)
+  currency         String            @default("USD")
+  dutyCalculated   Float             @default(0)
+  status           String            @default("Pending") // Pending, Submitted, Under Inspection, Cleared, Rejected
+  inspectionDate   DateTime?
+  clearedDate      DateTime?
+  remarks          String?
+  
+  isDeleted        Boolean           @default(false)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+
+// ============================================================================
+// PART 8: AIR TRACKING & WEATHER
+// ============================================================================
+
+model AirFlightTracking {
+  id               String            @id @default(uuid())
+  flightScheduleId String
+  flightSchedule   FlightSchedule    @relation(fields: [flightScheduleId], references: [id])
+  latitude         Float
+  longitude        Float
+  altitude         Float             @default(0)
+  speed            Float             @default(0)
+  heading          Float             @default(0)
+  status           String            @default("Scheduled") // In-Air, Delayed, Landed, Diverted
+  estimatedETA     DateTime?
+  timestamp        DateTime          @default(now())
+
+  isDeleted        Boolean           @default(false)
+}
+
+model AirWeatherAlert {
+  id               String            @id @default(uuid())
+  airportId        String
+  airport          Airport           @relation(fields: [airportId], references: [id])
+  severity         String            // Low, Medium, High, Severe
+  description      String
+  affectedRoutes   String?
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+
+// ============================================================================
+// PART 9: ROAD TRANSPORT OPERATIONS
+// ============================================================================
+
+model RoadVehicle {
+  id               String            @id @default(uuid())
+  registrationNo   String            @unique
+  category         String            // Rigid, Articulated, Van
+  type             String            // Flatbed, Curtainsider, Box, Reefer
+  make             String?
+  model            String?
+  maxPayload       Float             @default(0) // kg
+  volumeCapacity   Float             @default(0) // cbm
+  fuelType         String            @default("Diesel")
+  status           String            @default("Active") // Active, Maintenance, Retired
+  
+  trips            RoadTrip[]
+  inspections      VehicleInspection[]
+  maintenanceAlerts MaintenanceAlert[]
+  tyreLogs         TyreLog[]
+  documents        RoadVehicleDocument[]
+  maintenanceSchedules RoadMaintenanceSchedule[]
+  jobCards         RoadJobCard[]
+  fuelLogs         RoadFuelLog[]
+  tyres            RoadTyreInventory[]
+  maintenanceCosts RoadMaintenanceCost[]
+  
+  isDeleted        Boolean           @default(false)
+  createdAt        DateTime          @default(now())
+}
+
+model RoadTrailer {
+  id               String            @id @default(uuid())
+  registrationNo   String            @unique
+  type             String            // Flatbed, Reefer, Tanker
+  maxPayload       Float             @default(0)
+  volumeCapacity   Float             @default(0)
+  axleType         String?
+  status           String            @default("Active")
+  
+  trips            RoadTrip[]
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadDriver {
+  id               String            @id @default(uuid())
+  name             String
+  licenseNo        String            @unique
+  licenseExpiry    DateTime?
+  phone            String?
+  status           String            @default("Active") // Active, On-Trip, Rest, Leave
+  
+  trips            RoadTrip[]
+  shifts           RoadDriverShift[]
+  attendances      RoadDriverAttendance[]
+  violations       RoadDriverViolation[]
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadRoute {
+  id               String            @id @default(uuid())
+  name             String            @unique // e.g. DXB-AUH-Express
+  originCity       String
+  destCity         String
+  distanceKm       Float             @default(0)
+  estimatedHours   Float             @default(0)
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model FuelStation {
+  id               String            @id @default(uuid())
+  name             String
+  location         String
+  partnerNetwork   Boolean           @default(false)
+  isDeleted        Boolean           @default(false)
+}
+
+model TollBooth {
+  id               String            @id @default(uuid())
+  name             String
+  highway          String
+  costEstimate     Float             @default(0)
+  currency         String            @default("USD")
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadBooking {
+  id               String            @id @default(uuid())
+  bookingNumber    String            @unique
+  customerId       String?           
+  loadType         String            // FTL, LTL
+  status           String            @default("Draft") // Draft, Confirmed, Planned, In-Transit, Delivered, Cancelled
+  totalGrossWeight Float             @default(0)
+  totalVolume      Float             @default(0)
+  isHazardous      Boolean           @default(false)
+  isTemperatureControlled Boolean    @default(false)
+  
+  items            RoadBookingItem[]
+  stops            RoadTripStop[]
+  chargeLines      RoadChargeLine[]
+  invoices         RoadInvoice[]
+  claims           RoadClaim[]
+  
+  isDeleted        Boolean           @default(false)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model RoadBookingItem {
+  id               String            @id @default(uuid())
+  bookingId        String
+  booking          RoadBooking       @relation(fields: [bookingId], references: [id])
+  description      String
+  quantity         Int               @default(1)
+  grossWeight      Float             @default(0)
+  volume           Float             @default(0)
+  packageType      String            // Pallet, Carton, Drum
+  
+  cargoLogs        CargoOperationLog[]
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadTrip {
+  id               String            @id @default(uuid())
+  tripNumber       String            @unique
+  driverId         String?
+  driver           RoadDriver?       @relation(fields: [driverId], references: [id])
+  vehicleId        String?
+  vehicle          RoadVehicle?      @relation(fields: [vehicleId], references: [id])
+  trailerId        String?
+  trailer          RoadTrailer?      @relation(fields: [trailerId], references: [id])
+  
+  status           String            @default("Planned") // Planned, Dispatched, In-Transit, Completed
+  plannedStart     DateTime?
+  plannedEnd       DateTime?
+  actualStart      DateTime?
+  actualEnd        DateTime?
+  
+  stops            RoadTripStop[]
+  logs             RoadTripLog[]
+  documents        RoadTripDocument[]
+  inspections      VehicleInspection[]
+  telemetry        RoadTripTelemetry[]
+  chargeLines      RoadChargeLine[]
+  vendorBills      RoadVendorBill[]
+  
+  isDeleted        Boolean           @default(false)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model RoadTripStop {
+  id               String            @id @default(uuid())
+  tripId           String
+  trip             RoadTrip          @relation(fields: [tripId], references: [id])
+  sequence         Int
+  type             String            // Pickup, Delivery, CrossDock, Rest
+  locationName     String
+  locationAddress  String
+  
+  bookingId        String?
+  booking          RoadBooking?      @relation(fields: [bookingId], references: [id])
+  
+  plannedTime      DateTime?
+  actualTime       DateTime?
+  status           String            @default("Pending") // Pending, Arrived, Completed, Skipped
+  
+  cargoLogs        CargoOperationLog[]
+  proofOfDeliveries RoadProofOfDelivery[]
+  
+  isDeleted        Boolean           @default(false)
+}
+
+
+// ============================================================================
+// PART 10: FLEET OPERATIONS & DISPATCH EXECUTION
+// ============================================================================
+
+model RoadTripLog {
+  id               String            @id @default(uuid())
+  tripId           String
+  trip             RoadTrip          @relation(fields: [tripId], references: [id])
+  action           String            // Dispatched, Started, Paused, Resumed, Completed, Cancelled
+  location         String?           // GPS coords or physical name
+  remarks          String?
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadTripDocument {
+  id               String            @id @default(uuid())
+  tripId           String
+  trip             RoadTrip          @relation(fields: [tripId], references: [id])
+  type             String            // POD, IncidentReport, FuelReceipt, TollReceipt, Photo
+  url              String
+  uploadedBy       String?
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model VehicleInspection {
+  id               String            @id @default(uuid())
+  vehicleId        String
+  vehicle          RoadVehicle       @relation(fields: [vehicleId], references: [id])
+  tripId           String?
+  trip             RoadTrip?         @relation(fields: [tripId], references: [id])
+  type             String            // Pre-Trip, Post-Trip, Routine, Pre-Service
+  isPassed         Boolean
+  inspectorId      String?
+  notes            String?
+  checklistJson    String?
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model MaintenanceAlert {
+  id               String            @id @default(uuid())
+  vehicleId        String
+  vehicle          RoadVehicle       @relation(fields: [vehicleId], references: [id])
+  severity         String            // Low, Medium, High, Critical
+  issue            String
+  reportedAt       DateTime          @default(now())
+  status           String            @default("Open") // Open, Scheduled, In-Progress, Resolved
+  resolvedAt       DateTime?
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model TyreLog {
+  id               String            @id @default(uuid())
+  vehicleId        String
+  vehicle          RoadVehicle       @relation(fields: [vehicleId], references: [id])
+  position         String            // FL, FR, RL, RR, etc.
+  treadDepthMm     Float
+  pressurePsi      Float
+  inspectionDate   DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadDriverShift {
+  id               String            @id @default(uuid())
+  driverId         String
+  driver           RoadDriver        @relation(fields: [driverId], references: [id])
+  shiftStart       DateTime
+  shiftEnd         DateTime?
+  drivingHours     Float             @default(0)
+  breakHours       Float             @default(0)
+  isFatigued       Boolean           @default(false)
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadDriverAttendance {
+  id               String            @id @default(uuid())
+  driverId         String
+  driver           RoadDriver        @relation(fields: [driverId], references: [id])
+  date             DateTime
+  status           String            // Present, Absent, Sick, Leave
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadDriverViolation {
+  id               String            @id @default(uuid())
+  driverId         String
+  driver           RoadDriver        @relation(fields: [driverId], references: [id])
+  type             String            // Speeding, Harsh Braking, HOS Violation
+  severity         String
+  description      String
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model CargoOperationLog {
+  id               String            @id @default(uuid())
+  stopId           String
+  stop             RoadTripStop      @relation(fields: [stopId], references: [id])
+  bookingItemId    String?
+  bookingItem      RoadBookingItem?  @relation(fields: [bookingItemId], references: [id])
+  scanType         String            // Barcode, QRCode, Manual
+  status           String            // Loaded, Unloaded, Damaged, Shortage, Excess
+  weightVerified   Float?
+  sealVerified     Boolean           @default(false)
+  remarks          String?
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadTripTelemetry {
+  id               String            @id @default(uuid())
+  tripId           String
+  trip             RoadTrip          @relation(fields: [tripId], references: [id])
+  latitude         Float
+  longitude        Float
+  speedKmh         Float             @default(0)
+  fuelLevelPct     Float?
+  isEngineIdle     Boolean           @default(false)
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+
+// ============================================================================
+// PART 11: ROAD FINANCE, CLAIMS & ANALYTICS
+// ============================================================================
+
+model RoadChargeLine {
+  id               String            @id @default(uuid())
+  bookingId        String?
+  booking          RoadBooking?      @relation(fields: [bookingId], references: [id])
+  tripId           String?
+  trip             RoadTrip?         @relation(fields: [tripId], references: [id])
+  type             String            // REVENUE, EXPENSE
+  chargeCode       String            // FREIGHT, FUEL, TOLL, WAITING, HANDLING, INSURANCE, TAX, GST
+  amount           Float
+  currency         String            @default("USD")
+  exchangeRate     Float             @default(1.0)
+  description      String?
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadInvoice {
+  id               String            @id @default(uuid())
+  bookingId        String
+  booking          RoadBooking       @relation(fields: [bookingId], references: [id])
+  invoiceNumber    String            @unique
+  totalAmount      Float
+  currency         String            @default("USD")
+  status           String            @default("DRAFT") // DRAFT, SENT, PAID, OVERDUE
+  type             String            @default("CUSTOMER_INVOICE") // CUSTOMER_INVOICE, CREDIT_NOTE, DEBIT_NOTE
+  dueDate          DateTime?
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadVendorBill {
+  id               String            @id @default(uuid())
+  tripId           String
+  trip             RoadTrip          @relation(fields: [tripId], references: [id])
+  vendorId         String            // References an external vendor master if available
+  billNumber       String
+  totalAmount      Float
+  currency         String            @default("USD")
+  status           String            @default("DRAFT") // DRAFT, APPROVED, PAID
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadClaim {
+  id               String            @id @default(uuid())
+  bookingId        String
+  booking          RoadBooking       @relation(fields: [bookingId], references: [id])
+  type             String            // DAMAGE, MISSING, COMPLAINT
+  description      String
+  claimAmount      Float
+  approvedAmount   Float             @default(0)
+  currency         String            @default("USD")
+  status           String            @default("OPEN") // OPEN, INVESTIGATING, APPROVED, SETTLED, REJECTED
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadProofOfDelivery {
+  id               String            @id @default(uuid())
+  stopId           String
+  stop             RoadTripStop      @relation(fields: [stopId], references: [id])
+  type             String            // DIGITAL_SIGNATURE, OTP, PHOTO, DOCUMENT
+  payloadUrl       String            // URL to S3 or base64 string
+  status           String            @default("ACCEPTED") // ACCEPTED, REJECTED, PARTIAL, FAILED
+  remarks          String?
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+
+// ============================================================================
+// PART 12: FLEET MAINTENANCE & WORKSHOP
+// ============================================================================
+
+model RoadVehicleDocument {
+  id               String            @id @default(uuid())
+  vehicleId        String
+  vehicle          RoadVehicle       @relation(fields: [vehicleId], references: [id])
+  type             String            // Insurance, Permit, RC, Fitness, Emission, RoadTax
+  documentNo       String?
+  issueDate        DateTime?
+  expiryDate       DateTime?
+  fileUrl          String?
+  status           String            @default("Valid") // Valid, Expiring, Expired
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadMaintenancePlan {
+  id               String            @id @default(uuid())
+  name             String
+  description      String?
+  type             String            // Mileage, Time, EngineHours
+  intervalValue    Int               // e.g., 10000 (km) or 6 (months)
+  schedules        RoadMaintenanceSchedule[]
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadMaintenanceSchedule {
+  id               String            @id @default(uuid())
+  vehicleId        String
+  vehicle          RoadVehicle       @relation(fields: [vehicleId], references: [id])
+  planId           String
+  plan             RoadMaintenancePlan @relation(fields: [planId], references: [id])
+  nextDueDate      DateTime?
+  nextDueMileage   Int?
+  status           String            @default("Upcoming") // Upcoming, Overdue, Completed
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadWorkshop {
+  id               String            @id @default(uuid())
+  name             String
+  location         String
+  managerId        String?
+  bays             RoadWorkshopBay[]
+  mechanics        RoadMechanic[]
+  jobCards         RoadJobCard[]
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadWorkshopBay {
+  id               String            @id @default(uuid())
+  workshopId       String
+  workshop         RoadWorkshop      @relation(fields: [workshopId], references: [id])
+  name             String
+  status           String            @default("Available") // Available, Occupied, Maintenance
+  jobCards         RoadJobCard[]
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadMechanic {
+  id               String            @id @default(uuid())
+  workshopId       String
+  workshop         RoadWorkshop      @relation(fields: [workshopId], references: [id])
+  name             String
+  specialization   String?
+  status           String            @default("Active") // Active, On-Leave
+  jobCards         RoadJobCard[]
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadJobCard {
+  id               String            @id @default(uuid())
+  vehicleId        String
+  vehicle          RoadVehicle       @relation(fields: [vehicleId], references: [id])
+  workshopId       String
+  workshop         RoadWorkshop      @relation(fields: [workshopId], references: [id])
+  mechanicId       String?
+  mechanic         RoadMechanic?     @relation(fields: [mechanicId], references: [id])
+  bayId            String?
+  bay              RoadWorkshopBay?  @relation(fields: [bayId], references: [id])
+  
+  status           String            @default("Open") // Open, In-Progress, QA, Closed
+  description      String
+  totalCost        Float             @default(0)
+  currency         String            @default("USD")
+  
+  timestamp        DateTime          @default(now())
+  isDeleted        Boolean           @default(false)
+}
+
+
+// ============================================================================
+// PART 13: FLEET MAINTENANCE OPERATIONS
+// ============================================================================
+
+model RoadSparePart {
+  id               String            @id @default(uuid())
+  name             String
+  sku              String            @unique
+  category         String            // Engine, Brakes, Electrical, Body
+  stockLevel       Int               @default(0)
+  reorderLevel     Int               @default(5)
+  unitCost         Float             @default(0)
+  transactions     RoadPartTransaction[]
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadPartTransaction {
+  id               String            @id @default(uuid())
+  partId           String
+  part             RoadSparePart     @relation(fields: [partId], references: [id])
+  type             String            // Issue, Receipt, Return
+  quantity         Int
+  referenceId      String?           // E.g., JobCard ID or PO ID
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadFuelLog {
+  id               String            @id @default(uuid())
+  vehicleId        String
+  vehicle          RoadVehicle       @relation(fields: [vehicleId], references: [id])
+  quantityLiters   Float
+  cost             Float
+  odometerReading  Int
+  stationName      String?
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadTyreInventory {
+  id               String            @id @default(uuid())
+  serialNumber     String            @unique
+  brand            String
+  size             String
+  status           String            @default("Stock") // Stock, Installed, Retired
+  vehicleId        String?
+  vehicle          RoadVehicle?      @relation(fields: [vehicleId], references: [id])
+  position         String?           // FL, FR, RL, RR, etc.
+  treadDepth       Float             // in mm
+  cost             Float             @default(0)
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadServiceVendor {
+  id               String            @id @default(uuid())
+  name             String
+  type             String            // Garage, Dealer, Supplier
+  contactPerson    String?
+  phone            String?
+  rating           Float             @default(5.0)
+  costs            RoadMaintenanceCost[]
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model RoadMaintenanceCost {
+  id               String            @id @default(uuid())
+  vehicleId        String
+  vehicle          RoadVehicle       @relation(fields: [vehicleId], references: [id])
+  vendorId         String?
+  vendor           RoadServiceVendor? @relation(fields: [vendorId], references: [id])
+  type             String            // Parts, Labour, Fuel, Tyre, General
+  amount           Float
+  currency         String            @default("USD")
+  description      String?
+  incurredAt       DateTime          @default(now())
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+
+// ============================================================================
+// PART 14: CONTAINER MANAGEMENT
+// ============================================================================
+
+model Container {
+  id               String            @id @default(uuid())
+  containerNo      String            @unique // ISO 6346 Validated
+  category         String            @default("General Purpose")
+  type             String            // 20FT, 40FT, 40HC, Reefer, Open Top, Flat Rack, Tank
+  maxGrossWeight   Float             @default(0) // kg
+  tareWeight       Float             @default(0) // kg
+  payloadCapacity  Float             @default(0) // kg
+  volume           Float             @default(0) // cbm
+  ownershipType    String            @default("Owned") // Owned, Leased, Shipping Line
+  manufacturer     String?
+  manufacturingDate DateTime?
+  status           String            @default("Available") // Available, Reserved, Allocated, Loaded, In Transit, At Yard, Under Repair, Retired
+  
+  lifecycles       ContainerLifecycle[]
+  allocations      ContainerAllocation[]
+  documents        ContainerDocument[]
+  yardSlot         ContainerYardSlot?
+  operations       ContainerOperation[]
+  cargoOps         ContainerCargoOperation[]
+  portOps          ContainerPortOperation[]
+  
+  trackingLogs     ContainerTracking[]
+  health           ContainerHealth?
+  reeferLogs       ContainerReeferLog[]
+  compliance       ContainerCompliance[]
+  repairs          ContainerRepair[]
+  billings         ContainerBilling[]
+  
+  timestamp        DateTime          @default(now())
+  isDeleted        Boolean           @default(false)
+}
+
+model ContainerLifecycle {
+  id               String            @id @default(uuid())
+  containerId      String
+  container        Container         @relation(fields: [containerId], references: [id])
+  status           String
+  location         String?           // Port, Yard, Customer Location
+  referenceId      String?           // Booking ID, Shipment ID
+  notes            String?
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model ContainerAllocation {
+  id               String            @id @default(uuid())
+  containerId      String
+  container        Container         @relation(fields: [containerId], references: [id])
+  allocationType   String            // Shipment, Booking, Vehicle, YardSlot
+  referenceId      String            // ID of the allocated entity
+  sealNumber       String?
+  allocatedAt      DateTime          @default(now())
+  releasedAt       DateTime?
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model ContainerDocument {
+  id               String            @id @default(uuid())
+  containerId      String
+  container        Container         @relation(fields: [containerId], references: [id])
+  type             String            // CSC Plate, Approval, Inspection
+  fileUrl          String
+  expiryDate       DateTime?
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+
+// ============================================================================
+// PART 15: CONTAINER YARD, OPERATIONS & MOVEMENT
+// ============================================================================
+
+model ContainerYardZone {
+  id               String            @id @default(uuid())
+  name             String
+  type             String            // Empty, Loaded, Reefer, DG
+  capacity         Int
+  occupied         Int               @default(0)
+  slots            ContainerYardSlot[]
+  
+  isDeleted        Boolean           @default(false)
+  timestamp        DateTime          @default(now())
+}
+
+model ContainerYardSlot {
+  id               String            @id @default(uuid())
+  zoneId           String
+  zone             ContainerYardZone @relation(fields: [zoneId], references: [id])
+  block            String
+  row              String
+  stack            String
+  tier             String
+  status           String            @default("Available") // Available, Occupied, Maintenance
+  
+  containerId      String?           @unique
+  container        Container?        @relation(fields: [containerId], references: [id])
+  
+  isDeleted        Boolean           @default(false)
+  timestamp        DateTime          @default(now())
+}
+
+model ContainerOperation {
+  id               String            @id @default(uuid())
+  containerId      String
+  container        Container         @relation(fields: [containerId], references: [id])
+  type             String            // GateIn, GateOut, Stuffing, Destuffing, Cleaning, Washing, Fumigation, Repair
+  location         String?
+  performedBy      String?
+  status           String            @default("Completed")
+  notes            String?
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model ContainerCargoOperation {
+  id               String            @id @default(uuid())
+  containerId      String
+  container        Container         @relation(fields: [containerId], references: [id])
+  type             String            // Loading, Unloading, WeightVerif, TempCheck, DGVerif
+  verifiedWeight   Float?            // VGM (Verified Gross Mass)
+  reeferTemperature Float?           // Celsius
+  isDangerousGoods Boolean           @default(false)
+  inspectorId      String?
+  notes            String?
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model ContainerPortOperation {
+  id               String            @id @default(uuid())
+  containerId      String
+  container        Container         @relation(fields: [containerId], references: [id])
+  terminal         String
+  berth            String?
+  crane            String?
+  operation        String            // Load, Discharge, Arrival, Departure
+  vesselName       String?
+  scheduledTime    DateTime?
+  actualTime       DateTime?
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+
+// ============================================================================
+// PART 16: CONTAINER TRACKING, HEALTH & COMPLIANCE
+// ============================================================================
+
+model ContainerTracking {
+  id               String            @id @default(uuid())
+  containerId      String
+  container        Container         @relation(fields: [containerId], references: [id])
+  latitude         Float
+  longitude        Float
+  speed            Float             @default(0)
+  heading          String?
+  locationName     String?
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model ContainerHealth {
+  id               String            @id @default(uuid())
+  containerId      String            @unique
+  container        Container         @relation(fields: [containerId], references: [id])
+  healthScore      Int               @default(100) // 0-100
+  structuralCondition String         @default("Good")
+  floorCondition   String            @default("Good")
+  needsCleaning    Boolean           @default(false)
+  needsFumigation  Boolean           @default(false)
+  lastInspection   DateTime?
+  
+  timestamp        DateTime          @default(now())
+  isDeleted        Boolean           @default(false)
+}
+
+model ContainerReeferLog {
+  id               String            @id @default(uuid())
+  containerId      String
+  container        Container         @relation(fields: [containerId], references: [id])
+  temperature      Float
+  humidity         Float
+  powerStatus      String            @default("On") // On, Off, Error
+  hasAlarm         Boolean           @default(false)
+  alarmDetails     String?
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model ContainerCompliance {
+  id               String            @id @default(uuid())
+  containerId      String
+  container        Container         @relation(fields: [containerId], references: [id])
+  documentType     String            // CSC Plate, ISO Cert, Insurance
+  documentNumber   String?
+  issueDate        DateTime?
+  expiryDate       DateTime
+  issuingAuthority String?
+  fileUrl          String?
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model ContainerRepair {
+  id               String            @id @default(uuid())
+  containerId      String
+  container        Container         @relation(fields: [containerId], references: [id])
+  damageDescription String
+  repairStatus     String            @default("Requested") // Requested, InProgress, Completed
+  workshopName     String?
+  estimatedCost    Float?
+  actualCost       Float?
+  photos           String?           // JSON array string of URLs
+  requestedAt      DateTime          @default(now())
+  completedAt      DateTime?
+  
+  isDeleted        Boolean           @default(false)
+}
+
+
+// ============================================================================
+// PART 17: CONTAINER BILLING & ANALYTICS
+// ============================================================================
+
+model ContainerBilling {
+  id               String            @id @default(uuid())
+  containerId      String?
+  container        Container?        @relation(fields: [containerId], references: [id])
+  type             String            // Invoice, VendorBill, CreditNote, DebitNote
+  status           String            @default("Draft") // Draft, Unpaid, Paid, Overdue
+  totalAmount      Float             @default(0)
+  currency         String            @default("USD")
+  exchangeRate     Float             @default(1.0)
+  dueDate          DateTime?
+  timestamp        DateTime          @default(now())
+  
+  charges          ContainerCharge[]
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model ContainerCharge {
+  id               String            @id @default(uuid())
+  billingId        String
+  billing          ContainerBilling  @relation(fields: [billingId], references: [id], onDelete: Cascade)
+  chargeType       String            // Demurrage, Detention, Storage, LiftOn, LiftOff, Cleaning, Repair, Rental
+  amount           Float
+  taxAmount        Float             @default(0)
+  gstRate          Float             @default(0)
+  description      String?
+  timestamp        DateTime          @default(now())
+  
+  isDeleted        Boolean           @default(false)
+}
+
+model ContainerAnalytics {
+  id                   String        @id @default(uuid())
+  date                 DateTime      @unique
+  averageUtilization   Float         @default(0)
+  yardOccupancy        Float         @default(0)
+  totalRevenue         Float         @default(0)
+  totalProfit          Float         @default(0)
+  containersAvailable  Int           @default(0)
+  containersInTransit  Int           @default(0)
+  containersAtYard     Int           @default(0)
+  openDemurrageTickets Int           @default(0)
+  openDetentionTickets Int           @default(0)
+  
+  timestamp            DateTime      @default(now())
 }

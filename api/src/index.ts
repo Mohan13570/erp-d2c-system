@@ -61,6 +61,12 @@ import oceanFinanceRoutes from './routes/ocean/finance';
 import oceanCustomsRoutes from './routes/ocean/customs';
 import oceanTrackingRoutes from './routes/ocean/tracking';
 import oceanAnalyticsRoutes from './routes/ocean/analytics';
+import maintenanceRouter from './routes/maintenance';
+import maintenanceOpsRouter from './routes/maintenance-ops';
+import containerOpsRouter from './routes/container-ops';
+import containerTrackingRouter from './routes/container-tracking';
+import containerFinanceRouter from './routes/container-finance';
+
 dotenv.config();
 
 import { createServer } from 'http';
@@ -144,6 +150,12 @@ app.use('/api/ocean/finance', oceanFinanceRoutes);
 app.use('/api/ocean/customs', oceanCustomsRoutes);
 app.use('/api/ocean/tracking', oceanTrackingRoutes);
 app.use('/api/ocean/analytics', oceanAnalyticsRoutes);
+
+app.use('/api/maintenance', maintenanceRouter);
+app.use('/api/maintenance-ops', maintenanceOpsRouter);
+app.use('/api/container-ops', containerOpsRouter);
+app.use('/api/container-tracking', containerTrackingRouter);
+app.use('/api/container-finance', containerFinanceRouter);
 
 // Pass io to GPS routes for broadcasting
 app.use('/api/gps', gpsRoutes);

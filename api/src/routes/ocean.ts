@@ -37,7 +37,7 @@ router.post('/voyages', async (req, res) => {
 
 router.get('/containers', async (req, res) => {
   try {
-    const cons = await prisma.container.findMany({ include: { movements: true } });
+    const cons = await prisma.container.findMany({ include: { lifecycles: true } });
     res.json(cons);
   } catch (error) { res.status(500).json({ error: 'Failed' }); }
 });
@@ -51,7 +51,7 @@ router.post('/containers', async (req, res) => {
 
 router.post('/containers/movements', async (req, res) => {
   try {
-    const movement = await prisma.containerMovement.create({ data: req.body });
+    const movement = await prisma.containerLifecycle.create({ data: req.body });
     res.json(movement);
   } catch (err: any) { res.status(400).json({ error: err.message }); }
 });

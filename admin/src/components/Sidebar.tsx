@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
-  LayoutDashboard, Users, UserCog, Settings, Package, Tags, Briefcase, Handshake, Mail, Map, Link as LinkIcon, Database, TrendingUp, Anchor, Plane, Truck, Globe, Car, Building2, ShieldCheck, FileText, Box, ShoppingCart, Landmark, ReceiptText, Shield, Crosshair, DollarSign, Command, RotateCcw, Megaphone, UserCheck, BarChart3, FolderKanban, Cpu, LogOut, Layers, UserCircle, UsersRound, BrainCircuit, Smartphone, Plus, Navigation, ChevronDown, ChevronRight, Activity
+  LayoutDashboard, Users, UserCog, Settings, Package, Tags, Briefcase, Handshake, Mail, Map, Link as LinkIcon, Database, TrendingUp, Anchor, Plane, Truck, Globe, Car, Building2, ShieldCheck, FileText, Box, ShoppingCart, Landmark, ReceiptText, Shield, Crosshair, DollarSign, Command, RotateCcw, Megaphone, UserCheck, BarChart3, BarChart2, FolderKanban, Cpu, LogOut, Layers, UserCircle, UsersRound, BrainCircuit, Smartphone, Plus, Navigation, ChevronDown, ChevronRight, Activity, MapPin, Navigation2, Calendar, Route, TerminalSquare, History, ThermometerSnowflake, Wrench, DownloadCloud, LayoutGrid, Ship
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -51,10 +51,75 @@ const navSections = [
           { name: 'Customs Clearance', path: '/ocean/customs', icon: ShieldCheck },
         ]
       },
-      { name: 'Air Freight', path: '/air-freight', icon: Plane },
-      { name: 'Road Transport', path: '/road-transport', icon: Truck },
-      { name: 'Fleet Maintenance', path: '/fleet-management', icon: Car },
-      { name: 'Container Management', path: '/containers', icon: Box },
+      { name: 'Air Freight', path: '/air/hub', icon: Plane },
+      { 
+        name: 'Road Transport', 
+        icon: Truck,
+        subItems: [
+          { name: 'Executive Dashboard', path: '/road/executive', icon: LayoutDashboard },
+          { name: 'Planning Hub', path: '/road/hub', icon: MapPin },
+          { name: 'Dispatch Console', path: '/road/dispatch', icon: Navigation2 },
+          { name: 'Vehicle Ops', path: '/road/vehicle-ops', icon: Settings },
+          { name: 'Driver Ops', path: '/road/driver-ops', icon: Users },
+          { name: 'Billing & Costing', path: '/road/billing', icon: DollarSign },
+          { name: 'Claims & POD', path: '/road/claims', icon: ShieldCheck },
+          { name: 'Analytics', path: '/road/analytics', icon: BarChart2 }
+        ]
+      },
+      { 
+        name: 'Fleet Maintenance', 
+        icon: Car,
+        subItems: [
+          { name: 'Executive Dashboard', path: '/maintenance-ops/executive', icon: LayoutDashboard },
+          { name: 'Asset Master', path: '/maintenance/assets', icon: FileText },
+          { name: 'Preventive Schedule', path: '/maintenance/preventive', icon: Calendar },
+          { name: 'Workshop Desk', path: '/maintenance/workshop', icon: Settings },
+          { name: 'Inspections', path: '/maintenance/inspections', icon: ShieldCheck },
+          { name: 'Spare Parts', path: '/maintenance-ops/inventory', icon: Package },
+          { name: 'Fuel & Tyres', path: '/maintenance-ops/fuel-tyres', icon: Map },
+          { name: 'Vendor Hub', path: '/maintenance-ops/vendors', icon: Building2 }
+        ]
+      },
+      { 
+        name: 'Container Management', 
+        icon: Box,
+        subItems: [
+          { name: 'Executive Dashboard', path: '/containers/executive', icon: LayoutDashboard },
+          { name: 'Container Master', path: '/containers/master', icon: Box },
+          { name: 'Lifecycle Tracker', path: '/containers/lifecycle', icon: Route },
+          { name: 'Allocation Hub', path: '/containers/allocations', icon: Layers }
+        ]
+      },
+      { 
+        name: 'Container Operations', 
+        icon: TerminalSquare,
+        subItems: [
+          { name: 'Yard Management', path: '/container-ops/yard', icon: LayoutGrid },
+          { name: 'Operations Desk', path: '/container-ops/desk', icon: TerminalSquare },
+          { name: 'Cargo & Port Terminal', path: '/container-ops/cargo', icon: Ship },
+          { name: 'Movement History', path: '/container-ops/history', icon: History }
+        ]
+      },
+      { 
+        name: 'Tracking & Compliance', 
+        icon: Activity,
+        subItems: [
+          { name: 'Live Tracking Map', path: '/container-tracking/map', icon: MapPin },
+          { name: 'Reefer Telemetry', path: '/container-tracking/reefer', icon: ThermometerSnowflake },
+          { name: 'Health & Compliance', path: '/container-tracking/compliance', icon: ShieldCheck },
+          { name: 'Repair Workshop', path: '/container-tracking/repair', icon: Wrench }
+        ]
+      },
+      { 
+        name: 'Financial Analytics', 
+        icon: TrendingUp,
+        subItems: [
+          { name: 'Executive Dashboard', path: '/container-finance/dashboard', icon: BarChart3 },
+          { name: 'Billing & AR/AP', path: '/container-finance/billing', icon: DollarSign },
+          { name: 'Deep Analytics', path: '/container-finance/analytics', icon: Activity },
+          { name: 'Reports Engine', path: '/container-finance/reports', icon: DownloadCloud }
+        ]
+      },
     ]
   },
   {

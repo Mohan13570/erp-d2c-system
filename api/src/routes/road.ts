@@ -1,59 +1,28 @@
-import { Router, Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { Router } from 'express';
+import masterDataRoutes from './road/master-data';
+import bookingRoutes from './road/bookings';
+import planningRoutes from './road/planning';
+import dispatchRoutes from './road/dispatch';
+import vehicleOpsRoutes from './road/vehicle-ops';
+import driverOpsRoutes from './road/driver-ops';
+import cargoOpsRoutes from './road/cargo-ops';
+import financeRoutes from './road/finance';
+import podRoutes from './road/pod';
+import claimsRoutes from './road/claims';
+import analyticsRoutes from './road/analytics';
 
 const router = Router();
-const prisma = new PrismaClient();
 
-router.get('/vehicles', async (req, res) => {
-  try {
-    const v = await prisma.vehicle.findMany({ include: { trips: true } });
-    res.json(v);
-  } catch (error) { res.status(500).json({ error: 'Failed' }); }
-});
-
-router.post('/vehicles', async (req, res) => {
-  try {
-    const v = await prisma.vehicle.create({ data: req.body });
-    res.json(v);
-  } catch (err: any) { res.status(400).json({ error: err.message }); }
-});
-
-router.get('/drivers', async (req, res) => {
-  try {
-    const d = await prisma.driver.findMany({ include: { trips: true } });
-    res.json(d);
-  } catch (error) { res.status(500).json({ error: 'Failed' }); }
-});
-
-router.post('/drivers', async (req, res) => {
-  try {
-    const d = await prisma.driver.create({ data: req.body });
-    res.json(d);
-  } catch (err: any) { res.status(400).json({ error: err.message }); }
-});
-
-router.get('/trips', async (req, res) => {
-  try {
-    const trips = await prisma.trip.findMany({ include: { vehicle: true, driver: true, events: true } });
-    res.json(trips);
-  } catch (error) { res.status(500).json({ error: 'Failed' }); }
-});
-
-router.post('/trips', async (req, res) => {
-  try {
-    const data = { ...req.body };
-    if (data.startTime) data.startTime = new Date(data.startTime);
-    if (data.endTime) data.endTime = new Date(data.endTime);
-    const trip = await prisma.trip.create({ data });
-    res.json(trip);
-  } catch (err: any) { res.status(400).json({ error: err.message }); }
-});
-
-router.post('/trips/events', async (req, res) => {
-  try {
-    const ev = await prisma.tripEvent.create({ data: req.body });
-    res.json(ev);
-  } catch (err: any) { res.status(400).json({ error: err.message }); }
-});
+router.use('/master-data', masterDataRoutes);
+router.use('/bookings', bookingRoutes);
+router.use('/planning', planningRoutes);
+router.use('/dispatch', dispatchRoutes);
+router.use('/vehicle-ops', vehicleOpsRoutes);
+router.use('/driver-ops', driverOpsRoutes);
+router.use('/cargo-ops', cargoOpsRoutes);
+router.use('/finance', financeRoutes);
+router.use('/pod', podRoutes);
+router.use('/claims', claimsRoutes);
+router.use('/analytics', analyticsRoutes);
 
 export default router;

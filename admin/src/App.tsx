@@ -66,6 +66,54 @@ import AlertDashboard from './pages/alerts/AlertDashboard';
 import BIReports from './pages/reports/BIReports';
 import BookingDashboard from './pages/ocean/BookingDashboard';
 import CreateBookingWizard from './pages/ocean/CreateBookingWizard';
+import AirBookingDashboard from './pages/air/BookingDashboard';
+import CreateAirBookingWizard from './pages/air/CreateBookingWizard';
+import AirShipmentDetail from './pages/air/ShipmentDetail';
+import CargoAcceptanceDock from './pages/air/operations/CargoAcceptanceDock';
+import ULDBuildup from './pages/air/operations/ULDBuildup';
+import AircraftLoadPlan from './pages/air/operations/AircraftLoadPlan';
+import RampOperations from './pages/air/operations/RampOperations';
+import CostingDashboard from './pages/air/finance/CostingDashboard';
+import ShipmentProfitability from './pages/air/finance/ShipmentProfitability';
+import CustomsClearanceDesk from './pages/air/customs/CustomsClearanceDesk';
+import AirFreightHub from './pages/air/AirFreightHub';
+import TrackingDashboard from './pages/air/tracking/TrackingDashboard';
+import AnalyticsDashboard from './pages/air/analytics/AnalyticsDashboard';
+import RoadTransportHub from './pages/road/RoadTransportHub';
+import RoadBookingWizard from './pages/road/RoadBookingWizard';
+import TripPlanner from './pages/road/TripPlanner';
+import DispatchConsole from './pages/road/DispatchConsole';
+import TripExecutionWorkspace from './pages/road/TripExecutionWorkspace';
+import VehicleOpsDashboard from './pages/road/VehicleOpsDashboard';
+import DriverOpsDashboard from './pages/road/DriverOpsDashboard';
+import RoadBillingDashboard from './pages/road/RoadBillingDashboard';
+import RoadClaimsDesk from './pages/road/RoadClaimsDesk';
+import RoadAnalytics from './pages/road/RoadAnalytics';
+import RoadExecutiveDashboard from './pages/road/RoadExecutiveDashboard';
+import FleetAssetManager from './pages/maintenance/FleetAssetManager';
+import PreventiveMaintenanceCalendar from './pages/maintenance/PreventiveMaintenanceCalendar';
+import WorkshopDashboard from './pages/maintenance/WorkshopDashboard';
+import InspectionDesk from './pages/maintenance/InspectionDesk';
+import MaintenanceExecutiveDashboard from './pages/maintenance-ops/MaintenanceExecutiveDashboard';
+import PartsInventory from './pages/maintenance-ops/PartsInventory';
+import FuelAndTyreDesk from './pages/maintenance-ops/FuelAndTyreDesk';
+import ComplianceAndVendorHub from './pages/maintenance-ops/ComplianceAndVendorHub';
+import ContainerMasterDesk from './pages/containers/ContainerMasterDesk';
+import ContainerLifecycleTracker from './pages/containers/ContainerLifecycleTracker';
+import ContainerAllocationHub from './pages/containers/ContainerAllocationHub';
+import ContainerExecutiveDashboard from './pages/containers/ContainerExecutiveDashboard';
+import YardManagementConsole from './pages/container-ops/YardManagementConsole';
+import ContainerOperationsDesk from './pages/container-ops/ContainerOperationsDesk';
+import CargoAndPortTerminal from './pages/container-ops/CargoAndPortTerminal';
+import ContainerMovementHistory from './pages/container-ops/ContainerMovementHistory';
+import LiveTrackingMap from './pages/container-tracking/LiveTrackingMap';
+import ReeferTelemetryDashboard from './pages/container-tracking/ReeferTelemetryDashboard';
+import HealthAndComplianceHub from './pages/container-tracking/HealthAndComplianceHub';
+import RepairWorkshop from './pages/container-tracking/RepairWorkshop';
+import ContainerFinanceExecutiveDashboard from './pages/container-finance/ContainerExecutiveDashboard';
+import ContainerBillingHub from './pages/container-finance/ContainerBillingHub';
+import ContainerAnalyticsDesk from './pages/container-finance/ContainerAnalyticsDesk';
+import ContainerReportsEngine from './pages/container-finance/ContainerReportsEngine';
 import BookingWorkspace from './pages/ocean/BookingWorkspace';
 import YardDashboard from './pages/ocean/operations/YardDashboard';
 import ContainerInventory from './pages/ocean/operations/ContainerInventory';
@@ -77,7 +125,7 @@ import ProfitabilityAnalysis from './pages/ocean/finance/ProfitabilityAnalysis';
 import CustomsWorkspace from './pages/ocean/finance/CustomsWorkspace';
 import ExecutiveDashboard from './pages/ocean/executive/ExecutiveDashboard';
 import PerformanceAnalytics from './pages/ocean/executive/PerformanceAnalytics';
-import LiveTrackingMap from './pages/ocean/tracking/LiveTrackingMap';
+import OceanLiveTrackingMap from './pages/ocean/tracking/LiveTrackingMap';
 import ShipmentTimeline from './pages/ocean/tracking/ShipmentTimeline';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -129,6 +177,19 @@ function App() {
                   <Route path="/alerts" element={<AlertDashboard />} />
                   <Route path="/reports/bi" element={<BIReports />} />
                   <Route path="/ocean/bookings" element={<BookingDashboard />} />
+                  <Route path="/air/bookings" element={<AirBookingDashboard />} />
+                  <Route path="/air/bookings/create" element={<CreateAirBookingWizard />} />
+                  <Route path="/air/bookings/:id" element={<AirShipmentDetail />} />
+                  <Route path="/air/operations/acceptance" element={<CargoAcceptanceDock />} />
+                  <Route path="/air/operations/uld" element={<ULDBuildup />} />
+                  <Route path="/air/operations/load-plan" element={<AircraftLoadPlan />} />
+                  <Route path="/air/operations/ramp" element={<RampOperations />} />
+                  <Route path="/air/finance" element={<CostingDashboard />} />
+                  <Route path="/air/finance/profitability/:id" element={<ShipmentProfitability />} />
+                  <Route path="/air/customs" element={<CustomsClearanceDesk />} />
+                  <Route path="/air/hub" element={<AirFreightHub />} />
+                  <Route path="/air/tracking" element={<TrackingDashboard />} />
+                  <Route path="/air/analytics" element={<AnalyticsDashboard />} />
                   <Route path="/ocean/bookings/new" element={<CreateBookingWizard />} />
                   <Route path="/ocean/bookings/:id" element={<BookingWorkspace />} />
                   <Route path="/ocean/ops/yard" element={<YardDashboard />} />
@@ -141,7 +202,7 @@ function App() {
                   <Route path="/ocean/customs" element={<CustomsWorkspace />} />
                   <Route path="/ocean/executive/dashboard" element={<ExecutiveDashboard />} />
                   <Route path="/ocean/executive/performance" element={<PerformanceAnalytics />} />
-                  <Route path="/ocean/tracking/map" element={<LiveTrackingMap />} />
+                  <Route path="/ocean/tracking/map" element={<OceanLiveTrackingMap />} />
                   <Route path="/ocean/tracking/timeline" element={<ShipmentTimeline />} />
                   <Route path="/vehicles" element={<VehicleDashboard />} />
                   <Route path="/vehicles/list" element={<VehicleList />} />
@@ -157,9 +218,50 @@ function App() {
                   <Route path="/shipments/:id" element={<ShipmentDetail />} />
                   <Route path="/fleet" element={<Fleet />} />
                   <Route path="/ocean-freight" element={<OceanFreight />} />
-                  <Route path="/air-freight" element={<AirFreight />} />
-                  <Route path="/road-transport" element={<RoadTransport />} />
+                  <Route path="/air-freight" element={<Navigate to="/air/hub" replace />} />
+                  <Route path="/road-transport" element={<Navigate to="/road/hub" replace />} />
+                  <Route path="/road/hub" element={<RoadTransportHub />} />
+                  <Route path="/road/bookings/new" element={<RoadBookingWizard />} />
+                  <Route path="/road/planning" element={<TripPlanner />} />
+                  <Route path="/road/dispatch" element={<DispatchConsole />} />
+                  <Route path="/road/execution/:id" element={<TripExecutionWorkspace />} />
+                  <Route path="/road/vehicle-ops" element={<VehicleOpsDashboard />} />
+                  <Route path="/road/driver-ops" element={<DriverOpsDashboard />} />
+                  <Route path="/road/billing" element={<RoadBillingDashboard />} />
+                  <Route path="/road/claims" element={<RoadClaimsDesk />} />
+                  <Route path="/road/analytics" element={<RoadAnalytics />} />
+                  <Route path="/road/executive" element={<RoadExecutiveDashboard />} />
                   <Route path="/fleet-management" element={<FleetManagement />} />
+                  <Route path="/maintenance/assets" element={<FleetAssetManager />} />
+                  <Route path="/maintenance/preventive" element={<PreventiveMaintenanceCalendar />} />
+                  <Route path="/maintenance/workshop" element={<WorkshopDashboard />} />
+                  <Route path="/maintenance/inspections" element={<InspectionDesk />} />
+                  
+                  <Route path="/maintenance-ops/executive" element={<MaintenanceExecutiveDashboard />} />
+                  <Route path="/maintenance-ops/inventory" element={<PartsInventory />} />
+                  <Route path="/maintenance-ops/fuel-tyres" element={<FuelAndTyreDesk />} />
+                  <Route path="/maintenance-ops/vendors" element={<ComplianceAndVendorHub />} />
+
+                  <Route path="/containers/executive" element={<ContainerExecutiveDashboard />} />
+                  <Route path="/containers/master" element={<ContainerMasterDesk />} />
+                  <Route path="/containers/lifecycle" element={<ContainerLifecycleTracker />} />
+                  <Route path="/containers/allocations" element={<ContainerAllocationHub />} />
+
+                  <Route path="/container-ops/yard" element={<YardManagementConsole />} />
+                  <Route path="/container-ops/desk" element={<ContainerOperationsDesk />} />
+                  <Route path="/container-ops/cargo" element={<CargoAndPortTerminal />} />
+                  <Route path="/container-ops/history" element={<ContainerMovementHistory />} />
+
+                  <Route path="/container-tracking/map" element={<LiveTrackingMap />} />
+                  <Route path="/container-tracking/reefer" element={<ReeferTelemetryDashboard />} />
+                  <Route path="/container-tracking/compliance" element={<HealthAndComplianceHub />} />
+                  <Route path="/container-tracking/repair" element={<RepairWorkshop />} />
+
+                  <Route path="/container-finance/dashboard" element={<ContainerFinanceExecutiveDashboard />} />
+                  <Route path="/container-finance/billing" element={<ContainerBillingHub />} />
+                  <Route path="/container-finance/analytics" element={<ContainerAnalyticsDesk />} />
+                  <Route path="/container-finance/reports" element={<ContainerReportsEngine />} />
+
                   <Route path="/warehouse" element={<Warehouse />} />
                   <Route path="/customs" element={<Customs />} />
                   <Route path="/documents" element={<DocumentCenter />} />
