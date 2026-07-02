@@ -131,6 +131,9 @@ A massive end-to-end purchasing, sourcing, and finance engine tailored for logis
 - **Budget Control**: Departmental and project-based budget master allocations, preventing PO generation if consumption thresholds are breached.
 - **Executive Analytics & BI**: Advanced Prisma-based aggregation pipelines fueling the C-Suite Dashboard. Visualizes Top Spend Categories, Vendor Risk Ratings, Real-time Budget Utilization, and YTD Spend Trends using Recharts.
 
+### 5. Hotfixes & Stability Updates
+- **Legacy BI & AI Patches**: Seamlessly migrated legacy `VendorBill` Prisma references within `ai.ts`, `bi-reports.ts`, and `portals.ts` to the new `ProcurementVendorBill` architecture, ensuring 100% type-safety and uninterrupted compilation for executive reporting.
+
 ---
 
 *This document serves as the absolute blueprint of the Aura ERP ecosystem.*

@@ -89,7 +89,7 @@ router.post('/query', async (req, res) => {
 
       case 'finance.revenue':
         const rev = await prisma.invoice.aggregate({ _sum: { total: true }, where: { type: 'AR' } }).catch(()=>({_sum:{total:0}}));
-        const exp = await prisma.vendorBill.aggregate({ _sum: { amount: true } }).catch(()=>({_sum:{amount:0}}));
+        const exp = await prisma.procurementVendorBill.aggregate({ _sum: { amount: true } }).catch(()=>({_sum:{amount:0}}));
         const tRev = rev._sum.total || 0;
         const tExp = exp._sum.amount || 0;
         responseText = `Our financial records show $${tRev.toLocaleString()} in Revenue and $${tExp.toLocaleString()} in Expenses. Net Profit is $${(tRev - tExp).toLocaleString()}.`;

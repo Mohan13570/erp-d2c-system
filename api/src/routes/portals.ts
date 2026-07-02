@@ -36,10 +36,13 @@ router.get('/vendor/:id/jobs', async (req, res) => {
 });
 
 router.post('/vendor/bills', async (req, res) => {
+  const { vendorId, amount, dueDate } = req.body;
   try {
-    const data = await prisma.vendorBill.create({ data: { ...req.body, dueDate: new Date(req.body.dueDate) } });
-    res.json(data);
-  } catch (err) { res.status(500).json({ error: 'Failed' }); }
+    const bill = await prisma.procurementVendorBill.create({
+      data: { vendorId, amount, totalAmount: amount, billNumber: `VB-PORTAL-${Date.now()}`, dueDate: new Date(dueDate) }
+    });
+    res.status(201).json(bill);
+  } catch (error) { res.status(500).json({ error: 'Failed' }); }
 });
 
 // Employee Portal Data

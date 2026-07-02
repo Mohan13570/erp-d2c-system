@@ -9,13 +9,13 @@ router.get('/dashboard', async (req, res) => {
     // KPI Data
     const totalSales = await prisma.salesOrder.count().catch(() => 0);
     const totalRevenue = await prisma.invoice.aggregate({ _sum: { total: true }, where: { type: 'AR' } }).catch(() => ({ _sum: { total: 0 } }));
-    const totalExpenses = await prisma.vendorBill.aggregate({ _sum: { amount: true } }).catch(() => ({ _sum: { amount: 0 } }));
-    const activeShipments = await prisma.shipment.count({ where: { status: { not: 'Delivered' } } }).catch(() => 0);
+    const totalExpenses = await prisma.procurementVendorBill.aggregate({ _sum: { amount: true }, where: { status: 'Paid' } }).catch(() => ({ _sum: { amount: 0 } }));
+    const activeShipments = await prisma.shipment.count({ where: { status: { notIn: ['Delivered', 'Cancelled'] } } }).catch(() => 0);
     const totalUsers = (await prisma.user.count().catch(() => 0)) + (await prisma.employee.count().catch(() => 0));
 
     // 1. Revenue Forecast (AreaChart)
     const invoices = await prisma.invoice.findMany({ where: { type: 'AR' }, select: { date: true, total: true } }).catch(() => []);
-    const bills = await prisma.vendorBill.findMany({ select: { dueDate: true, amount: true } }).catch(() => []);
+    const bills = await prisma.procurementVendorBill.findMany({ select: { dueDate: true, amount: true } }).catch(() => []);
     
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const revenueMap: Record<string, { revenue: number, expenses: number }> = {};
