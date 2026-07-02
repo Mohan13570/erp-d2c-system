@@ -128,6 +128,28 @@ import PerformanceAnalytics from './pages/ocean/executive/PerformanceAnalytics';
 import OceanLiveTrackingMap from './pages/ocean/tracking/LiveTrackingMap';
 import ShipmentTimeline from './pages/ocean/tracking/ShipmentTimeline';
 
+// Procurement Module
+import ProcurementHub from './pages/procurement/ProcurementHub';
+import VendorMaster from './pages/procurement/VendorMaster';
+import RFQDashboard from './pages/procurement/RFQDashboard';
+import ContractManager from './pages/procurement/ContractManager';
+import ApprovalQueue from './pages/procurement/ApprovalQueue';
+
+// Purchasing Operations Module
+import PurchaseDashboard from './pages/procurement/PurchaseDashboard';
+import PRManager from './pages/procurement/PRManager';
+import POControlCenter from './pages/procurement/POControlCenter';
+import GoodsReceiptDesk from './pages/procurement/GoodsReceiptDesk';
+import InvoiceMatcher from './pages/procurement/InvoiceMatcher';
+import PurchaseReturns from './pages/procurement/PurchaseReturns';
+
+// Procurement Finance Module
+import ExecutiveDashboardProc from './pages/procurement/ExecutiveDashboard';
+import VendorBilling from './pages/procurement/VendorBilling';
+import PaymentManager from './pages/procurement/PaymentManager';
+import BudgetManager from './pages/procurement/BudgetManager';
+import SpendAnalytics from './pages/procurement/SpendAnalytics';
+
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isInitializing } = useAuth();
   if (isInitializing) {
@@ -266,7 +288,29 @@ function App() {
                   <Route path="/customs" element={<Customs />} />
                   <Route path="/documents" element={<DocumentCenter />} />
                   <Route path="/containers" element={<ContainerMgmt />} />
-                  <Route path="/procurement" element={<Procurement />} />
+                  
+                  {/* Procurement & Sourcing Module */}
+                  <Route path="/procurement/hub" element={<ProcurementHub />} />
+                  <Route path="/procurement/vendors" element={<VendorMaster />} />
+                  <Route path="/procurement/rfq" element={<RFQDashboard />} />
+                  <Route path="/procurement/contracts" element={<ContractManager />} />
+                  <Route path="/procurement/approvals" element={<ApprovalQueue />} />
+
+                  {/* Purchasing Operations Module */}
+                  <Route path="/purchasing/dashboard" element={<PurchaseDashboard />} />
+                  <Route path="/purchasing/pr" element={<PRManager />} />
+                  <Route path="/purchasing/po" element={<POControlCenter />} />
+                  <Route path="/purchasing/grn" element={<GoodsReceiptDesk />} />
+                  <Route path="/purchasing/invoices" element={<InvoiceMatcher />} />
+                  <Route path="/purchasing/returns" element={<PurchaseReturns />} />
+
+                  {/* Procurement Finance Module */}
+                  <Route path="/finance/executive-dashboard" element={<ExecutiveDashboardProc />} />
+                  <Route path="/finance/analytics" element={<SpendAnalytics />} />
+                  <Route path="/finance/bills" element={<VendorBilling />} />
+                  <Route path="/finance/payments" element={<PaymentManager />} />
+                  <Route path="/finance/budgets" element={<BudgetManager />} />
+
                   <Route path="/billing" element={<Billing />} />
                   <Route path="/insurance" element={<Insurance />} />
                   <Route path="/tracking" element={<Tracking />} />

@@ -30,6 +30,7 @@ router.delete('/vendors/:id', async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to delete vendor' });
   }
 });
+/*
 router.get('/purchase-orders', async (_req: Request, res: Response) => {
   const pos = await prisma.purchaseOrder.findMany({ include: { vendor: true, items: { include: { item: true } } } });
   res.json(pos);
@@ -72,5 +73,6 @@ router.post('/grns', async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to create GRN' });
   }
 });
+*/
 
 export default router;

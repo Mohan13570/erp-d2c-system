@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
-  LayoutDashboard, Users, UserCog, Settings, Package, Tags, Briefcase, Handshake, Mail, Map, Link as LinkIcon, Database, TrendingUp, Anchor, Plane, Truck, Globe, Car, Building2, ShieldCheck, FileText, Box, ShoppingCart, Landmark, ReceiptText, Shield, Crosshair, DollarSign, Command, RotateCcw, Megaphone, UserCheck, BarChart3, BarChart2, FolderKanban, Cpu, LogOut, Layers, UserCircle, UsersRound, BrainCircuit, Smartphone, Plus, Navigation, ChevronDown, ChevronRight, Activity, MapPin, Navigation2, Calendar, Route, TerminalSquare, History, ThermometerSnowflake, Wrench, DownloadCloud, LayoutGrid, Ship
+  LayoutDashboard, Users, UserCog, Settings, Package, Tags, Briefcase, Handshake, Mail, Map, Link as LinkIcon, Database, TrendingUp, Anchor, Plane, Truck, Globe, Car, Building2, ShieldCheck, FileText, Box, ShoppingCart, Landmark, ReceiptText, Shield, Crosshair, DollarSign, Command, RotateCcw, Megaphone, UserCheck, BarChart3, BarChart2, FolderKanban, Cpu, LogOut, Layers, UserCircle, UsersRound, BrainCircuit, Smartphone, Plus, Navigation, ChevronDown, ChevronRight, Activity, MapPin, Navigation2, Calendar, Route, TerminalSquare, History, ThermometerSnowflake, Wrench, DownloadCloud, LayoutGrid, Ship, Target, CheckCircle
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -118,6 +118,40 @@ const navSections = [
           { name: 'Billing & AR/AP', path: '/container-finance/billing', icon: DollarSign },
           { name: 'Deep Analytics', path: '/container-finance/analytics', icon: Activity },
           { name: 'Reports Engine', path: '/container-finance/reports', icon: DownloadCloud }
+        ]
+      },
+      { 
+        name: 'Procurement & Sourcing', 
+        icon: Building2,
+        subItems: [
+          { name: 'Procurement Hub', path: '/procurement/hub', icon: LayoutDashboard },
+          { name: 'Vendor Master', path: '/procurement/vendors', icon: Users },
+          { name: 'RFQ Sourcing', path: '/procurement/rfq', icon: Target },
+          { name: 'Contract Manager', path: '/procurement/contracts', icon: FileText },
+          { name: 'Approval Queue', path: '/procurement/approvals', icon: CheckCircle }
+        ]
+      },
+      { 
+        name: 'Purchasing Operations', 
+        icon: ShoppingCart,
+        subItems: [
+          { name: 'Purchasing Dashboard', path: '/purchasing/dashboard', icon: LayoutDashboard },
+          { name: 'PR Manager', path: '/purchasing/pr', icon: FileText },
+          { name: 'PO Control Center', path: '/purchasing/po', icon: ShoppingCart },
+          { name: 'Goods Receipt (GRN)', path: '/purchasing/grn', icon: Package },
+          { name: 'Invoice Matcher', path: '/purchasing/invoices', icon: ReceiptText },
+          { name: 'Purchase Returns', path: '/purchasing/returns', icon: RefreshCcw }
+        ]
+      },
+      { 
+        name: 'Finance & Analytics', 
+        icon: TrendingUp,
+        subItems: [
+          { name: 'Executive Dashboard', path: '/finance/executive-dashboard', icon: Target },
+          { name: 'Spend Analytics', path: '/finance/analytics', icon: TrendingUp },
+          { name: 'Vendor Billing (AP)', path: '/finance/bills', icon: FileText },
+          { name: 'Payment Gateway', path: '/finance/payments', icon: CreditCard },
+          { name: 'Budget Control', path: '/finance/budgets', icon: Activity }
         ]
       },
     ]

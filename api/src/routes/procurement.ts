@@ -1,28 +1,32 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import mastersRouter from './procurement/masters';
+import vendorsRouter from './procurement/vendors';
+import rfqRouter from './procurement/rfq';
+import contractsRouter from './procurement/contracts';
+import approvalsRouter from './procurement/approvals';
+import prRouter from './procurement/pr';
+import poRouter from './procurement/po';
+import grnRouter from './procurement/grn';
+import returnsRouter from './procurement/returns';
+import invoicesRouter from './procurement/invoices';
+import posRouter from './procurement/pos';
+import financeRouter from './procurement/finance';
+import analyticsRouter from './procurement/analytics';
 
 const router = Router();
-const prisma = new PrismaClient();
 
-router.get('/vendors', async (req, res) => {
-  try { res.json(await prisma.vendor.findMany()); } catch (error) { res.status(500).json({ error: 'Failed' }); }
-});
-router.post('/vendors', async (req, res) => {
-  try { res.json(await prisma.vendor.create({ data: req.body })); } catch (err: any) { res.status(400).json({ error: err.message }); }
-});
-
-router.get('/pos', async (req, res) => {
-  try { res.json(await prisma.purchaseOrder.findMany({ include: { vendor: true } })); } catch (error) { res.status(500).json({ error: 'Failed' }); }
-});
-router.post('/pos', async (req, res) => {
-  try { res.json(await prisma.purchaseOrder.create({ data: req.body })); } catch (err: any) { res.status(400).json({ error: err.message }); }
-});
-
-router.get('/requisitions', async (req, res) => {
-  try { res.json(await prisma.purchaseRequisition.findMany()); } catch (error) { res.status(500).json({ error: 'Failed' }); }
-});
-router.post('/requisitions', async (req, res) => {
-  try { res.json(await prisma.purchaseRequisition.create({ data: req.body })); } catch (err: any) { res.status(400).json({ error: err.message }); }
-});
+router.use('/masters', mastersRouter);
+router.use('/vendors', vendorsRouter);
+router.use('/rfq', rfqRouter);
+router.use('/contracts', contractsRouter);
+router.use('/approvals', approvalsRouter);
+router.use('/pr', prRouter);
+router.use('/po', poRouter);
+router.use('/grn', grnRouter);
+router.use('/returns', returnsRouter);
+router.use('/invoices', invoicesRouter);
+router.use('/finance', financeRouter);
+router.use('/analytics', analyticsRouter);
+router.use('/', posRouter);
 
 export default router;

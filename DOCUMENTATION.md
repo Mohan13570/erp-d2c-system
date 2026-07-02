@@ -122,6 +122,15 @@ An exhaustive end-to-end global asset lifecycle ecosystem handling ISO container
 - **Financial Architecture**: Auto-aggregation of Demurrage, Detention, Storage, and Cleaning charges. Converts complex operational movements into streamlined multi-currency vendor bills and customer invoices.
 - **C-Suite BI Dashboards**: Recharts-powered interactive analytics calculating Fleet Health Scores, Yard Occupancy ratios, and Revenue vs Profit predictive trends.
 
+### 4. Global Enterprise Procurement Suite
+A massive end-to-end purchasing, sourcing, and finance engine tailored for logistics and supply chain:
+- **Procurement Foundation & Masters**: Complex rule-based vendor routing, tax configurations, Incoterms, and approval workflows.
+- **Purchasing Operations (P2P)**: Comprehensive Procure-to-Pay lifecycle. Generates multi-line Purchase Requisitions (PR), complex Blanket Purchase Orders (PO), and facilitates Goods Receipt Notes (GRN) with QA/QC tracking and partial fulfillments.
+- **Automated Invoice Matching**: A highly robust 2-way and 3-way matching engine to detect discrepancies between PO values, physical GRN receipts, and actual Vendor Invoices.
+- **Procurement Finance & Accounts Payable**: Native integration with the ledger. Manages Vendor Billing (AP liabilities), Payment Gateways (tracking cheques, UPI, bank transfers), and automatically updates Vendor Ledgers (debits/credits).
+- **Budget Control**: Departmental and project-based budget master allocations, preventing PO generation if consumption thresholds are breached.
+- **Executive Analytics & BI**: Advanced Prisma-based aggregation pipelines fueling the C-Suite Dashboard. Visualizes Top Spend Categories, Vendor Risk Ratings, Real-time Budget Utilization, and YTD Spend Trends using Recharts.
+
 ---
 
 *This document serves as the absolute blueprint of the Aura ERP ecosystem.*
