@@ -7,6 +7,7 @@ import inventoryRoutes from './routes/inventory';
 import omsRoutes from './routes/oms';
 import hrRoutes from './routes/hr';
 import financeRoutes from './routes/finance';
+import glRouter from './routes/gl';
 import authRoutes from './routes/auth';
 import supplychainRoutes from './routes/supplychain';
 import manufacturingRoutes from './routes/manufacturing';
@@ -29,7 +30,6 @@ import customsRouter from './routes/customs';
 import documentsRouter from './routes/documents';
 import containersRouter from './routes/containers';
 import procurementRouter from './routes/procurement';
-import financeRouter from './routes/finance';
 import billingRouter from './routes/billing';
 import insuranceRouter from './routes/insurance';
 import trackingRouter from './routes/tracking';
@@ -92,6 +92,7 @@ app.use('/api/inventory', inventoryRoutes);
 app.use('/api/orders', omsRoutes);
 app.use('/api/hr', hrRoutes);
 app.use('/api/finance', financeRoutes);
+app.use('/api/gl', glRouter);
 app.use('/api/auth', authRoutes);
 app.use('/api/supply-chain', supplychainRoutes);
 app.use('/api/manufacturing', manufacturingRoutes);
@@ -117,12 +118,16 @@ app.use('/api/documents', documentsRouter);
 // Modules 13-18
 app.use('/api/containers', containersRouter);
 app.use('/api/procurement', procurementRouter);
-app.use('/api/finance', financeRouter);
-app.use('/api/billing', billingRouter);
-app.use('/api/insurance', insuranceRouter);
+app.use('/api/shipments', shipmentRoutes);
+app.use('/api/supplychain', supplychainRoutes);
+app.use('/api/procurement', procurementRouter);
 app.use('/api/tracking', trackingRouter);
 app.use('/api/portals', portalsRouter);
-app.use('/api/notifications', notificationsRouter);
+app.use('/api/billing', billingRouter);
+app.use('/api/warehouse', warehouseRouter); // Mount WMS
+app.use('/api/notifications', notificationsRouter); // Restored Notifications
+
+// AI API
 app.use('/api/bi', biReportsRouter);
 app.use('/api/ai', aiRouter);
 app.use('/api/shipments', shipmentRoutes);

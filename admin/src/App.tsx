@@ -150,6 +150,50 @@ import PaymentManager from './pages/procurement/PaymentManager';
 import BudgetManager from './pages/procurement/BudgetManager';
 import SpendAnalytics from './pages/procurement/SpendAnalytics';
 
+// WMS UI Module
+import WarehouseMaster from './pages/warehouse/WarehouseMaster';
+import SpatialManager from './pages/warehouse/SpatialManager';
+import EquipmentManager from './pages/warehouse/EquipmentManager';
+import WarehouseSettings from './pages/warehouse/WarehouseSettings';
+
+// WMS Inbound Module
+import InboundDashboard from './pages/warehouse/inbound/InboundDashboard';
+import ASNManager from './pages/warehouse/inbound/ASNManager';
+import GateEntry from './pages/warehouse/inbound/GateEntry';
+import GRNWorkspace from './pages/warehouse/inbound/GRNWorkspace';
+import PutAwayPlanner from './pages/warehouse/inbound/PutAwayPlanner';
+
+// WMS Outbound Module
+import OutboundDashboard from './pages/warehouse/outbound/OutboundDashboard';
+import PickPlanner from './pages/warehouse/outbound/PickPlanner';
+import PackingStation from './pages/warehouse/outbound/PackingStation';
+import DispatchManager from './pages/warehouse/outbound/DispatchManager';
+
+// WMS Analytics Module
+import WMSExecutiveDashboard from './pages/warehouse/analytics/ExecutiveDashboard';
+import WarehouseReports from './pages/warehouse/analytics/WarehouseReports';
+
+// Enterprise Finance Module
+import FinanceDashboard from './pages/finance/FinanceDashboard';
+import ChartOfAccounts from './pages/finance/ChartOfAccounts';
+import AccountsPayable from './pages/finance/AccountsPayable';
+import AccountsReceivable from './pages/finance/AccountsReceivable';
+import FinanceSettings from './pages/finance/FinanceSettings';
+import GeneralLedger from './pages/finance/GeneralLedger';
+import TrialBalance from './pages/finance/TrialBalance';
+import BankReconciliation from './pages/finance/BankReconciliation';
+import EnterpriseBilling from './pages/finance/EnterpriseBilling';
+import TaxCompliance from './pages/finance/TaxCompliance';
+import FinanceProfitabilityAnalysis from './pages/finance/ProfitabilityAnalysis';
+
+// Advanced Inventory Module
+import InventoryDashboard from './pages/inventory/InventoryDashboard';
+import StockControl from './pages/inventory/StockControl';
+import Traceability from './pages/inventory/Traceability';
+import StockMovements from './pages/inventory/StockMovements';
+import CycleCount from './pages/inventory/CycleCount';
+import InventoryReports from './pages/inventory/InventoryReports';
+
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isInitializing } = useAuth();
   if (isInitializing) {
@@ -311,8 +355,51 @@ function App() {
                   <Route path="/finance/payments" element={<PaymentManager />} />
                   <Route path="/finance/budgets" element={<BudgetManager />} />
 
+                  {/* Warehouse Management Module */}
+                  <Route path="/warehouse/master" element={<WarehouseMaster />} />
+                  <Route path="/warehouse/spatial" element={<SpatialManager />} />
+                  <Route path="/warehouse/equipment" element={<EquipmentManager />} />
+                  <Route path="/warehouse/settings" element={<WarehouseSettings />} />
+
+                  {/* Warehouse Inbound Module */}
+                  <Route path="/warehouse/inbound/dashboard" element={<InboundDashboard />} />
+                  <Route path="/warehouse/inbound/asn" element={<ASNManager />} />
+                  <Route path="/warehouse/inbound/gate-entry" element={<GateEntry />} />
+                  <Route path="/warehouse/inbound/grn" element={<GRNWorkspace />} />
+                  <Route path="/warehouse/inbound/put-away" element={<PutAwayPlanner />} />
+
+                  {/* Warehouse Outbound Module */}
+                  <Route path="/warehouse/outbound/dashboard" element={<OutboundDashboard />} />
+                  <Route path="/warehouse/outbound/picking" element={<PickPlanner />} />
+                  <Route path="/warehouse/outbound/packing" element={<PackingStation />} />
+                  <Route path="/warehouse/outbound/dispatch" element={<DispatchManager />} />
+
+                  {/* Warehouse Analytics Module */}
+                  <Route path="/warehouse/analytics/dashboard" element={<WMSExecutiveDashboard />} />
+                  <Route path="/warehouse/analytics/reports" element={<WarehouseReports />} />
+
+                  {/* Enterprise Finance Module */}
+                  <Route path="/finance/dashboard" element={<FinanceDashboard />} />
+                  <Route path="/finance/coa" element={<ChartOfAccounts />} />
+                  <Route path="/finance/gl" element={<GeneralLedger />} />
+                  <Route path="/finance/trial-balance" element={<TrialBalance />} />
+                  <Route path="/finance/bank-reconciliation" element={<BankReconciliation />} />
+                  <Route path="/finance/billing" element={<EnterpriseBilling />} />
+                  <Route path="/finance/tax" element={<TaxCompliance />} />
+                  <Route path="/finance/profitability" element={<FinanceProfitabilityAnalysis />} />
+                  <Route path="/finance/ap" element={<AccountsPayable />} />
+                  <Route path="/finance/ar" element={<AccountsReceivable />} />
+                  <Route path="/finance/settings" element={<FinanceSettings />} />
+
+                  {/* Procurement Module */}
+                  <Route path="/inventory/dashboard" element={<InventoryDashboard />} />
+                  <Route path="/inventory/stock-control" element={<StockControl />} />
+                  <Route path="/inventory/traceability" element={<Traceability />} />
+                  <Route path="/inventory/movements" element={<StockMovements />} />
+                  <Route path="/inventory/cycle-counts" element={<CycleCount />} />
+                  <Route path="/inventory/reports" element={<InventoryReports />} />
+
                   <Route path="/billing" element={<Billing />} />
-                  <Route path="/insurance" element={<Insurance />} />
                   <Route path="/tracking" element={<Tracking />} />
 
                   {/* Portals */}

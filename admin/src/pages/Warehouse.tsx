@@ -11,7 +11,7 @@ export default function Warehouse() {
   const fetchData = async () => {
     try {
       const [wRes, pRes] = await Promise.all([
-        fetch('/api/warehouse'), fetch('/api/warehouse/picks')
+        fetch('/api/warehouse/master'), fetch('/api/warehouse/master/picks')
       ]);
       if (wRes.ok) setWarehouses(await wRes.json());
       if (pRes.ok) setPicks(await pRes.json());
@@ -23,7 +23,7 @@ export default function Warehouse() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch(`/api/warehouse/${activeTab === 'hubs' ? '' : 'picks'}`, {
+      const res = await fetch(`/api/warehouse/master${activeTab === 'hubs' ? '' : '/picks'}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

@@ -2,9 +2,13 @@ import { Router, Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import fs from 'fs';
 import path from 'path';
+import advancedRouter from './inventory/advanced';
 
 const router = Router();
 const prisma = new PrismaClient();
+
+// Mount advanced features
+router.use('/advanced', advancedRouter);
 
 // GET ALL ITEMS
 router.get('/items', async (req: Request, res: Response) => {

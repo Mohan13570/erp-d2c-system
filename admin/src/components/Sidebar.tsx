@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  LayoutDashboard, Users, UserCog, Settings, Package, Tags, Briefcase, Handshake, Mail, Map, Link as LinkIcon, Database, TrendingUp, Anchor, Plane, Truck, Globe, Car, Building2, ShieldCheck, FileText, Box, ShoppingCart, Landmark, ReceiptText, Shield, Crosshair, DollarSign, Command, RotateCcw, Megaphone, UserCheck, BarChart3, BarChart2, FolderKanban, Cpu, LogOut, Layers, UserCircle, UsersRound, BrainCircuit, Smartphone, Plus, Navigation, ChevronDown, ChevronRight, Activity, MapPin, Navigation2, Calendar, Route, TerminalSquare, History, ThermometerSnowflake, Wrench, DownloadCloud, LayoutGrid, Ship, Target, CheckCircle, RefreshCcw, CreditCard
-} from 'lucide-react';
+import { BookOpen, Scale, Activity, Anchor, ArrowDownToLine, ArrowRightLeft, BarChart2, BarChart3, Box, BrainCircuit, Briefcase, Building2, Calendar, Car, CheckCircle, ChevronDown, ChevronRight, ClipboardCheck, ClipboardList, Command, Cpu, CreditCard, Crosshair, DollarSign, DownloadCloud, FileBarChart, FileText, FolderKanban, Globe, Handshake, History, Landmark, Layers, LayoutDashboard, LayoutGrid, LogOut, Map, MapPin, Megaphone, Navigation, Navigation2, Package, PackageOpen, PackageSearch, Plane, Plus, QrCode, ReceiptText, RefreshCcw, RotateCcw, Route, Send, Settings, Shield, ShieldCheck, Ship, ShoppingCart, Smartphone, Target, TerminalSquare, ThermometerSnowflake, TrendingUp, Truck, UserCheck, UserCircle, Users, UsersRound, Wrench } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const navSections = [
@@ -168,15 +166,80 @@ const navSections = [
   {
     label: 'Finance',
     items: [
-      { name: 'Accounting', path: '/finance', icon: Landmark },
-      { name: 'Billing & Invoicing', path: '/billing', icon: ReceiptText },
+      { 
+        name: 'Enterprise Finance', 
+        icon: Landmark,
+        subItems: [
+          { name: 'Finance Dashboard', path: '/finance/dashboard', icon: BarChart3 },
+          { name: 'General Ledger', path: '/finance/gl', icon: BookOpen },
+          { name: 'Chart of Accounts', path: '/finance/coa', icon: Layers },
+          { name: 'Trial Balance', path: '/finance/trial-balance', icon: Scale },
+          { name: 'Bank Reconciliation', path: '/finance/bank-reconciliation', icon: ArrowRightLeft },
+          { name: 'Enterprise Billing', path: '/finance/billing', icon: ReceiptText },
+          { name: 'Accounts Payable', path: '/finance/ap', icon: ShieldCheck },
+          { name: 'Accounts Receivable', path: '/finance/ar', icon: FileText },
+          { name: 'Tax & Compliance', path: '/finance/tax', icon: ShieldCheck },
+          { name: 'Profitability Analysis', path: '/finance/profitability', icon: TrendingUp },
+          { name: 'Finance Settings', path: '/finance/settings', icon: Settings },
+        ]
+      },
       { name: 'Insurance & Claims', path: '/insurance', icon: Shield },
     ]
   },
   {
     label: 'ERP Modules',
     items: [
-      { name: 'Inventory', path: '/inventory', icon: Package },
+      { 
+        name: 'Warehouse Operations', 
+        icon: Box,
+        subItems: [
+          { name: 'Master Setup', path: '/warehouse/master', icon: Building2 },
+          { name: 'Spatial Layout', path: '/warehouse/spatial', icon: Layers },
+          { name: 'Equipment Track', path: '/warehouse/equipment', icon: Truck },
+          { name: 'WMS Settings', path: '/warehouse/settings', icon: Settings }
+        ]
+      },
+      {
+        name: 'Warehouse Inbound',
+        icon: ArrowDownToLine,
+        subItems: [
+          { name: 'Inbound Dashboard', path: '/warehouse/inbound/dashboard', icon: LayoutDashboard },
+          { name: 'ASN & Docking', path: '/warehouse/inbound/asn', icon: Calendar },
+          { name: 'Gate Entry', path: '/warehouse/inbound/gate-entry', icon: Truck },
+          { name: 'GRN & QA', path: '/warehouse/inbound/grn', icon: ClipboardCheck },
+          { name: 'Put-Away Planner', path: '/warehouse/inbound/put-away', icon: MapPin }
+        ]
+      },
+      {
+        name: 'Warehouse Outbound',
+        icon: Send,
+        subItems: [
+          { name: 'Outbound Hub', path: '/warehouse/outbound/dashboard', icon: LayoutDashboard },
+          { name: 'Pick Planner', path: '/warehouse/outbound/picking', icon: Layers },
+          { name: 'Packing Station', path: '/warehouse/outbound/packing', icon: PackageOpen },
+          { name: 'Dispatch Manager', path: '/warehouse/outbound/dispatch', icon: Truck }
+        ]
+      },
+      {
+        name: 'WMS Analytics',
+        icon: BarChart3,
+        subItems: [
+          { name: 'Exec Dashboard', path: '/warehouse/analytics/dashboard', icon: LayoutDashboard },
+          { name: 'Reports Builder', path: '/warehouse/analytics/reports', icon: FileBarChart }
+        ]
+      },
+      { 
+        name: 'Inventory Control', 
+        icon: Package,
+        subItems: [
+          { name: 'Inventory Dashboard', path: '/inventory/dashboard', icon: TrendingUp },
+          { name: 'Stock Control', path: '/inventory/stock-control', icon: PackageSearch },
+          { name: 'Traceability', path: '/inventory/traceability', icon: QrCode },
+          { name: 'Movements & Transfers', path: '/inventory/movements', icon: ArrowRightLeft },
+          { name: 'Cycle Counts', path: '/inventory/cycle-counts', icon: ClipboardList },
+          { name: 'Inventory Reports', path: '/inventory/reports', icon: FileText }
+        ]
+      },
       { name: 'Sales Orders', path: '/orders', icon: ShoppingCart },
       { name: 'Supply Chain', path: '/supply-chain', icon: Truck },
       { name: 'Manufacturing', path: '/manufacturing', icon: Cpu },
@@ -266,8 +329,11 @@ export default function Sidebar() {
               {section.items
                 .filter(item => hasPermission(item.name) || (item.subItems && item.subItems.some(sub => hasPermission(sub.name))))
                 .map(item => {
-                
+                if (!item.icon) { console.error('MISSING ICON FOR ITEM:', item.name); }
                 if (item.subItems) {
+                   item.subItems.forEach(sub => {
+                     if (!sub.icon) console.error('MISSING ICON FOR SUBITEM:', sub.name, 'IN', item.name);
+                   });
                    const isOpen = openMenus[item.name];
                    const isActive = item.subItems.some(sub => location.pathname === sub.path);
                    return (
