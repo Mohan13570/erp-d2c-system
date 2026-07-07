@@ -154,4 +154,54 @@ router.get('/logs', async (req, res) => {
   } catch (error) { res.status(500).json({ error: 'Failed' }); }
 });
 
+router.post('/ocr', async (req, res) => {
+  try {
+    // Simulating OpenAI Vision / OCR Processing for Customs Documents
+    const { documentUrl, documentType } = req.body;
+    
+    // In a real production environment, we would pipe this to OpenAI API:
+    // const response = await openai.chat.completions.create({ ... })
+    
+    // Simulated Neural Extraction
+    const extractedData = {
+      confidenceScore: 0.98,
+      documentType: documentType || 'Bill of Lading',
+      extractedFields: {
+        shipper: "Global Logistics Inc.",
+        consignee: "Aura Enterprises Ltd.",
+        totalWeight: 14500,
+        hsCode: "8471.30.00",
+        declaredValue: 45000.00,
+        portOfLoading: "CNSHA",
+        portOfDischarge: "USLAX"
+      }
+    };
+
+    res.json({ success: true, aiExtraction: extractedData });
+  } catch (error) { res.status(500).json({ error: 'Failed OCR extraction' }); }
+});
+
+router.post('/optimize-route', async (req, res) => {
+  try {
+    const { origin, destination, constraints } = req.body;
+    
+    // Simulating AI Route Pathfinding & ETA Prediction
+    const optimizedPath = {
+      origin,
+      destination,
+      predictedETA: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), // 14 days from now
+      aiConfidence: 0.94,
+      waypoints: [
+        { location: origin, type: 'Origin Port', status: 'Pending' },
+        { location: 'SGSIN', type: 'Transshipment Hub', status: 'Pending' },
+        { location: destination, type: 'Destination Port', status: 'Pending' }
+      ],
+      estimatedFuelSavings: "12%",
+      weatherImpact: "Low - Clear Skies predicted across Pacific sector."
+    };
+
+    res.json({ success: true, optimization: optimizedPath });
+  } catch (error) { res.status(500).json({ error: 'Failed Route Optimization' }); }
+});
+
 export default router;

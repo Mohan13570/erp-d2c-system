@@ -84,8 +84,42 @@ const io = new Server(httpServer, {
   }
 });
 
-app.use(cors());
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import morgan from 'morgan';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsDoc from 'swagger-jsdoc';
+import logger from './utils/logger';
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: { title: 'Aura ERP API', version: '2.0.0', description: 'Enterprise Resource Planning API' },
+    servers: [{ url: 'http://localhost:5000' }],
+    components: {
+      securitySchemes: {
+        bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }
+      }
+    },
+    security: [{ bearerAuth: [] }]
+  },
+  apis: ['./src/routes/*.ts'],
+};
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+app.use(helmet());
+app.use(cors({ origin: '*', credentials: true }));
 app.use(express.json());
+app.use(morgan('combined', { stream: { write: (message) => logger.info(message.trim()) } }));
+
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 1500, // Limit each IP to 1500 requests per `window`
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api/', apiLimiter);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Routes
 app.use('/api/inventory', inventoryRoutes);
