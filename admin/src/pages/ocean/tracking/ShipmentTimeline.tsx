@@ -8,7 +8,7 @@ export default function ShipmentTimeline() {
 
   const fetchTimeline = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/ocean/tracking/timeline/${bookingId}`);
+      const res = await fetch(`/api/ocean/tracking/timeline/${bookingId}`);
       if (res.ok) {
          setEvents(await res.json());
          setSearched(true);

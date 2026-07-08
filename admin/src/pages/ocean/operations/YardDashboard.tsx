@@ -7,7 +7,7 @@ export default function YardDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/ocean/port-ops/calls')
+    fetch('/api/ocean/port-ops/calls')
       .then(res => res.json())
       .then(data => {
         setCalls(data);

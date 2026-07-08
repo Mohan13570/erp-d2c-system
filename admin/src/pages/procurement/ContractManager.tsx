@@ -5,7 +5,7 @@ export default function ContractManager() {
   const [contracts, setContracts] = useState([]);
   
   useEffect(() => {
-    fetch('http://localhost:5000/api/procurement/contracts')
+    fetch('/api/procurement/contracts')
       .then(r => r.json())
       .then(data => setContracts(data))
       .catch(e => console.error(e));

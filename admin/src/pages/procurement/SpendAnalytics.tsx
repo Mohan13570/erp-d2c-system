@@ -6,7 +6,7 @@ export default function SpendAnalytics() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/procurement/analytics/spend')
+    fetch('/api/procurement/analytics/spend')
       .then(res => res.json())
       .then(setData)
       .catch(console.error);

@@ -9,7 +9,7 @@ export default function NotificationDashboard() {
   const { data, isLoading } = useQuery({
     queryKey: ['notification-dashboard'],
     queryFn: async () => {
-      const res = await axios.get('http://localhost:5000/api/notifications/dashboard');
+      const res = await axios.get('/api/notifications/dashboard');
       return res.data;
     }
   });

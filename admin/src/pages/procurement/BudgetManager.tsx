@@ -5,7 +5,7 @@ export default function BudgetManager() {
   const [budgets, setBudgets] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/procurement/finance/budgets')
+    fetch('/api/procurement/finance/budgets')
       .then(res => res.json())
       .then(setBudgets)
       .catch(console.error);

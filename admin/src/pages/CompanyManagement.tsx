@@ -21,10 +21,10 @@ export default function CompanyManagement() {
   const fetchData = async () => {
     try {
       const [brRes, coRes, poRes, txRes] = await Promise.all([
-        fetch('http://localhost:5000/api/company-management/branches', { headers }),
-        fetch('http://localhost:5000/api/company-management/countries', { headers }),
-        fetch('http://localhost:5000/api/company-management/ports', { headers }),
-        fetch('http://localhost:5000/api/company-management/taxes', { headers })
+        fetch('/api/company-management/branches', { headers }),
+        fetch('/api/company-management/countries', { headers }),
+        fetch('/api/company-management/ports', { headers }),
+        fetch('/api/company-management/taxes', { headers })
       ]);
       if(brRes.ok) setBranches(await brRes.json());
       if(coRes.ok) setCountries(await coRes.json());
@@ -48,7 +48,7 @@ export default function CompanyManagement() {
     if (activeTab === 'finance') endpoint = 'taxes';
 
     try {
-      const res = await fetch(`http://localhost:5000/api/company-management/${endpoint}`, {
+      const res = await fetch(`/api/company-management/${endpoint}`, {
         method: 'POST',
         headers,
         body: JSON.stringify(formData)

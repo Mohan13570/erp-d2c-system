@@ -6,7 +6,7 @@ export default function VendorMaster() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/procurement/vendors')
+    fetch('/api/procurement/vendors')
       .then(r => r.json())
       .then(data => { setVendors(data); setLoading(false); })
       .catch(e => { console.error(e); setLoading(false); });

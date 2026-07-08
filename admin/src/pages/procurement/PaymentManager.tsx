@@ -5,7 +5,7 @@ export default function PaymentManager() {
   const [payments, setPayments] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/procurement/finance/payments')
+    fetch('/api/procurement/finance/payments')
       .then(res => res.json())
       .then(setPayments)
       .catch(console.error);

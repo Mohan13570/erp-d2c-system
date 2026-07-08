@@ -5,14 +5,14 @@ export default function ApprovalQueue() {
   const [queue, setQueue] = useState<any[]>([]);
   
   useEffect(() => {
-    fetch('http://localhost:5000/api/procurement/approvals')
+    fetch('/api/procurement/approvals')
       .then(r => r.json())
       .then(data => setQueue(data))
       .catch(e => console.error(e));
   }, []);
 
   const handleAction = async (id: string, action: 'approve' | 'reject') => {
-    await fetch(`http://localhost:5000/api/procurement/approvals/${id}/${action}`, {
+    await fetch(`/api/procurement/approvals/${id}/${action}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ comments: `${action} by UI` })

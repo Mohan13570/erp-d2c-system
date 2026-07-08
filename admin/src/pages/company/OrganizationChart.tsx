@@ -49,7 +49,7 @@ export default function OrganizationChart() {
   const { data: treeData, isLoading } = useQuery({
     queryKey: ['org-tree'],
     queryFn: async () => {
-      const { data } = await axios.get('http://localhost:5000/api/organization/tree');
+      const { data } = await axios.get('/api/organization/tree');
       return data;
     }
   });

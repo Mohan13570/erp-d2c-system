@@ -13,7 +13,7 @@ export default function GateOperations() {
 
   const handleSubmit = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/ocean/events', {
+      const res = await fetch('/api/ocean/events', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

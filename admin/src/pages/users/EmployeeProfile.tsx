@@ -13,7 +13,7 @@ export default function EmployeeProfile() {
   const { data: profile, isLoading } = useQuery({
     queryKey: ['employee', id],
     queryFn: async () => {
-      const { data } = await axios.get(`http://localhost:5000/api/employees/${id}`);
+      const { data } = await axios.get(`/api/employees/${id}`);
       return data;
     },
     enabled: !!id

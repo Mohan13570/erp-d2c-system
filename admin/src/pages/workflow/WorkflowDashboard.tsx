@@ -10,7 +10,7 @@ export default function WorkflowDashboard() {
   const { data: workflows, isLoading } = useQuery({
     queryKey: ['workflows'],
     queryFn: async () => {
-      const { data } = await axios.get('http://localhost:5000/api/workflow');
+      const { data } = await axios.get('/api/workflow');
       return data;
     }
   });

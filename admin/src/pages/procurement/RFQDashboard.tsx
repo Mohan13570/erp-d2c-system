@@ -5,7 +5,7 @@ export default function RFQDashboard() {
   const [rfqs, setRfqs] = useState([]);
   
   useEffect(() => {
-    fetch('http://localhost:5000/api/procurement/rfq')
+    fetch('/api/procurement/rfq')
       .then(r => r.json())
       .then(data => setRfqs(data))
       .catch(e => console.error(e));

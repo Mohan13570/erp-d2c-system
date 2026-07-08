@@ -20,6 +20,20 @@ router.get('/roles', requireAuth, async (req, res) => {
   }
 });
 
+// GET all Users for RBAC Assignment
+router.get('/users', requireAuth, async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      include: {
+        roles: { include: { role: true } }
+      }
+    });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+});
+
 // POST Create Role
 router.post('/roles', requireAuth, async (req, res) => {
   try {

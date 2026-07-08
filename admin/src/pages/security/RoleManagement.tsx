@@ -10,7 +10,7 @@ export default function RoleManagement() {
   const { data: roles, isLoading } = useQuery({
     queryKey: ['roles'],
     queryFn: async () => {
-      const res = await axios.get('http://localhost:5000/api/rbac/roles');
+      const res = await axios.get('/api/rbac/roles');
       return res.data;
     }
   });

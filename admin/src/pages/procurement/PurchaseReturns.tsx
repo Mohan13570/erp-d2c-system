@@ -5,7 +5,7 @@ export default function PurchaseReturns() {
   const [returns, setReturns] = useState([]);
   
   useEffect(() => {
-    fetch('http://localhost:5000/api/procurement/returns')
+    fetch('/api/procurement/returns')
       .then(r => r.json())
       .then(data => setReturns(data))
       .catch(e => console.error(e));

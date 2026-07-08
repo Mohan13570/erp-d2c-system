@@ -7,7 +7,7 @@ export default function LiveTrackingMap() {
   const [aiLoading, setAiLoading] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/ocean/tracking/map-data')
+    fetch('/api/ocean/tracking/map-data')
       .then(res => res.json())
       .then(data => setGeoData(data));
   }, []);
@@ -15,7 +15,7 @@ export default function LiveTrackingMap() {
   const runRouteOptimization = async () => {
     setAiLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/ai/optimize-route', {
+      const res = await fetch('/api/ai/optimize-route', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ origin: 'CNHKG', destination: 'NLRTM' })

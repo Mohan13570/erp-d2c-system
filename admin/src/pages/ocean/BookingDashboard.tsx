@@ -20,7 +20,7 @@ export default function BookingDashboard() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/ocean/bookings')
+    fetch('/api/ocean/bookings')
       .then(res => res.json())
       .then(data => {
         setBookings(data);

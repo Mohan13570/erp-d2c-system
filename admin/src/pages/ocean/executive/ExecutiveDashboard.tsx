@@ -7,7 +7,7 @@ export default function ExecutiveDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/ocean/analytics/executive-kpis')
+    fetch('/api/ocean/analytics/executive-kpis')
       .then(res => res.json())
       .then(data => {
         setKpis(data);

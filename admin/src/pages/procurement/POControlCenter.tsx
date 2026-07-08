@@ -5,7 +5,7 @@ export default function POControlCenter() {
   const [pos, setPos] = useState([]);
   
   useEffect(() => {
-    fetch('http://localhost:5000/api/procurement/po')
+    fetch('/api/procurement/po')
       .then(r => r.json())
       .then(data => setPos(data))
       .catch(e => console.error(e));

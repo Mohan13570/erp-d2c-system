@@ -5,7 +5,7 @@ export default function PRManager() {
   const [prs, setPrs] = useState([]);
   
   useEffect(() => {
-    fetch('http://localhost:5000/api/procurement/pr')
+    fetch('/api/procurement/pr')
       .then(r => r.json())
       .then(data => setPrs(data))
       .catch(e => console.error(e));

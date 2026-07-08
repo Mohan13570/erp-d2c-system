@@ -5,7 +5,7 @@ export default function GoodsReceiptDesk() {
   const [grns, setGrns] = useState([]);
   
   useEffect(() => {
-    fetch('http://localhost:5000/api/procurement/grn')
+    fetch('/api/procurement/grn')
       .then(r => r.json())
       .then(data => setGrns(data))
       .catch(e => console.error(e));

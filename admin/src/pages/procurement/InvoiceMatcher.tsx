@@ -5,7 +5,7 @@ export default function InvoiceMatcher() {
   const [invoices, setInvoices] = useState([]);
   
   useEffect(() => {
-    fetch('http://localhost:5000/api/procurement/invoices')
+    fetch('/api/procurement/invoices')
       .then(r => r.json())
       .then(data => setInvoices(data))
       .catch(e => console.error(e));

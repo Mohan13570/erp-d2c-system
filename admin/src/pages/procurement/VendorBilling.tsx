@@ -5,7 +5,7 @@ export default function VendorBilling() {
   const [bills, setBills] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/procurement/finance/bills')
+    fetch('/api/procurement/finance/bills')
       .then(res => res.json())
       .then(setBills)
       .catch(console.error);

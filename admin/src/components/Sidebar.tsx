@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { BookOpen, Scale, Activity, Anchor, ArrowDownToLine, ArrowRightLeft, BarChart2, BarChart3, Box, BrainCircuit, Briefcase, Building2, Calendar, Car, CheckCircle, ChevronDown, ChevronRight, ClipboardCheck, ClipboardList, Command, Cpu, CreditCard, Crosshair, DollarSign, DownloadCloud, FileBarChart, FileText, FolderKanban, Globe, Handshake, History, Landmark, Layers, LayoutDashboard, LayoutGrid, LogOut, Map, MapPin, Megaphone, Navigation, Navigation2, Package, PackageOpen, PackageSearch, Plane, Plus, QrCode, ReceiptText, RefreshCcw, RotateCcw, Route, Send, Settings, Shield, ShieldCheck, Ship, ShoppingCart, Smartphone, Target, TerminalSquare, ThermometerSnowflake, TrendingUp, Truck, UserCheck, UserCircle, Users, UsersRound, Wrench } from 'lucide-react';
+import { BookOpen, Scale, Activity, Anchor, ArrowDownToLine, ArrowRightLeft, BarChart2, BarChart3, Box, BrainCircuit, Briefcase, Building2, Calendar, Car, CheckCircle, ChevronDown, ChevronRight, ClipboardCheck, ClipboardList, Command, Cpu, CreditCard, Crosshair, DollarSign, DownloadCloud, FileBarChart, FileText, FolderKanban, Globe, Handshake, History, Landmark, Layers, LayoutDashboard, LayoutGrid, LogOut, Map, MapPin, Megaphone, Navigation, Navigation2, Package, PackageOpen, PackageSearch, Plane, Plus, QrCode, ReceiptText, RefreshCcw, RotateCcw, Route, Send, Settings, Shield, ShieldCheck, Ship, ShoppingCart, Smartphone, Target, TerminalSquare, ThermometerSnowflake, TrendingUp, Truck, UserCheck, UserCircle, Users, UsersRound, Wrench, GitMerge, Workflow, Bell, FileCode2, Database, Table, KeyRound } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const navSections = [
@@ -263,11 +263,51 @@ const navSections = [
     ]
   },
   {
-    label: 'System',
+    label: 'Enterprise Core',
     items: [
-      { name: 'Company Master', path: '/company-management', icon: Building2 },
-      { name: 'Auth & RBAC', path: '/rbac', icon: ShieldCheck },
-      { name: 'User Access', path: '/access', icon: UserCheck },
+      { 
+        name: 'Organization', 
+        icon: Building2,
+        subItems: [
+          { name: 'Company Master', path: '/company/master', icon: Building2 },
+          { name: 'Org Chart', path: '/company/organization-chart', icon: Users },
+        ]
+      },
+      { 
+        name: 'Identity & Security', 
+        icon: ShieldCheck,
+        subItems: [
+          { name: 'User Directory', path: '/users/dashboard', icon: UsersRound },
+          { name: 'Security Dashboard', path: '/security/dashboard', icon: Shield },
+          { name: 'Role Management', path: '/security/roles', icon: KeyRound },
+        ]
+      },
+      { 
+        name: 'Workflows & Approvals', 
+        icon: GitMerge,
+        subItems: [
+          { name: 'Approval Inbox', path: '/workflow/inbox', icon: CheckCircle },
+          { name: 'Visual Builder', path: '/workflow/builder', icon: Workflow },
+          { name: 'Workflow Dashboard', path: '/workflow/dashboard', icon: LayoutDashboard },
+        ]
+      },
+      { 
+        name: 'Communications', 
+        icon: Megaphone,
+        subItems: [
+          { name: 'Notification Hub', path: '/notifications/dashboard', icon: Bell },
+          { name: 'Template Builder', path: '/notifications/templates', icon: FileCode2 },
+          { name: 'Announcements', path: '/notifications/announcements', icon: Megaphone },
+        ]
+      },
+      { 
+        name: 'Master Data (MDM)', 
+        icon: Database,
+        subItems: [
+          { name: 'MDM Control Tower', path: '/mdm/dashboard', icon: Database },
+          { name: 'HS Codes Grid', path: '/mdm/HSC', icon: Table },
+        ]
+      },
     ]
   },
   {

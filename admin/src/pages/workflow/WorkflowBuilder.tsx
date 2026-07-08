@@ -45,7 +45,7 @@ export default function WorkflowBuilder() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await axios.post('http://localhost:5000/api/workflow', {
+      await axios.post('/api/workflow', {
         name: 'New Approval Matrix',
         category: 'Finance',
         nodes,

@@ -11,7 +11,7 @@ export default function UserDashboard() {
   const { data: users, isLoading } = useQuery({
     queryKey: ['users'],
     queryFn: async () => {
-      const { data } = await axios.get('http://localhost:5000/api/users');
+      const { data } = await axios.get('/api/users');
       return data;
     }
   });

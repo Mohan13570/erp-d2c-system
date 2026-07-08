@@ -14,7 +14,7 @@ export default function MasterDataGrid() {
   const { data, isLoading } = useQuery({
     queryKey: ['mdm', entity],
     queryFn: async () => {
-      const res = await axios.get(`http://localhost:5000/api/mdm/${entity}`);
+      const res = await axios.get(`/api/mdm/${entity}`);
       return res.data;
     }
   });

@@ -6,7 +6,7 @@ export default function ExecutiveDashboard() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/procurement/analytics/dashboard')
+    fetch('/api/procurement/analytics/dashboard')
       .then(res => res.json())
       .then(d => setData(d))
       .catch(console.error);

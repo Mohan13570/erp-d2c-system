@@ -9,7 +9,7 @@ export default function CustomsWorkspace() {
   const [ocrLoading, setOcrLoading] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/ocean/customs/declarations')
+    fetch('/api/ocean/customs/declarations')
       .then(res => res.json())
       .then(data => {
         setDeclarations(data);
@@ -20,7 +20,7 @@ export default function CustomsWorkspace() {
   const handleAIOCR = async () => {
     setOcrLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/ai/ocr', {
+      const res = await fetch('/api/ai/ocr', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ documentType: 'Customs Invoice' })

@@ -7,18 +7,18 @@ export default function BookingWorkspace() {
   const [booking, setBooking] = useState<any>(null);
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/ocean/bookings/${id}`)
+    fetch(`/api/ocean/bookings/${id}`)
       .then(res => res.json())
       .then(data => setBooking(data));
   }, [id]);
 
   const handleApprove = async () => {
-    await fetch(`http://localhost:5000/api/ocean/bookings/${id}/approve`, { method: 'POST' });
+    await fetch(`/api/ocean/bookings/${id}/approve`, { method: 'POST' });
     window.location.reload();
   };
 
   const generateMBL = async () => {
-    await fetch(`http://localhost:5000/api/ocean/bookings/${id}/documents`, { 
+    await fetch(`/api/ocean/bookings/${id}/documents`, { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ documentType: 'MBL', payload: { shipper: booking.shipper }})

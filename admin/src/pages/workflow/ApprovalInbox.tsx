@@ -9,14 +9,14 @@ export default function ApprovalInbox() {
   const { data: approvals, isLoading, refetch } = useQuery({
     queryKey: ['approvals'],
     queryFn: async () => {
-      const { data } = await axios.get('http://localhost:5000/api/approvals/pending');
+      const { data } = await axios.get('/api/approvals/pending');
       return data;
     }
   });
 
   const handleAction = async (id: string, stepId: string, action: string) => {
     try {
-      await axios.post(`http://localhost:5000/api/approvals/${id}/decide`, {
+      await axios.post(`/api/approvals/${id}/decide`, {
         action,
         stepId,
         comments: `${action} via Unified Inbox`

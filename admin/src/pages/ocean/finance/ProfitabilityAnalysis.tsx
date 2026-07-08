@@ -7,7 +7,7 @@ export default function ProfitabilityAnalysis() {
 
   const analyze = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/ocean/finance/profitability/${bookingId}`);
+      const res = await fetch(`/api/ocean/finance/profitability/${bookingId}`);
       if (res.ok) {
          setResult(await res.json());
       }

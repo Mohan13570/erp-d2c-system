@@ -5,7 +5,7 @@ export default function PerformanceAnalytics() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/ocean/analytics/performance')
+    fetch('/api/ocean/analytics/performance')
       .then(res => res.json())
       .then(d => setData(d));
   }, []);

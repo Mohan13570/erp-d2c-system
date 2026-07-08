@@ -15,14 +15,14 @@ export default function Announcements() {
   const { data: announcements, refetch } = useQuery({
     queryKey: ['announcements'],
     queryFn: async () => {
-      const { data } = await axios.get('http://localhost:5000/api/announcements');
+      const { data } = await axios.get('/api/announcements');
       return data;
     }
   });
 
   const handleBroadcast = async () => {
     try {
-      await axios.post('http://localhost:5000/api/announcements', {
+      await axios.post('/api/announcements', {
         title,
         content,
         type: 'Info',

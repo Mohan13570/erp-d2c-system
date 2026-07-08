@@ -7,7 +7,7 @@ export default function BillingDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/ocean/finance/invoices')
+    fetch('/api/ocean/finance/invoices')
       .then(res => res.json())
       .then(data => {
         setInvoices(data);

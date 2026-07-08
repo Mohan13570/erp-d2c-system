@@ -21,7 +21,7 @@ export default function InvoiceManager() {
     const calculatedTotal = lines.reduce((acc, curr) => acc + (curr.unitPrice * curr.quantity), 0);
     
     try {
-      const res = await fetch('http://localhost:5000/api/ocean/finance/invoices', {
+      const res = await fetch('/api/ocean/finance/invoices', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

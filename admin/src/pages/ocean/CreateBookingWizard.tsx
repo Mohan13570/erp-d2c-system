@@ -23,8 +23,8 @@ export default function CreateBookingWizard() {
   useEffect(() => {
     // Parallel fetching of lookup data
     Promise.all([
-      fetch('http://localhost:5000/api/ocean/ports').then(r => r.json()),
-      fetch('http://localhost:5000/api/ocean/vessels').then(r => r.json()),
+      fetch('/api/ocean/ports').then(r => r.json()),
+      fetch('/api/ocean/vessels').then(r => r.json()),
     ]).then(([ports, vessels]) => {
       setMasterData({ ports, vessels });
     });
@@ -32,7 +32,7 @@ export default function CreateBookingWizard() {
 
   const handleSubmit = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/ocean/bookings', {
+      const res = await fetch('/api/ocean/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
