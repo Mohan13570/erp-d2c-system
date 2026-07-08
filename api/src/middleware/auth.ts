@@ -37,3 +37,5 @@ export const requireRoles = (roles: string[]) => {
     next();
   };
 };
+
+export const requireAuth = authenticateToken;

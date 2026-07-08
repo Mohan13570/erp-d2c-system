@@ -27,8 +27,32 @@ import CompanyManagement from './pages/CompanyManagement';
 import Quotations from './pages/Quotations';
 import OceanFreight from './pages/OceanFreight';
 import AirFreight from './pages/AirFreight';
-import RoadTransport from './pages/RoadTransport';
-import FleetManagement from './pages/FleetManagement';
+
+// New Organization Enterprise Routing
+import CompanyMaster from './pages/company/CompanyMaster';
+import OrganizationChart from './pages/company/OrganizationChart';
+
+// New User & Employee Routing
+import UserDashboard from './pages/users/UserDashboard';
+import EmployeeProfile from './pages/users/EmployeeProfile';
+
+// New Security & RBAC Routing
+import SecurityDashboard from './pages/security/SecurityDashboard';
+import RoleManagement from './pages/security/RoleManagement';
+
+// New Workflow & Approval Routing
+import WorkflowDashboard from './pages/workflow/WorkflowDashboard';
+import WorkflowBuilder from './pages/workflow/WorkflowBuilder';
+import ApprovalInbox from './pages/workflow/ApprovalInbox';
+
+// New Notification & Communication Hub Routing
+import NotificationDashboard from './pages/notifications/NotificationDashboard';
+import TemplateBuilder from './pages/notifications/TemplateBuilder';
+import Announcements from './pages/notifications/Announcements';
+
+// New Master Data Management (MDM) Routing
+import MDMDashboard from './pages/mdm/MDMDashboard';
+import MasterDataGrid from './pages/mdm/MasterDataGrid';
 import Warehouse from './pages/Warehouse';
 import Customs from './pages/Customs';
 import DocumentCenter from './pages/DocumentCenter';
@@ -297,7 +321,7 @@ function App() {
                   <Route path="/road/claims" element={<RoadClaimsDesk />} />
                   <Route path="/road/analytics" element={<RoadAnalytics />} />
                   <Route path="/road/executive" element={<RoadExecutiveDashboard />} />
-                  <Route path="/fleet-management" element={<FleetManagement />} />
+                  {/* <Route path="/fleet-management" element={<FleetManagement />} /> */}
                   <Route path="/maintenance/assets" element={<FleetAssetManager />} />
                   <Route path="/maintenance/preventive" element={<PreventiveMaintenanceCalendar />} />
                   <Route path="/maintenance/workshop" element={<WorkshopDashboard />} />
@@ -327,9 +351,34 @@ function App() {
                   <Route path="/container-finance/billing" element={<ContainerBillingHub />} />
                   <Route path="/container-finance/analytics" element={<ContainerAnalyticsDesk />} />
                   <Route path="/container-finance/reports" element={<ContainerReportsEngine />} />
+          
+          {/* Organization & Company Routes */}
+          <Route path="company/master" element={<CompanyMaster />} />
+          <Route path="company/organization-chart" element={<OrganizationChart />} />
 
-                  <Route path="/warehouse" element={<Warehouse />} />
-                  <Route path="/customs" element={<Customs />} />
+          {/* User & Employee Routes */}
+          <Route path="users/dashboard" element={<UserDashboard />} />
+          <Route path="users/employee/:id" element={<EmployeeProfile />} />
+
+          {/* Security & RBAC Routes */}
+          <Route path="security/dashboard" element={<SecurityDashboard />} />
+          <Route path="security/roles" element={<RoleManagement />} />
+
+          {/* Workflow & Approval Routes */}
+          <Route path="workflow/dashboard" element={<WorkflowDashboard />} />
+          <Route path="workflow/builder" element={<WorkflowBuilder />} />
+          <Route path="workflow/inbox" element={<ApprovalInbox />} />
+
+          {/* Notification Hub Routes */}
+          <Route path="notifications/dashboard" element={<NotificationDashboard />} />
+          <Route path="notifications/templates" element={<TemplateBuilder />} />
+          <Route path="notifications/announcements" element={<Announcements />} />
+
+          {/* Master Data Management (MDM) Routes */}
+          <Route path="mdm/dashboard" element={<MDMDashboard />} />
+          <Route path="mdm/:entity" element={<MasterDataGrid />} />
+
+          {/* Logistics & TMS */}    <Route path="/customs" element={<Customs />} />
                   <Route path="/documents" element={<DocumentCenter />} />
                   <Route path="/containers" element={<ContainerMgmt />} />
                   

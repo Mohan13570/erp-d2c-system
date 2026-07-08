@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CheckCircle, Search, Clock, FileText, Check, X } from 'lucide-react';
 
 export default function ApprovalQueue() {
-  const [queue, setQueue] = useState([]);
+  const [queue, setQueue] = useState<any[]>([]);
   
   useEffect(() => {
     fetch('http://localhost:5000/api/procurement/approvals')

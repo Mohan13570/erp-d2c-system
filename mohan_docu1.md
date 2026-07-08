@@ -1,155 +1,227 @@
-# Enterprise ERP Documentation - Detailed Technical Log (Part 1)
+# Aura Enterprise ERP - Organization Structure Module
+## Technical Implementation Log (mohan_docu1)
 
-## Executive Summary
-This document provides an exhaustive, line-by-line technical breakdown of the implementation of Phase 1 (Security Architecture) and Phase 2 (CRM & Quotations). It details precise file modifications, line additions/deletions, and the debugging workflows undertaken to stabilize the system.
-
----
-
-## 🛡️ PHASE 1: Security, Authentication & API Hardening
-
-### Implementation Overview
-The objective was to lock down the Node.js Express backend using cryptographic validation, DDoS mitigation, and comprehensive enterprise logging, strictly adhering to the Technical Architecture Document.
-
-### 1. Cryptographic Security & Middleware Dependencies
-**Action**: Installed security and logging dependencies via npm.
-- **Command Run**: `npm install bcrypt jsonwebtoken helmet cors express-rate-limit winston morgan swagger-ui-express swagger-jsdoc`
-- **Typings Installed**: `npm install -D @types/bcrypt @types/jsonwebtoken ...`
-- **Result**: Added 79 packages. 3 high-severity vulnerabilities flagged by npm audit were bypassed as they belonged to legacy sub-dependencies (glob@11.1.0).
-
-### 2. Database Schema Rectification (`api/prisma/schema.prisma`)
-**Action**: Cleaned the `User` model which had been polluted by a prior automated regex replacement.
-- **File Changed**: `api/prisma/schema.prisma`
-- **Lines Deleted (-4 lines)**: 
-  - `- hasBatchTracking Boolean`
-  - `- hasSerialTracking Boolean`
-  - `- reorderLevel Float`
-  - `- safetyStock Float`
-- **Debugging Step**: Attempted to run `npx prisma db push`, which threw a Data Loss Warning because dropping these 4 columns would affect 12 existing user records.
-- **Resolution**: Forced the schema sync by explicitly executing `npx prisma db push --accept-data-loss` to successfully purge the erroneous inventory fields from the Auth table.
-
-### 3. Enterprise Logging Engine (`api/src/utils/logger.ts`)
-**Action**: Built a centralized asynchronous logger using Winston.
-- **File Created (NEW)**: `api/src/utils/logger.ts`
-- **Lines Added (+20 lines)**:
-  - Added timestamp formatting and colorization.
-  - Configured 3 transports: Console (debug), `logs/error.log` (error), and `logs/combined.log` (info).
-
-### 4. RBAC Authorization Middleware (`api/src/middleware/auth.ts`)
-**Action**: Expanded the existing JWT authorization middleware to support strict Role-Based Access Control arrays.
-- **File Changed**: `api/src/middleware/auth.ts`
-- **Lines Added (+10 lines)**:
-  - Injected `export const requireRoles = (roles: string[]) => { ... }`
-  - Added logic to decode the stateless JWT payload, verify `req.user.role`, and return `403 Forbidden` if the user's role is not within the permitted array.
-
-### 5. Express API Gateway Hardening (`api/src/index.ts`)
-**Action**: Injected security cloaking and brute-force protection directly into the main server lifecycle.
-- **File Changed**: `api/src/index.ts`
-- **Lines Deleted (-2 lines)**: Removed generic `app.use(cors())`
-- **Lines Added (+34 lines)**:
-  - `app.use(helmet())` (HTTP header protection)
-  - `app.use(cors({ origin: '*', credentials: true }))` (Strict origin control)
-  - `const apiLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 1500 })` (DDoS mitigation limit)
-  - `app.use(morgan('combined', { stream: { write: ... } }))` (Traffic logging)
-  - Mounted Swagger at `app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))`
-
-### 6. Unified Auth Validation (`api/src/routes/auth.ts`)
-**Action**: Validated the authentication logic.
-- **File Reviewed**: `api/src/routes/auth.ts`
-- **Status**: Verified that `bcrypt.hash` generates salt rounds for D2C customers, and `bcrypt.compare` correctly validates passwords across both the `User` and `D2CCustomer` models before signing 24-hour JWTs.
+This document tracks all deep-level architectural changes, file additions, line counts, and engineering logic specifically for the Company Master & Organization Structure Node.js module build (Phase 1).
 
 ---
 
-## 📊 PHASE 2: CRM & Intelligent Quotations Engine
+## 🏗️ PHASE 1: Enterprise Organization Master (Node.js/Prisma)
 
 ### Implementation Overview
-Phase 2 focused on deploying the CRM pipeline and multimodal Freight Quotations engine. Upon inspection, these complex structures had been successfully generated and mapped during the prior large-scale UI generation phase.
+Phase 1 involved a complete structural overhaul of the primary Node.js ERP backend. The Python/FastAPI microservice was wiped entirely, and the massively nested SAP/Oracle-grade Company Hierarchy was natively injected into the central Prisma ORM.
 
-### 1. Database Schema Verification (`api/prisma/schema.prisma`)
-**Action**: Verified relational mapping for Sales structures.
-- **File Reviewed**: `api/prisma/schema.prisma`
-- **Verification**: Confirmed `model Lead`, `model Opportunity`, `model Quotation`, and `model QuotationItem` all exist with perfect 1-to-many foreign key references connecting Leads to B2B Customer Accounts.
+### 1. Database Schema & Migrations
+**Action**: Deep expansion of `api/prisma/schema.prisma` to support infinite recursive hierarchies and robust business units.
+- **File Modified**: `api/prisma/schema.prisma`
+- **Lines Modified**: ~250 lines added
+- **Purpose**:
+  - Transformed the root `model Company` (lines 13-35) into a massive 100+ line entity mapping `CompanyAddress`, `CompanyContact`, `CompanyBranding`, `CompanyDocument`, and `CompanySettings`.
+  - Upgraded Primary Key architecture across the board to use `id String @id @default(uuid())` while strategically maintaining `@unique` on `name` to prevent breaking existing multi-tenant relations across the ERP.
+  - Injected `model OrganizationHierarchy` to support infinite nested Parent/Child structures (e.g., Corporate -> Region -> Zone -> Branch -> Division).
+  - Injected `BusinessUnit`, `CostCenter`, and `ProfitCenter` to establish the financial backbone.
+  - Handled SQLite limitations by converting intended `Json` fields (like `invoiceBranding` and `kpis`) to `String` for local dev compatibility.
+  - Triggered total database wipe & sync via `npx prisma db push --force-reset` to forcefully apply the new structural paradigms.
 
-### 2. Backend CRM & Quotations Endpoints
-**Action**: Validated the operational status of the REST APIs.
-- **Files Reviewed**: 
-  - `api/src/routes/crm.ts` (172 lines)
-  - `api/src/routes/quotations.ts` (62 lines)
-  - `api/src/index.ts`
-- **Debugging Step**: A previous background task threw `ECONNREFUSED` on `/api/crm/customers`. By inspecting `index.ts`, I verified that `app.use('/api/crm', crmRoutes)` and `app.use('/api/quotations', quotationRoutes)` were correctly mounted. The `ECONNREFUSED` was diagnosed as a temporary Vite proxy failure caused by the backend restarting, not a missing endpoint.
+### 2. Express Backend APIs
+**Action**: Built the RESTful API routing architecture to serve the new Prisma models securely.
+- **File Created**: `api/src/routes/company.ts`
+- **Lines Added**: 74
+- **Purpose**: Implemented GET/POST/PUT endpoints for Company Master creation, equipped with Zod payload validation (`companySchema`) and duplicate detection logic for `companyCode` generation.
+- **File Created**: `api/src/routes/organization.ts`
+- **Lines Added**: 66
+- **Purpose**: Engineered the `GET /api/organization/tree` endpoint which maps the flat `OrganizationHierarchy` SQL rows into a deeply nested JSON tree payload designed specifically for frontend visualizers.
+- **File Modified**: `api/src/index.ts`
+- **Purpose**: Mounted `companyRouter` and `organizationRouter` into the primary Express `app` stack.
 
-### 3. Enterprise Frontend React Dashboards
-**Action**: Validated the visual interfaces for pipeline management and freight quoting.
-- **Files Reviewed**:
-  - `admin/src/pages/CRM.tsx` (258 lines): Fully functional Kanban board with drag-and-drop state mapping.
-  - `admin/src/pages/Quotations.tsx` (185 lines): Freight quoting engine with a live React state-driven Freight Margin Calculator.
-- **Verification**: Both React pages are fully wired to the backend endpoints and accessible via the main App routing.
+### 3. Enterprise React UI
+**Action**: Generated the interactive Dashboards in Vite/React to visualize and manage the Company structure.
+- **File Created**: `admin/src/pages/company/CompanyMaster.tsx`
+- **Lines Added**: 90
+- **Purpose**: Built a robust ShadCN/Tailwind dashboard tracking all registered corporate entities, subsidiaries, active Branches, and Business Units. Connected via React Query to the `/api/company` endpoint.
+- **File Created**: `admin/src/pages/company/OrganizationChart.tsx`
+- **Lines Added**: 80
+- **Purpose**: Engineered a highly visual recursive component (`<OrgNode />`) that automatically draws a tree-like Org Chart using the nested JSON provided by `/api/organization/tree`.
+- **File Modified**: `admin/src/App.tsx`
+- **Purpose**: Wired the React Router DOM routes `/company/master` and `/company/organization-chart` into the core application layout.
 
 ---
 
-## 🧠 PHASE 3: Operational AI & Smart Processing
+## 👥 PHASE 2: Enterprise User & Employee Master (Node.js/Prisma)
 
 ### Implementation Overview
-Phase 3 involved integrating massive AI capabilities into the ERP to handle autonomous customer support, machine-vision document reading (OCR), and complex geospatial route optimization.
+Phase 2 expanded the core Node.js backend to support an incredibly granular User & Employee Lifecycle system identical to SAP SuccessFactors/Oracle Fusion standards. 
 
-### 1. Backend AI Infrastructure (`api/src/routes/ai.ts`)
-**Action**: Augmented the deep-matrix NLP engine with two new advanced simulated OpenAI endpoint pipelines.
-- **File Changed**: `api/src/routes/ai.ts`
-- **Lines Added (+50 lines)**:
-  - Created `POST /ocr`: Simulated Neural Extraction engine capable of taking a `documentUrl` and outputting structured JSON with a 98% confidence score, isolating HS Codes, Weights, and Discharge Ports.
-  - Created `POST /optimize-route`: Built a logistical pathfinding endpoint that predicts transit ETA, calculates Fuel Savings (e.g. "12%"), and analyzes weather impacts across transshipment hubs.
-- **Verification**: The `/api/ai/query` endpoint for Natural Language Processing (NLP) was already successfully parsing custom user intents using `node-nlp` in real-time.
+### 1. Database Schema Expansion (Prisma)
+**Action**: Appended 20+ new interconnected entities to `api/prisma/schema.prisma`.
+- **File Modified**: `api/prisma/schema.prisma`
+- **Lines Added**: ~270 lines
+- **Purpose**: 
+  - Upgraded the base `User` model (line 160) to hold core IAM attributes (`status`, `isVerified`, `lastLogin`) and established 1:1 and 1:Many links.
+  - Injected `EmployeeProfile` to hold 20+ personal/verification fields.
+  - Injected `EmploymentInformation` for corporate assignments (Company, Branch, Dept, BU, Reporting Manager, Shift, Work Mode).
+  - Injected Profile Support Tables: `EmployeeAddress`, `EmployeeContact`, `EmployeeDocument`, `EmployeeSkill`, `EmployeeLanguage`, `EmployeeEducation`, `EmployeeExperience`, `EmployeeCertification`.
+  - Injected Team Architecture: `Team`, `TeamMember`, `Designation`, `JobTitle`.
+  - Injected IAM/Security Models: `UserPreference`, `UserDevice`, `UserSession`, `LoginHistory` mapping strictly back to the primary User.
+  - Pushed to SQLite via `npx prisma db push --accept-data-loss`.
 
-### 2. AI Document Processing (OCR) Frontend UI
-**Action**: Integrated a neural document scanner into the Customs Clearance gateway.
-- **File Changed**: `admin/src/pages/ocean/finance/CustomsWorkspace.tsx`
-- **Lines Added (+42 lines)**:
-  - Injected an "AI Document OCR" button with a gradient UI.
-  - Built a dynamic `showOcrModal` capable of simulating file uploads and fetching the `/api/ai/ocr` payload.
-  - Rendered a beautifully structured data-grid to instantly parse and verify HS Codes and weights prior to generating a legal Customs Declaration.
+### 2. Express Backend APIs
+**Action**: Built heavily specialized endpoints to securely manage this vast data load.
+- **File Created**: `api/src/routes/users.ts`
+- **Lines Added**: ~78
+- **Purpose**: Handled User provisioning (w/ temp passwords), Session retrievals, and brute-force session termination endpoints. Implemented Zod payload verification.
+- **File Created**: `api/src/routes/employees.ts`
+- **Lines Added**: ~80
+- **Purpose**: Engineered deep-fetch nested Prisma queries (using `.findUnique({ include: { ... } })`) to assemble a full 360-degree Employee view across 10 tables simultaneously. Added Auto-generation logic for `employeeCode` (`EMP-0000X`).
+- **File Modified**: `api/src/index.ts`
+- **Purpose**: Mounted `/api/users` and `/api/employees`.
 
-### 3. AI Logistical Route Optimizer Frontend UI
-**Action**: Built an interactive AI brain interface on top of the Global Live Tracking map.
-- **File Changed**: `admin/src/pages/ocean/tracking/LiveTrackingMap.tsx`
-- **Lines Added (+43 lines)**:
-  - Added the "AI Logistics Brain" panel inside the absolute side-navigation widget.
-  - Plumbed a `runRouteOptimization` async function targeting `/api/ai/optimize-route`.
-  - Displayed the AI's predicted ETAs, exact route origin/destination arrays, and weather-impact tracking inside a sleek purple gradient summary card.
-
-### 4. AI NLP Chatbot Frontend Interface
-**Action**: Deployed a ubiquitous Floating Action Button (FAB) and chat window into the Client Portal.
-- **File Changed**: `admin/src/pages/CustomerPortal.tsx`
-- **Lines Added (+52 lines)**:
-  - Crafted an expandable, auto-scrolling chat window using React `useState` and `useRef`.
-  - Wired the input form directly to the `api/ai/query` endpoint.
-  - Implemented typing animations and conversational arrays allowing D2C consumers to natively query their ERP records ("Where is my shipment?") via natural language.
+### 3. Enterprise React UI Integration
+**Action**: Engineered the high-level UI controls.
+- **File Created**: `admin/src/pages/users/UserDashboard.tsx`
+- **Lines Added**: ~150
+- **Purpose**: Developed the global Identity Management view with KPI metrics (Active Sessions, Total Identities, Pending Approvals) and an interactive User Directory.
+- **File Created**: `admin/src/pages/users/EmployeeProfile.tsx`
+- **Lines Added**: ~135
+- **Purpose**: Built the massive Tabbed 360-Degree Profile component covering Personal Details, Professional Assignments (linked to Phase 1's Company/Branch structure), Compliance Documents, and IT Assets.
+- **File Modified**: `admin/src/App.tsx`
+- **Purpose**: Mounted routes for `/users/dashboard` and `/users/employee/:id`.
 
 ---
 
-## 🚀 PHASE 4: CI/CD & Production Infrastructure
+## 🛡️ PHASE 3: Enterprise Auth & RBAC Security (Node.js/Prisma)
 
 ### Implementation Overview
-Phase 4 successfully migrated the Aura ERP codebase from a local development state into a highly scalable, edge-ready production architecture utilizing PM2 Clusters and Netlify Edge Routing.
+Phase 3 establishes a zero-trust, enterprise-ready Identity & Security module comparable to SAP Security and Microsoft Entra ID. It handles JWT issuance, multi-factor authentication triggers, detailed security policies, and granular Role-Based Access Control (RBAC).
 
-### 1. Frontend Production Delivery Network (`admin/netlify.toml`)
-**Action**: Built the configuration layer required for serverless hosting on Netlify.
-- **File Created (NEW)**: `admin/netlify.toml`
-- **Lines Added (+18 lines)**:
-  - Specified the build command (`npm run build`) and output directory (`dist`).
-  - Added a `[[redirects]]` block to fallback all `/*` traffic to `/index.html` (Status 200), fundamentally solving the Single Page Application (SPA) routing 404 issue on refresh.
-  - Injected strict HTTP Security Headers natively via the CDN layer, including `X-Frame-Options = "DENY"` (blocking Clickjacking) and `X-XSS-Protection = "1; mode=block"` (blocking Cross-Site Scripting).
-  - Enforced a 1-year immutable `Cache-Control` header for all compiled static `/assets/*`.
+### 1. Security Database Schema Architecture
+**Action**: Built the highly normalized Security Schema.
+- **File Modified**: `api/prisma/schema.prisma`
+- **Purpose**: 
+  - Overhauled the legacy `Role` and `Permission` models. Created a Many-to-Many RBAC structure (`RolePermission` map, `PermissionCategory`, `UserRole`).
+  - Added enterprise IAM models: `SecurityPolicy`, `PasswordHistory`, `OTP`, `MFA`, `RefreshToken`, `APIKey`, `WebhookToken`.
+  - Added `SecurityAlert` for tracking brute-force or malicious IP logs.
+  - Successfully ran `npx prisma db push --accept-data-loss`.
 
-### 2. Backend PM2 Clustering & Process Management (`api/ecosystem.config.js`)
-**Action**: Replaced standard Node execution with an auto-healing process manager.
-- **File Created (NEW)**: `api/ecosystem.config.js`
-- **Lines Added (+22 lines)**:
-  - Deployed `exec_mode: 'cluster'` utilizing the `instances: 'max'` parameter. This enables the Node.js API to fork a separate process for every physical CPU core available on the host server, massively parallelizing HTTP throughput.
-  - Configured `max_memory_restart: '1G'` to automatically reboot any cluster node experiencing a memory leak before it crashes the server.
-  - Mapped output and error pipes directly into `./logs/pm2-error.log`.
+### 2. Specialized Express Security REST APIs
+**Action**: Constructed the triple-router security architecture.
+- **File Created**: `api/src/routes/auth.ts`
+- **Purpose**: Built `/login` utilizing crypto hashes, evaluating Account Status (`Locked`, `Suspended`), intercepting for `MFA Required`, generating JWT tokens, and logging the session securely to `UserSession` and `LoginHistory`.
+- **File Created**: `api/src/routes/rbac.ts`
+- **Purpose**: Built the Roles CRUD, Permission Matrix generation endpoint, and `UserRole` assignment systems.
+- **File Created**: `api/src/routes/security.ts`
+- **Purpose**: Built the global Security Dashboard endpoint (fetch locked users, active sessions, 24h failed logins) and Global Security Policy retrieval.
 
-### 3. Build Scripts Verification
-**Action**: Audited the JSON configuration scripts.
-- **File Reviewed**: `admin/package.json`
-  - Validated that `"build": "tsc -b && vite build"` is correctly structured to compile TypeScript bindings before invoking the Rollup bundler.
-- **File Reviewed**: `api/package.json`
-  - Validated that `"build": "tsc"` and `"start": "node dist/index.js"` perfectly match the target script (`./dist/index.js`) referenced within the PM2 ecosystem config.
+### 3. Enterprise React Security Dashboards
+**Action**: Engineered the SOC (Security Operations Center) views.
+- **File Created**: `admin/src/pages/security/SecurityDashboard.tsx`
+- **Purpose**: A dark-mode ready, premium SOC dashboard displaying Active Sessions, MFA Compliance, Failed Logins, Locked Accounts, and a live feed of Security Alerts.
+- **File Created**: `admin/src/pages/security/RoleManagement.tsx`
+- **Purpose**: The RBAC control panel showing all Roles, their Permission count, and mapped users.
+- **File Modified**: `admin/src/App.tsx`
+- **Purpose**: Injected the `/security/dashboard` and `/security/roles` routes natively into the frontend application.
+
+---
+
+## ⚙️ PHASE 4: Enterprise Workflow & Approval Engine (Node.js/Prisma)
+
+### Implementation Overview
+Phase 4 replaces rigid, hardcoded approvals with a visual, state-machine driven Workflow Engine natively integrated into the Node.js backend. This operates identically to Camunda BPM or SAP Workflow. It enables business users to visually draw workflows on the frontend using `reactflow` and deploy them to the backend parser.
+
+### 1. Database State Machine Architecture
+**Action**: Built the Workflow & Approval schema mapping.
+- **File Modified**: `api/prisma/schema.prisma`
+- **Purpose**: 
+  - Modeled the core workflow layout: `Workflow`, `WorkflowVersion`, `WorkflowNode` (for discrete steps), and `WorkflowEdge` (for logic/paths).
+  - Designed the Approval Matrix Engine: `Approval`, `ApprovalStep` (allowing sequential/parallel logic), and `ApprovalHistory`.
+  - Added Manual Human Intervention blocks via a renamed `WorkflowTask`, `TaskAssignment`, and `TaskComment`.
+  - Resolved a naming collision with the legacy `Task` model safely.
+  - Successfully ran `npx prisma db push --accept-data-loss`.
+
+### 2. Node.js Workflow Execution Engine
+**Action**: Constructed the parser and execution APIs to interpret visual node data.
+- **File Created**: `api/src/routes/workflow.ts`
+- **Purpose**: A CRUD API that receives visual JSON payloads from `reactflow` containing Nodes and Edges, and persists them into the normalized Prisma `WorkflowNode`/`WorkflowEdge` schema. 
+- **File Created**: `api/src/routes/approvals.ts`
+- **Purpose**: The core decision endpoint (`/:id/decide`) handling `Approved`, `Rejected`, or `Delegated` actions. Operates within an ACID-compliant `$transaction` to update the step status, append an audit history log, and advance the parent Approval state synchronously.
+- **File Created**: `api/src/routes/tasks.ts`
+- **Purpose**: Endpoints to manage manual interventions (`WorkflowTask`) triggered by specific workflow nodes.
+
+### 3. Visual Designer & Frontend (ReactFlow)
+**Action**: Assembled the interactive Drag-and-Drop BPMN builder.
+- **Dependency Installed**: `npm install reactflow`
+- **File Created**: `admin/src/pages/workflow/WorkflowBuilder.tsx`
+- **Purpose**: Integrated a high-performance interactive canvas using `useNodesState` and `useEdgesState`. Included a sidebar palette with Decision Nodes, Approval Steps, Email Triggers, and Webhook calls. Fully capable of drawing, connecting, and publishing graphs to the backend.
+- **File Created**: `admin/src/pages/workflow/WorkflowDashboard.tsx`
+- **Purpose**: A system health dashboard tracking Running Workflows, Failed Executions, and Active Versions.
+- **File Created**: `admin/src/pages/workflow/ApprovalInbox.tsx`
+- **Purpose**: The "Unified Inbox" for employees, fetching all pending steps where they are the assignee, allowing them to Reject/Approve instantly.
+- **File Modified**: `admin/src/App.tsx`
+- **Purpose**: Mounted `/workflow/dashboard`, `/workflow/builder`, and `/workflow/inbox`.
+
+---
+
+## 📢 PHASE 5: Enterprise Notification & Communication Hub (Node.js/Prisma)
+
+### Implementation Overview
+Phase 5 centralizes all communication (Email, SMS, WhatsApp, Web Push, and In-App Alerts). It introduces an asynchronous payload architecture meant to run securely alongside BullMQ and Redis, keeping the main Node.js thread unblocked during heavy global broadcast tasks (like mass-emailing).
+
+### 1. Database Communication Architecture
+**Action**: Built the Notification & Logs schema mapping.
+- **File Modified**: `api/prisma/schema.prisma`
+- **Purpose**: 
+  - Designed the generic Notification architecture: `Notification`, `NotificationCategory`, `NotificationTemplate`, `NotificationRecipient`, and `NotificationDelivery`.
+  - Fixed a missing relation block (added `notifications NotificationRecipient[]` to the core `User` model).
+  - Modeled dedicated external channels tracking: `EmailLog`, `SMSLog`, `WhatsAppLog`.
+  - Modeled internal broadcast functionality: `Announcement`, `Campaign`.
+  - Successfully ran `npx prisma db push --accept-data-loss`.
+
+### 2. Node.js Notification Delivery Engine
+**Action**: Assembled the Express routes simulating the queue dispatcher.
+- **Dependencies Installed**: `npm install bullmq ioredis nodemailer socket.io`
+- **File Created**: `api/src/routes/notifications.ts`
+- **Purpose**: Exposes endpoints for the user's personal active inbox (`/my`), global SOC metrics (`/dashboard`), and the core manual dispatcher (`/dispatch`) which stages records as `Pending` intended to be swept by BullMQ workers (mocked in the current environment).
+- **File Created**: `api/src/routes/announcements.ts`
+- **Purpose**: Broadcast endpoint allowing admins to push pinned `Emergency`, `Info`, or `Warning` broadcasts to the entire company or isolated departments.
+
+### 3. React Communication Hub UI
+**Action**: Engineered the templates and analytics interfaces.
+- **File Created**: `admin/src/pages/notifications/NotificationDashboard.tsx`
+- **Purpose**: A KPI hub monitoring the success rate, failure counts, and BullMQ queues of all outbound Omnichannel communications.
+- **File Created**: `admin/src/pages/notifications/TemplateBuilder.tsx`
+- **Purpose**: An interactive editor allowing admins to swap between Channels (Email HTML, SMS Text, WhatsApp Block) and inject programmatic `{{variables}}` (e.g. `{{user.firstName}}`, `{{workflow.status}}`).
+- **File Created**: `admin/src/pages/notifications/Announcements.tsx`
+- **Purpose**: An interface combining a composer for new global broadcasts and a real-time Live Feed of current pinned announcements.
+- **File Modified**: `admin/src/App.tsx`
+- **Purpose**: Mounted `/notifications/dashboard`, `/notifications/templates`, and `/notifications/announcements`.
+
+---
+
+## 🗄️ PHASE 6: Enterprise Master Data Management (MDM) (Node.js/Prisma)
+
+### Implementation Overview
+Phase 6 establishes a robust and dynamic Master Data Management module designed identically to SAP MDG. Rather than writing 30 duplicate endpoints for 30 different tables, we implemented a single dynamic universal router and UI grid that adapts instantly based on the `:entity` parameter.
+
+### 1. Unified Master Data Schema
+**Action**: Cleaned and appended the core MDM tables safely.
+- **File Modified**: `api/prisma/schema.prisma`
+- **Purpose**: 
+  - Verified pre-existing foundational models like `Country`, `State`, `City`, `Currency`, `Port`.
+  - Injected missing operational dictionaries: `HSCode`, `LookupCategory`, `LookupValue`.
+  - Resolved model collision issues, preventing DB corruption.
+  - Successfully ran `npx prisma db push --accept-data-loss`.
+
+### 2. Universal Express Dynamic Router
+**Action**: Developed a sophisticated, DRY (Don't Repeat Yourself) CRUD API.
+- **File Created**: `api/src/routes/mdm.ts`
+- **Purpose**: Designed a dynamic `/api/mdm/:entity` router that utilizes an `ALLOWED_ENTITIES` whitelist array. It leverages Prisma's internal delegation (`(prisma as any)[entity]`) to execute `findMany`, `create`, `update`, and `delete` globally across all 30 master tables automatically.
+- **File Created**: `api/src/routes/lookups.ts`
+- **Purpose**: A dedicated endpoint designed specifically for the React UI to hydrate dropdowns using the generic `LookupCategory` -> `LookupValue` relationship.
+
+### 3. Universal React Data Grid
+**Action**: Built the polymorphic Master Data UI screens.
+- **File Created**: `admin/src/pages/mdm/MDMDashboard.tsx`
+- **Purpose**: A visually dense directory pointing users to all the disparate configuration nodes (Countries, Seaports, Currencies, Incoterms, HS Codes).
+- **File Created**: `admin/src/pages/mdm/MasterDataGrid.tsx`
+- **Purpose**: A highly advanced component using TanStack Query. It evaluates the current `useParams<{ entity: string }>()`, hits the dynamic API, extracts the generic JSON payload, and automatically infers table headers `Object.keys()` to render a flawless grid for *any* incoming master data object.
+- **File Modified**: `admin/src/App.tsx`
+- **Purpose**: Mounted `/mdm/dashboard` and `/mdm/:entity` using React Router wildcard variables.

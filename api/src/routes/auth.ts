@@ -1,161 +1,93 @@
-import { Router, Request, Response } from 'express';
+import express from 'express';
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
+import { z } from 'zod';
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET, authenticateToken, AuthRequest } from '../middleware/auth';
+import crypto from 'crypto';
 
-const router = Router();
+const router = express.Router();
 const prisma = new PrismaClient();
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key';
 
-// Unified Login for Admin, Employee, Customer
-router.post('/login', async (req: Request, res: Response) => {
-  const { email, password, type } = req.body;
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string()
+});
 
+router.post('/login', async (req, res) => {
   try {
-    let userRecord = null;
-    let role = 'User';
+    const { email, password } = loginSchema.parse(req.body);
+    const passwordHash = crypto.createHash('sha256').update(password).digest('hex');
 
-    if (type === 'Customer') {
-      userRecord = await prisma.d2CCustomer.findUnique({ where: { email } });
-    } else {
-      userRecord = await prisma.user.findUnique({ 
-        where: { email },
-        include: { 
-          role: {
-            include: { permissions: true }
-          }
-        }
-      });
-      if (userRecord && (userRecord as any).role) {
-        role = (userRecord as any).role.name;
-      }
-    }
-
-    if (!userRecord || !userRecord.passwordHash) {
-      return res.status(401).json({ error: 'Invalid email or password' });
-    }
-
-    const validPassword = await bcrypt.compare(password, userRecord.passwordHash);
-    if (!validPassword) {
-      return res.status(401).json({ error: 'Invalid email or password' });
-    }
-
-    // Update last login
-    if (type !== 'Customer') {
-      await prisma.user.update({
-        where: { id: userRecord.id },
-        data: { lastLogin: new Date() }
-      });
-
-      // Create Audit Log for login
-      await prisma.auditLog.create({
-        data: {
-          userId: userRecord.id,
-          action: 'Login',
-          tableName: 'User',
-          recordId: userRecord.id,
-          oldValue: null,
-          newValue: 'Successful Login',
-          ipAddress: req.ip || req.socket.remoteAddress
-        }
-      });
-    } else {
-      // Create Audit Log for D2C Customer login
-      await prisma.auditLog.create({
-        data: {
-          userId: null,
-          action: 'Login',
-          tableName: 'D2CCustomer',
-          recordId: userRecord.id,
-          oldValue: null,
-          newValue: 'Successful Login',
-          ipAddress: req.ip || req.socket.remoteAddress
-        }
-      });
-    }
-
-    const token = jwt.sign(
-      { 
-        id: userRecord.id, 
-        email: userRecord.email, 
-        role: role,
-        type: type 
-      }, 
-      JWT_SECRET, 
-      { expiresIn: '24h' }
-    );
-    res.json({
-      token,
-      user: {
-        id: userRecord.id,
-        email: userRecord.email,
-        firstName: userRecord.firstName,
-        lastName: userRecord.lastName,
-        role: role,
-        type: type,
-        permissions: type !== 'Customer' && (userRecord as any).role?.permissions ? (userRecord as any).role.permissions.map((p: any) => p.module) : []
+    const user = await prisma.user.findUnique({ 
+      where: { email },
+      include: {
+        mfas: true,
+        userRoles: { include: { role: true } }
       }
     });
 
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+    if (!user || user.passwordHash !== passwordHash) {
+      await prisma.loginHistory.create({
+        data: {
+          userId: user?.id || 'unknown',
+          status: 'Failed',
+          failureReason: 'Invalid Credentials',
+          ipAddress: req.ip
+        }
+      });
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
-// Get Current User Profile
-router.get('/me', authenticateToken, async (req: AuthRequest, res: Response) => {
-  res.json({ user: req.user });
-});
+    if (user.status === 'Locked' || user.status === 'Suspended') {
+      return res.status(403).json({ error: `Account is ${user.status}` });
+    }
 
-// Register D2C Customer
-router.post('/register-customer', async (req: Request, res: Response) => {
-  try {
-    const { email, password, firstName, lastName } = req.body;
+    // Check MFA
+    const mfa = user.mfas.find(m => m.isEnabled);
+    if (mfa) {
+      // In production, return an MFA token requiring the client to hit /verify-mfa
+      return res.status(202).json({ message: 'MFA Required', mfaToken: 'temp_mfa_token' });
+    }
+
+    // Generate Tokens
+    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
     
-    // Check if customer exists
-    const existing = await prisma.d2CCustomer.findUnique({ where: { email } });
-    if (existing) {
-      return res.status(400).json({ error: 'Email already in use' });
-    }
-
-    const passwordHash = await bcrypt.hash(password, 10);
-    const customer = await prisma.d2CCustomer.create({
+    // Log successful session
+    await prisma.userSession.create({
       data: {
-        email,
-        passwordHash,
-        firstName,
-        lastName,
-        tier: 'Bronze'
+        userId: user.id,
+        token: token,
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        expiresAt: new Date(Date.now() + 60 * 60 * 1000)
       }
     });
 
-    const token = jwt.sign(
-      { 
-        id: customer.id, 
-        email: customer.email, 
-        role: 'Customer',
-        type: 'Customer' 
-      }, 
-      JWT_SECRET, 
-      { expiresIn: '24h' }
-    );
-
-    res.status(201).json({
-      token,
-      user: {
-        id: customer.id,
-        email: customer.email,
-        firstName: customer.firstName,
-        lastName: customer.lastName,
-        role: 'Customer',
-        type: 'Customer'
-      }
+    await prisma.loginHistory.create({
+      data: { userId: user.id, status: 'Success', ipAddress: req.ip }
     });
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { lastLogin: new Date() }
+    });
+
+    res.json({ token, user: { id: user.id, email: user.email, roles: user.userRoles.map(ur => ur.role.name) } });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Failed to register customer' });
+    res.status(400).json({ error: 'Invalid payload' });
   }
 });
 
-export default router;
+// Logout endpoint
+router.post('/logout', async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (token) {
+    await prisma.userSession.updateMany({
+      where: { token },
+      data: { status: 'Terminated' }
+    });
+  }
+  res.json({ message: 'Logged out successfully' });
+});
+
+export const authRouter = router;

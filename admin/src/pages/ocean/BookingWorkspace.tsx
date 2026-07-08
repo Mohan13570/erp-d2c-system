@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Anchor, CheckCircle, FileText, Send, Clock, ShieldCheck, Printer } from 'lucide-react';
+import { Anchor, CheckCircle, FileText, Send, Clock, ShieldCheck, Printer, Plus } from 'lucide-react';
 
 export default function BookingWorkspace() {
   const { id } = useParams();

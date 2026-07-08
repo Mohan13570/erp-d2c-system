@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, User, Star, Activity, Phone, ShieldAlert, CreditCard, HeartPulse } from 'lucide-react';
+import { ArrowLeft, User, Star, Activity, Phone, ShieldAlert, CreditCard, HeartPulse, FileText } from 'lucide-react';
 
 export default function DriverProfile() {
   const { id } = useParams();
