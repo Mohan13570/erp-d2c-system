@@ -1,0 +1,53 @@
+// ==========================================
+// VENDOR LOGISTICS & ASN COLLABORATION
+// ==========================================
+
+model VendorASNInteraction {
+  id              String   @id @default(uuid())
+  asnId           String
+  asn             AdvanceShipmentNotice @relation(fields: [asnId], references: [id], onDelete: Cascade)
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  status          String   @default("Pending") // Pending, Approved, Rejected
+  remarks         String?
+  containerNumber String?
+  sealNumber      String?
+  timestamp       DateTime @default(now())
+}
+
+model VendorDeliveryAppointment {
+  id              String   @id @default(uuid())
+  asnId           String
+  asn             AdvanceShipmentNotice @relation(fields: [asnId], references: [id], onDelete: Cascade)
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  dockScheduleId  String
+  dockSchedule    DockSchedule @relation(fields: [dockScheduleId], references: [id])
+  status          String   @default("Scheduled") // Scheduled, Arrived, Unloading, Completed, Missed
+  vehiclePlate    String?
+  driverName      String?
+  driverContact   String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model VendorShipmentTracking {
+  id              String   @id @default(uuid())
+  asnId           String
+  asn             AdvanceShipmentNotice @relation(fields: [asnId], references: [id], onDelete: Cascade)
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  event           String   // Dispatched, In Transit, Arrived, Gate Entry, Unloading, Completed
+  location        String?
+  timestamp       DateTime @default(now())
+}
+
+model VendorGRNVisibility {
+  id              String   @id @default(uuid())
+  grnId           String
+  grn             GoodsReceiptNote @relation(fields: [grnId], references: [id], onDelete: Cascade)
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  canView         Boolean  @default(true)
+  viewedAt        DateTime?
+}

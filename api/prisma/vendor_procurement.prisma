@@ -1,0 +1,95 @@
+// ==========================================
+// VENDOR PROCUREMENT COLLABORATION
+// ==========================================
+
+model VendorQuotation {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  rfqId           String
+  rfq             ProcurementRFQ @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+  status          String   @default("Draft") // Draft, Submitted, UnderNegotiation, Accepted, Rejected, Withdrawn
+  totalAmount     Float    @default(0.0)
+  currency        String   @default("USD")
+  validUntil      DateTime?
+  deliveryDate    DateTime?
+  remarks         String?
+  items           VendorQuotationItem[]
+  negotiations    VendorNegotiation[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model VendorQuotationItem {
+  id              String   @id @default(uuid())
+  quotationId     String
+  quotation       VendorQuotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  rfqItemId       String
+  rfqItem         ProcurementRFQItem @relation(fields: [rfqItemId], references: [id])
+  quantity        Float
+  unitPrice       Float
+  taxAmount       Float    @default(0.0)
+  freightAmount   Float    @default(0.0)
+  discountAmount  Float    @default(0.0)
+  totalPrice      Float
+  remarks         String?
+}
+
+model VendorNegotiation {
+  id              String   @id @default(uuid())
+  quotationId     String
+  quotation       VendorQuotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  message         String
+  authorType      String   // Vendor, Buyer
+  authorId        String   // ID of VendorUser or internal User
+  attachmentUrl   String?
+  timestamp       DateTime @default(now())
+}
+
+model VendorProductCatalog {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  sku             String
+  name            String
+  description     String?
+  unitOfMeasure   String
+  price           Float
+  currency        String   @default("USD")
+  leadTimeDays    Int      @default(0)
+  moq             Float    @default(1)
+  isActive        Boolean  @default(true)
+}
+
+model VendorPriceList {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  name            String
+  validFrom       DateTime
+  validTo         DateTime
+  discountPercent Float    @default(0.0)
+  isActive        Boolean  @default(true)
+}
+
+model VendorPOInteraction {
+  id              String   @id @default(uuid())
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  action          String   // Viewed, Accepted, Rejected
+  remarks         String?
+  timestamp       DateTime @default(now())
+}
+
+model VendorContractAcknowledge {
+  id              String   @id @default(uuid())
+  contractId      String
+  contract        VendorContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  status          String   @default("Pending") // Pending, Acknowledged, Disputed
+  acknowledgedAt  DateTime?
+  remarks         String?
+}

@@ -53,6 +53,28 @@ import Announcements from './pages/notifications/Announcements';
 // New Master Data Management (MDM) Routing
 import MDMDashboard from './pages/mdm/MDMDashboard';
 import MasterDataGrid from './pages/mdm/MasterDataGrid';
+
+// New System Admin Routing
+import SystemDashboard from './pages/admin/SystemDashboard';
+import LogsViewer from './pages/admin/LogsViewer';
+
+// Enterprise Integration & AI
+import IntegrationDashboard from './pages/integration/IntegrationDashboard';
+import APIGateway from './pages/integration/APIGateway';
+import AIDashboard from './pages/ai/AIDashboard';
+import PromptLibrary from './pages/ai/PromptLibrary';
+
+// Vendor Portal
+import VendorList from './pages/vendor/VendorList';
+import VendorRegistrationWizard from './pages/vendor/VendorRegistrationWizard';
+import VendorDashboard from './pages/vendor/VendorDashboard';
+import VendorProcurementDashboard from './pages/vendor/VendorProcurementDashboard';
+import VendorRFQList from './pages/vendor/VendorRFQList';
+import VendorPOView from './pages/vendor/VendorPOView';
+import VendorLogisticsDashboard from './pages/vendor/VendorLogisticsDashboard';
+import VendorASNList from './pages/vendor/VendorASNList';
+import VendorDockBooking from './pages/vendor/VendorDockBooking';
+
 import Warehouse from './pages/Warehouse';
 import Customs from './pages/Customs';
 import DocumentCenter from './pages/DocumentCenter';
@@ -377,6 +399,27 @@ function App() {
           {/* Master Data Management (MDM) Routes */}
           <Route path="mdm/dashboard" element={<MDMDashboard />} />
           <Route path="mdm/:entity" element={<MasterDataGrid />} />
+
+          {/* System Admin Routes */}
+          <Route path="admin/dashboard" element={<SystemDashboard />} />
+          <Route path="admin/logs" element={<LogsViewer />} />
+
+          {/* Integration & AI Routes */}
+          <Route path="integration/dashboard" element={<IntegrationDashboard />} />
+          <Route path="integration/gateway" element={<APIGateway />} />
+          <Route path="ai/dashboard" element={<AIDashboard />} />
+          <Route path="ai/prompts" element={<PromptLibrary />} />
+
+          {/* Vendor Portal Routes */}
+          <Route path="vendor/list" element={<VendorList />} />
+          <Route path="vendor/registration" element={<VendorRegistrationWizard />} />
+          <Route path="vendor/portal" element={<VendorDashboard />} />
+          <Route path="vendor/procurement" element={<VendorProcurementDashboard />} />
+          <Route path="vendor/rfqs" element={<VendorRFQList />} />
+          <Route path="vendor/pos" element={<VendorPOView />} />
+          <Route path="vendor/logistics" element={<VendorLogisticsDashboard />} />
+          <Route path="vendor/asns" element={<VendorASNList />} />
+          <Route path="vendor/docks" element={<VendorDockBooking />} />
 
           {/* Logistics & TMS */}    <Route path="/customs" element={<Customs />} />
                   <Route path="/documents" element={<DocumentCenter />} />

@@ -1,0 +1,127 @@
+// ==========================================
+// VENDOR PORTAL & ONBOARDING
+// ==========================================
+
+model VendorProfile {
+  id              String   @id @default(uuid())
+  vendorId        String   @unique
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  legalName       String?
+  tradeName       String?
+  description     String?
+  companyLogo     String?
+  companyBanner   String?
+  socialLinks     String?  // JSON
+  msmeRegNo       String?
+  cinNo           String?
+  incorporationDate DateTime?
+  profileStatus   String   @default("Draft") // Draft, Submitted, UnderReview, Approved, Rejected
+  completionPercentage Int @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model VendorUser {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  email           String   @unique
+  passwordHash    String
+  firstName       String
+  lastName        String
+  mobile          String?
+  profilePic      String?
+  roleId          String?
+  role            VendorUserRole? @relation(fields: [roleId], references: [id])
+  isActive        Boolean  @default(true)
+  lastLogin       DateTime?
+  loginHistory    String?  // JSON array of IP/Device
+  createdAt       DateTime @default(now())
+}
+
+model VendorUserRole {
+  id              String   @id @default(uuid())
+  name            String   // Admin, Finance, Operations
+  permissions     String   // JSON array of RBAC strings
+  users           VendorUser[]
+}
+
+model VendorInvitation {
+  id              String   @id @default(uuid())
+  email           String
+  vendorId        String?
+  vendor          Vendor?  @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  token           String   @unique
+  status          String   @default("Pending") // Pending, Accepted, Expired
+  invitedBy       String?
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+}
+
+model VendorCompliance {
+  id              String   @id @default(uuid())
+  vendorId        String   @unique
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  kycStatus       String   @default("Pending") // Pending, Verified, Rejected
+  amlClear        Boolean  @default(false)
+  taxValidated    Boolean  @default(false)
+  complianceScore Int      @default(0)
+  blacklistCheck  Boolean  @default(false)
+  lastAssessedAt  DateTime?
+}
+
+model VendorKYC {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  documentType    String   // GST, PAN, IEC, BusinessLicense
+  documentNumber  String
+  documentUrl     String?
+  status          String   @default("Pending") // Pending, Verified, Rejected
+  verifiedBy      String?
+  verifiedAt      DateTime?
+  expiryDate      DateTime?
+}
+
+model VendorApproval {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  approvalType    String   // Registration, ProfileChange, BankDetail
+  status          String   @default("Pending") // Pending, Approved, Rejected
+  currentLevel    Int      @default(1)
+  history         VendorApprovalHistory[]
+  createdAt       DateTime @default(now())
+}
+
+model VendorApprovalHistory {
+  id              String   @id @default(uuid())
+  approvalId      String
+  approval        VendorApproval @relation(fields: [approvalId], references: [id], onDelete: Cascade)
+  level           Int
+  action          String   // Approved, Rejected, Commented
+  comments        String?
+  actorId         String   // User ID who acted
+  timestamp       DateTime @default(now())
+}
+
+model VendorNotification {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  title           String
+  message         String
+  type            String   // Info, Alert, Approval
+  isRead          Boolean  @default(false)
+  timestamp       DateTime @default(now())
+}
+
+model VendorActivity {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  userId          String?
+  action          String
+  details         String?  // JSON
+  timestamp       DateTime @default(now())
+}

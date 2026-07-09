@@ -1,0 +1,200 @@
+// ==========================================
+// SYSTEM ADMINISTRATION & MONITORING
+// ==========================================
+
+model SystemHealth {
+  id              String   @id @default(uuid())
+  component       String   // Database, Redis, Server, API
+  status          String   // Operational, Degraded, Down
+  responseTimeMs  Int      @default(0)
+  lastChecked     DateTime @default(now())
+  details         String?  // JSON string for errors/warnings
+}
+
+model ServerMetrics {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  cpuUsage        Float    @default(0)
+  memoryTotal     Float    @default(0)
+  memoryUsed      Float    @default(0)
+  diskTotal       Float    @default(0)
+  diskUsed        Float    @default(0)
+  networkRx       Float    @default(0)
+  networkTx       Float    @default(0)
+  uptime          Float    @default(0)
+}
+
+model DatabaseMetrics {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  activeConnections Int    @default(0)
+  idleConnections   Int    @default(0)
+  queryRate       Float    @default(0)
+  slowQueries     Int      @default(0)
+  deadlocks       Int      @default(0)
+  dbSizeGb        Float    @default(0)
+}
+
+model RedisMetrics {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  connectedClients Int     @default(0)
+  memoryUsedMb    Float    @default(0)
+  keyspaceHits    Int      @default(0)
+  keyspaceMisses  Int      @default(0)
+}
+
+model QueueMetrics {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  queueName       String
+  activeJobs      Int      @default(0)
+  waitingJobs     Int      @default(0)
+  completedJobs   Int      @default(0)
+  failedJobs      Int      @default(0)
+  delayedJobs     Int      @default(0)
+}
+
+model ApiMetrics {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  endpoint        String
+  method          String
+  requestCount    Int      @default(0)
+  avgResponseTime Float    @default(0)
+  p95ResponseTime Float    @default(0)
+  errorCount      Int      @default(0)
+}
+
+model JobHistory {
+  id              String   @id @default(uuid())
+  jobId           String
+  queueName       String
+  name            String
+  status          String   // Completed, Failed
+  startTime       DateTime
+  endTime         DateTime?
+  durationMs      Int?
+  attempts        Int      @default(1)
+  error           String?
+  result          String?
+  createdAt       DateTime @default(now())
+}
+
+model BackupHistory {
+  id              String   @id @default(uuid())
+  type            String   // Full, Incremental
+  status          String   // InProgress, Completed, Failed
+  filePath        String?
+  fileSizeBytes   BigInt?
+  startedAt       DateTime @default(now())
+  completedAt     DateTime?
+  durationMs      Int?
+  error           String?
+}
+
+model RestoreHistory {
+  id              String   @id @default(uuid())
+  backupId        String
+  status          String   // InProgress, Completed, Failed
+  startedAt       DateTime @default(now())
+  completedAt     DateTime?
+  durationMs      Int?
+  error           String?
+}
+
+model SystemLog {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  level           String   // INFO, WARN, ERROR, FATAL
+  service         String   // Api, Worker, Cron
+  message         String
+  metadata        String?  // JSON
+  stackTrace      String?
+}
+
+model ApiLog {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  method          String
+  path            String
+  statusCode      Int
+  durationMs      Int
+  ipAddress       String?
+  userAgent       String?
+  userId          String?
+  requestBody     String?
+  responseBody    String?
+}
+
+model ErrorLog {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  type            String   // Validation, Database, Unhandled
+  message         String
+  stack           String?
+  path            String?
+  userId          String?
+  resolved        Boolean  @default(false)
+  resolvedAt      DateTime?
+}
+
+model PerformanceMetric {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  metricName      String
+  value           Float
+  tags            String?  // JSON
+}
+
+model SecurityEvent {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  eventType       String   // FailedLogin, BlockedIP, RateLimitExceeded
+  severity        String   // Low, Medium, High, Critical
+  ipAddress       String?
+  userId          String?
+  details         String?
+}
+
+model License {
+  id              String   @id @default(uuid())
+  licenseKey      String   @unique
+  organization    String
+  tier            String   // Professional, Enterprise
+  validFrom       DateTime
+  validUntil      DateTime
+  maxUsers        Int      @default(10)
+  modules         String   // JSON array of activated modules
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+}
+
+model FeatureFlag {
+  id              String   @id @default(uuid())
+  name            String   @unique
+  description     String?
+  isEnabled       Boolean  @default(false)
+  environments    String   // JSON array e.g. ["dev", "prod"]
+  updatedAt       DateTime @updatedAt
+}
+
+model EnvironmentSetting {
+  id              String   @id @default(uuid())
+  key             String   @unique
+  value           String
+  description     String?
+  isSecret        Boolean  @default(false)
+  updatedAt       DateTime @updatedAt
+}
+
+// ActivityLog - Generic log for any entity
+model ActivityLog {
+  id              String   @id @default(uuid())
+  entityType      String
+  entityId        String
+  action          String   // Created, Updated, Deleted
+  userId          String?
+  details         String?  // JSON of changes
+  timestamp       DateTime @default(now())
+}

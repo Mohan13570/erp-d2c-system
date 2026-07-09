@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { BookOpen, Scale, Activity, Anchor, ArrowDownToLine, ArrowRightLeft, BarChart2, BarChart3, Box, BrainCircuit, Briefcase, Building2, Calendar, Car, CheckCircle, ChevronDown, ChevronRight, ClipboardCheck, ClipboardList, Command, Cpu, CreditCard, Crosshair, DollarSign, DownloadCloud, FileBarChart, FileText, FolderKanban, Globe, Handshake, History, Landmark, Layers, LayoutDashboard, LayoutGrid, LogOut, Map, MapPin, Megaphone, Navigation, Navigation2, Package, PackageOpen, PackageSearch, Plane, Plus, QrCode, ReceiptText, RefreshCcw, RotateCcw, Route, Send, Settings, Shield, ShieldCheck, Ship, ShoppingCart, Smartphone, Target, TerminalSquare, ThermometerSnowflake, TrendingUp, Truck, UserCheck, UserCircle, Users, UsersRound, Wrench, GitMerge, Workflow, Bell, FileCode2, Database, Table, KeyRound } from 'lucide-react';
+import { BookOpen, Scale, Activity, Anchor, ArrowDownToLine, ArrowRightLeft, BarChart2, BarChart3, Box, BrainCircuit, Briefcase, Building2, Calendar, Car, CheckCircle, ChevronDown, ChevronRight, ClipboardCheck, ClipboardList, Command, Cpu, CreditCard, Crosshair, DollarSign, DownloadCloud, FileBarChart, FileText, FolderKanban, Globe, Handshake, History, Landmark, Layers, LayoutDashboard, LayoutGrid, LogOut, Map, MapPin, Megaphone, Navigation, Navigation2, Package, PackageOpen, PackageSearch, Plane, Plus, QrCode, ReceiptText, RefreshCcw, RotateCcw, Route, Send, Settings, Shield, ShieldCheck, Ship, ShoppingCart, Smartphone, Target, TerminalSquare, ThermometerSnowflake, TrendingUp, Truck, UserCheck, UserCircle, Users, UsersRound, Wrench, GitMerge, Workflow, Bell, FileCode2, Database, Table, KeyRound, Webhook, Link2, Key, FileCheck, Inbox } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const navSections = [
@@ -265,6 +265,45 @@ const navSections = [
   {
     label: 'Enterprise Core',
     items: [
+      { 
+        name: 'System Administration', 
+        icon: Cpu,
+        subItems: [
+          { name: 'Control Tower', path: '/admin/dashboard', icon: LayoutDashboard },
+          { name: 'System Logs', path: '/admin/logs', icon: FileText },
+        ]
+      },
+      {
+        name: 'Integration Hub',
+        icon: Webhook,
+        subItems: [
+          { name: 'Connectors', path: '/integration/dashboard', icon: Link2 },
+          { name: 'API Gateway', path: '/integration/gateway', icon: Key },
+        ]
+      },
+      {
+        name: 'AI Platform',
+        icon: BrainCircuit,
+        subItems: [
+          { name: 'AI Control Center', path: '/ai/dashboard', icon: Activity },
+          { name: 'Prompt Library', path: '/ai/prompts', icon: FileText },
+        ]
+      },
+      {
+        name: 'Vendor Portal',
+        icon: Building2,
+        subItems: [
+          { name: 'Vendor Directory', path: '/vendor/list', icon: Users },
+          { name: 'Self Registration', path: '/vendor/registration', icon: FileCheck },
+          { name: 'External Portal', path: '/vendor/portal', icon: ShieldCheck },
+          { name: 'Procurement Collab', path: '/vendor/procurement', icon: ShoppingCart },
+          { name: 'RFQs & Quotes', path: '/vendor/rfqs', icon: FileText },
+          { name: 'Purchase Orders', path: '/vendor/pos', icon: Inbox },
+          { name: 'Logistics Collab', path: '/vendor/logistics', icon: Truck },
+          { name: 'Active ASNs', path: '/vendor/asns', icon: Package },
+          { name: 'Dock Booking', path: '/vendor/docks', icon: MapPin },
+        ]
+      },
       { 
         name: 'Organization', 
         icon: Building2,

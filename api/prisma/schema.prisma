@@ -384,6 +384,25 @@ model Vendor {
   group      VendorGroup?    @relation(fields: [groupId], references: [id])
   typeId     String?
   type       VendorType?     @relation(fields: [typeId], references: [id])
+  
+  // Vendor Portal Extensions
+  profile         VendorProfile?
+  users           VendorUser[]
+  invitations     VendorInvitation[]
+  compliance      VendorCompliance?
+  kycDocuments    VendorKYC[]
+  approvals       VendorApproval[]
+  notifications   VendorNotification[]
+  activities      VendorActivity[]
+  quotations VendorQuotation[]
+  catalogs VendorProductCatalog[]
+  priceLists VendorPriceList[]
+  poInteractions VendorPOInteraction[]
+  contractAcknowledgments VendorContractAcknowledge[]
+  asnInteractions VendorASNInteraction[]
+  deliveryAppointments VendorDeliveryAppointment[]
+  shipmentTrackings VendorShipmentTracking[]
+  grnVisibilities VendorGRNVisibility[]
 }
 
 // ==========================================
@@ -4025,6 +4044,7 @@ model VendorContract {
   status     String                  @default("Active")
   fileUrl    String?
   versions   VendorContractVersion[]
+  acknowledgments VendorContractAcknowledge[]
 }
 
 model VendorContractVersion {
@@ -4165,6 +4185,7 @@ model ProcurementRFQ {
   vendors     ProcurementRFQVendor[]
   responses   ProcurementRFQResponse[]
   comparisons ProcurementRFQComparison[]
+  vendorQuotations VendorQuotation[]
 }
 
 model ProcurementRFQItem {
@@ -4175,6 +4196,7 @@ model ProcurementRFQItem {
   description String
   quantity    Int
   uom         String
+  vendorQuotationItems VendorQuotationItem[]
 }
 
 model ProcurementRFQVendor {
@@ -4311,6 +4333,7 @@ model PurchaseOrder {
   returns               PurchaseReturn[]
   history               PurchaseOrderHistory[]
   ProcurementVendorBill ProcurementVendorBill[]
+  vendorInteractions VendorPOInteraction[]
 }
 
 model PurchaseOrderHistory {
@@ -4352,6 +4375,7 @@ model GoodsReceiptNote {
   notes           String?
   items           GRNItem[]
   inspections     QualityInspection[]
+  vendorVisibilities VendorGRNVisibility[]
 }
 
 model GRNItem {
@@ -4670,6 +4694,9 @@ model AdvanceShipmentNotice {
   status          String        @default("Scheduled") // Scheduled, Arrived, Receiving, Completed
   createdAt       DateTime      @default(now())
   gateEntries     GateEntry[]
+  vendorInteractions VendorASNInteraction[]
+  vendorAppointments VendorDeliveryAppointment[]
+  vendorTrackings VendorShipmentTracking[]
 }
 
 model DockSchedule {
@@ -4681,6 +4708,7 @@ model DockSchedule {
   startTime     String // "10:00"
   endTime       String // "12:00"
   status        String     @default("Booked") // Booked, In-Progress, Completed
+  vendorAppointments VendorDeliveryAppointment[]
 }
 
 model GateEntry {
@@ -5976,3 +6004,707 @@ model LookupValue {
   updatedAt       DateTime @updatedAt
 }
 
+
+// ==========================================
+// SYSTEM ADMINISTRATION & MONITORING
+// ==========================================
+
+model SystemHealth {
+  id              String   @id @default(uuid())
+  component       String   // Database, Redis, Server, API
+  status          String   // Operational, Degraded, Down
+  responseTimeMs  Int      @default(0)
+  lastChecked     DateTime @default(now())
+  details         String?  // JSON string for errors/warnings
+}
+
+model ServerMetrics {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  cpuUsage        Float    @default(0)
+  memoryTotal     Float    @default(0)
+  memoryUsed      Float    @default(0)
+  diskTotal       Float    @default(0)
+  diskUsed        Float    @default(0)
+  networkRx       Float    @default(0)
+  networkTx       Float    @default(0)
+  uptime          Float    @default(0)
+}
+
+model DatabaseMetrics {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  activeConnections Int    @default(0)
+  idleConnections   Int    @default(0)
+  queryRate       Float    @default(0)
+  slowQueries     Int      @default(0)
+  deadlocks       Int      @default(0)
+  dbSizeGb        Float    @default(0)
+}
+
+model RedisMetrics {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  connectedClients Int     @default(0)
+  memoryUsedMb    Float    @default(0)
+  keyspaceHits    Int      @default(0)
+  keyspaceMisses  Int      @default(0)
+}
+
+model QueueMetrics {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  queueName       String
+  activeJobs      Int      @default(0)
+  waitingJobs     Int      @default(0)
+  completedJobs   Int      @default(0)
+  failedJobs      Int      @default(0)
+  delayedJobs     Int      @default(0)
+}
+
+model ApiMetrics {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  endpoint        String
+  method          String
+  requestCount    Int      @default(0)
+  avgResponseTime Float    @default(0)
+  p95ResponseTime Float    @default(0)
+  errorCount      Int      @default(0)
+}
+
+model JobHistory {
+  id              String   @id @default(uuid())
+  jobId           String
+  queueName       String
+  name            String
+  status          String   // Completed, Failed
+  startTime       DateTime
+  endTime         DateTime?
+  durationMs      Int?
+  attempts        Int      @default(1)
+  error           String?
+  result          String?
+  createdAt       DateTime @default(now())
+}
+
+model BackupHistory {
+  id              String   @id @default(uuid())
+  type            String   // Full, Incremental
+  status          String   // InProgress, Completed, Failed
+  filePath        String?
+  fileSizeBytes   BigInt?
+  startedAt       DateTime @default(now())
+  completedAt     DateTime?
+  durationMs      Int?
+  error           String?
+}
+
+model RestoreHistory {
+  id              String   @id @default(uuid())
+  backupId        String
+  status          String   // InProgress, Completed, Failed
+  startedAt       DateTime @default(now())
+  completedAt     DateTime?
+  durationMs      Int?
+  error           String?
+}
+
+model SystemLog {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  level           String   // INFO, WARN, ERROR, FATAL
+  service         String   // Api, Worker, Cron
+  message         String
+  metadata        String?  // JSON
+  stackTrace      String?
+}
+
+model ApiLog {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  method          String
+  path            String
+  statusCode      Int
+  durationMs      Int
+  ipAddress       String?
+  userAgent       String?
+  userId          String?
+  requestBody     String?
+  responseBody    String?
+}
+
+model ErrorLog {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  type            String   // Validation, Database, Unhandled
+  message         String
+  stack           String?
+  path            String?
+  userId          String?
+  resolved        Boolean  @default(false)
+  resolvedAt      DateTime?
+}
+
+model PerformanceMetric {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  metricName      String
+  value           Float
+  tags            String?  // JSON
+}
+
+model SecurityEvent {
+  id              String   @id @default(uuid())
+  timestamp       DateTime @default(now())
+  eventType       String   // FailedLogin, BlockedIP, RateLimitExceeded
+  severity        String   // Low, Medium, High, Critical
+  ipAddress       String?
+  userId          String?
+  details         String?
+}
+
+model License {
+  id              String   @id @default(uuid())
+  licenseKey      String   @unique
+  organization    String
+  tier            String   // Professional, Enterprise
+  validFrom       DateTime
+  validUntil      DateTime
+  maxUsers        Int      @default(10)
+  modules         String   // JSON array of activated modules
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+}
+
+model FeatureFlag {
+  id              String   @id @default(uuid())
+  name            String   @unique
+  description     String?
+  isEnabled       Boolean  @default(false)
+  environments    String   // JSON array e.g. ["dev", "prod"]
+  updatedAt       DateTime @updatedAt
+}
+
+model EnvironmentSetting {
+  id              String   @id @default(uuid())
+  key             String   @unique
+  value           String
+  description     String?
+  isSecret        Boolean  @default(false)
+  updatedAt       DateTime @updatedAt
+}
+
+// ActivityLog - Generic log for any entity
+model ActivityLog {
+  id              String   @id @default(uuid())
+  entityType      String
+  entityId        String
+  action          String   // Created, Updated, Deleted
+  userId          String?
+  details         String?  // JSON of changes
+  timestamp       DateTime @default(now())
+}
+
+// ==========================================
+// INTEGRATION HUB & API GATEWAY
+// ==========================================
+
+model Integration {
+  id              String   @id @default(uuid())
+  provider        String   // SAP, Salesforce, Stripe
+  category        String   // ERP, CRM, Payment
+  status          String   @default("Inactive") // Active, Inactive, Error
+  environment     String   @default("Production")
+  credentials     IntegrationCredential[]
+  logs            IntegrationLog[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  createdBy       String?
+}
+
+model IntegrationCredential {
+  id              String   @id @default(uuid())
+  integrationId   String
+  integration     Integration @relation(fields: [integrationId], references: [id])
+  keyName         String
+  keyValue        String   // Needs encryption in service layer
+  isSecret        Boolean  @default(true)
+  updatedAt       DateTime @updatedAt
+}
+
+model IntegrationLog {
+  id              String   @id @default(uuid())
+  integrationId   String
+  integration     Integration @relation(fields: [integrationId], references: [id])
+  direction       String   // Inbound, Outbound
+  status          String   // Success, Failed
+  payload         String?  // JSON
+  response        String?  // JSON
+  timestamp       DateTime @default(now())
+}
+
+model GatewayApiKey {
+  id              String   @id @default(uuid())
+  name            String
+  keyHash         String   @unique
+  organization    String?
+  rateLimit       Int      @default(1000)
+  isActive        Boolean  @default(true)
+  expiresAt       DateTime?
+  lastUsedAt      DateTime?
+  createdAt       DateTime @default(now())
+}
+
+model ApiToken {
+  id              String   @id @default(uuid())
+  tokenHash       String   @unique
+  userId          String?
+  scope           String?  // JSON array
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+}
+
+model Webhook {
+  id              String   @id @default(uuid())
+  name            String
+  url             String
+  events          String   // JSON array e.g. ["order.created", "shipment.updated"]
+  secret          String?
+  isActive        Boolean  @default(true)
+  history         WebhookHistory[]
+  retries         WebhookRetry[]
+  createdAt       DateTime @default(now())
+}
+
+model WebhookHistory {
+  id              String   @id @default(uuid())
+  webhookId       String
+  webhook         Webhook  @relation(fields: [webhookId], references: [id])
+  event           String
+  payload         String   // JSON
+  status          String   // Success, Failed
+  statusCode      Int?
+  response        String?
+  timestamp       DateTime @default(now())
+}
+
+model WebhookRetry {
+  id              String   @id @default(uuid())
+  webhookId       String
+  webhook         Webhook  @relation(fields: [webhookId], references: [id])
+  historyId       String?
+  attempts        Int      @default(0)
+  nextRetryAt     DateTime
+  status          String   // Pending, Exhausted
+}
+
+// ==========================================
+// IMPORT / EXPORT ENGINE
+// ==========================================
+
+model ImportHistory {
+  id              String   @id @default(uuid())
+  entity          String   // e.g. Customer, Item
+  fileName        String
+  status          String   // Processing, Completed, Failed
+  totalRows       Int      @default(0)
+  successRows     Int      @default(0)
+  errorRows       Int      @default(0)
+  errors          String?  // JSON
+  uploadedBy      String?
+  timestamp       DateTime @default(now())
+}
+
+model ExportHistory {
+  id              String   @id @default(uuid())
+  entity          String
+  format          String   // CSV, XLSX, JSON
+  status          String   // Processing, Completed, Failed
+  fileUrl         String?
+  requestedBy     String?
+  timestamp       DateTime @default(now())
+}
+
+// ==========================================
+// AI PLATFORM
+// ==========================================
+
+model AIProvider {
+  id              String   @id @default(uuid())
+  name            String   @unique // Gemini, OpenAI, Claude
+  isActive        Boolean  @default(true)
+  apiKey          String?  // Encrypted
+  models          AIModel[]
+  requests        AIRequest[]
+  usage           AIUsage[]
+}
+
+model AIModel {
+  id              String   @id @default(uuid())
+  providerId      String
+  provider        AIProvider @relation(fields: [providerId], references: [id])
+  name            String   // gpt-4, gemini-1.5-pro
+  costPer1kTokens Float    @default(0.0)
+  isActive        Boolean  @default(true)
+  requests        AIRequest[]
+}
+
+model PromptTemplate {
+  id              String   @id @default(uuid())
+  name            String   @unique // e.g. "GenerateInvoice"
+  description     String?
+  versions        PromptVersion[]
+  createdAt       DateTime @default(now())
+}
+
+model PromptVersion {
+  id              String   @id @default(uuid())
+  templateId      String
+  template        PromptTemplate @relation(fields: [templateId], references: [id])
+  version         Int      @default(1)
+  content         String
+  isActive        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+}
+
+model AIAgent {
+  id              String   @id @default(uuid())
+  name            String   @unique
+  role            String   // e.g. "Customer Support", "Data Analyst"
+  systemPrompt    String
+  modelId         String?
+  isActive        Boolean  @default(true)
+}
+
+model AIRequest {
+  id              String   @id @default(uuid())
+  providerId      String?
+  provider        AIProvider? @relation(fields: [providerId], references: [id])
+  modelId         String?
+  model           AIModel? @relation(fields: [modelId], references: [id])
+  prompt          String
+  response        String?
+  status          String   // Success, Failed
+  durationMs      Int?
+  tokensUsed      Int      @default(0)
+  userId          String?
+  timestamp       DateTime @default(now())
+}
+
+model AIUsage {
+  id              String   @id @default(uuid())
+  providerId      String
+  provider        AIProvider @relation(fields: [providerId], references: [id])
+  date            DateTime @default(now()) // Daily aggregation
+  totalRequests   Int      @default(0)
+  totalTokens     Int      @default(0)
+  estimatedCost   Float    @default(0.0)
+}
+
+model AICost {
+  id              String   @id @default(uuid())
+  month           String   // "YYYY-MM"
+  provider        String
+  cost            Float    @default(0.0)
+}
+
+// ==========================================
+// MCP SERVER MANAGEMENT
+// ==========================================
+
+model MCPServer {
+  id              String   @id @default(uuid())
+  name            String   @unique
+  url             String
+  status          String   @default("Disconnected") // Connected, Disconnected
+  tools           MCPTool[]
+  lastPing        DateTime?
+}
+
+model MCPTool {
+  id              String   @id @default(uuid())
+  serverId        String
+  server          MCPServer @relation(fields: [serverId], references: [id])
+  name            String
+  description     String?
+  isActive        Boolean  @default(true)
+}
+
+// ==========================================
+// VENDOR PORTAL & ONBOARDING
+// ==========================================
+
+model VendorProfile {
+  id              String   @id @default(uuid())
+  vendorId        String   @unique
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  legalName       String?
+  tradeName       String?
+  description     String?
+  companyLogo     String?
+  companyBanner   String?
+  socialLinks     String?  // JSON
+  msmeRegNo       String?
+  cinNo           String?
+  incorporationDate DateTime?
+  profileStatus   String   @default("Draft") // Draft, Submitted, UnderReview, Approved, Rejected
+  completionPercentage Int @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model VendorUser {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  email           String   @unique
+  passwordHash    String
+  firstName       String
+  lastName        String
+  mobile          String?
+  profilePic      String?
+  roleId          String?
+  role            VendorUserRole? @relation(fields: [roleId], references: [id])
+  isActive        Boolean  @default(true)
+  lastLogin       DateTime?
+  loginHistory    String?  // JSON array of IP/Device
+  createdAt       DateTime @default(now())
+}
+
+model VendorUserRole {
+  id              String   @id @default(uuid())
+  name            String   // Admin, Finance, Operations
+  permissions     String   // JSON array of RBAC strings
+  users           VendorUser[]
+}
+
+model VendorInvitation {
+  id              String   @id @default(uuid())
+  email           String
+  vendorId        String?
+  vendor          Vendor?  @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  token           String   @unique
+  status          String   @default("Pending") // Pending, Accepted, Expired
+  invitedBy       String?
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+}
+
+model VendorCompliance {
+  id              String   @id @default(uuid())
+  vendorId        String   @unique
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  kycStatus       String   @default("Pending") // Pending, Verified, Rejected
+  amlClear        Boolean  @default(false)
+  taxValidated    Boolean  @default(false)
+  complianceScore Int      @default(0)
+  blacklistCheck  Boolean  @default(false)
+  lastAssessedAt  DateTime?
+}
+
+model VendorKYC {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  documentType    String   // GST, PAN, IEC, BusinessLicense
+  documentNumber  String
+  documentUrl     String?
+  status          String   @default("Pending") // Pending, Verified, Rejected
+  verifiedBy      String?
+  verifiedAt      DateTime?
+  expiryDate      DateTime?
+}
+
+model VendorApproval {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  approvalType    String   // Registration, ProfileChange, BankDetail
+  status          String   @default("Pending") // Pending, Approved, Rejected
+  currentLevel    Int      @default(1)
+  history         VendorApprovalHistory[]
+  createdAt       DateTime @default(now())
+}
+
+model VendorApprovalHistory {
+  id              String   @id @default(uuid())
+  approvalId      String
+  approval        VendorApproval @relation(fields: [approvalId], references: [id], onDelete: Cascade)
+  level           Int
+  action          String   // Approved, Rejected, Commented
+  comments        String?
+  actorId         String   // User ID who acted
+  timestamp       DateTime @default(now())
+}
+
+model VendorNotification {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  title           String
+  message         String
+  type            String   // Info, Alert, Approval
+  isRead          Boolean  @default(false)
+  timestamp       DateTime @default(now())
+}
+
+model VendorActivity {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  userId          String?
+  action          String
+  details         String?  // JSON
+  timestamp       DateTime @default(now())
+}
+
+// ==========================================
+// VENDOR PROCUREMENT COLLABORATION
+// ==========================================
+
+model VendorQuotation {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  rfqId           String
+  rfq             ProcurementRFQ @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+  status          String   @default("Draft") // Draft, Submitted, UnderNegotiation, Accepted, Rejected, Withdrawn
+  totalAmount     Float    @default(0.0)
+  currency        String   @default("USD")
+  validUntil      DateTime?
+  deliveryDate    DateTime?
+  remarks         String?
+  items           VendorQuotationItem[]
+  negotiations    VendorNegotiation[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model VendorQuotationItem {
+  id              String   @id @default(uuid())
+  quotationId     String
+  quotation       VendorQuotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  rfqItemId       String
+  rfqItem         ProcurementRFQItem @relation(fields: [rfqItemId], references: [id])
+  quantity        Float
+  unitPrice       Float
+  taxAmount       Float    @default(0.0)
+  freightAmount   Float    @default(0.0)
+  discountAmount  Float    @default(0.0)
+  totalPrice      Float
+  remarks         String?
+}
+
+model VendorNegotiation {
+  id              String   @id @default(uuid())
+  quotationId     String
+  quotation       VendorQuotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  message         String
+  authorType      String   // Vendor, Buyer
+  authorId        String   // ID of VendorUser or internal User
+  attachmentUrl   String?
+  timestamp       DateTime @default(now())
+}
+
+model VendorProductCatalog {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  sku             String
+  name            String
+  description     String?
+  unitOfMeasure   String
+  price           Float
+  currency        String   @default("USD")
+  leadTimeDays    Int      @default(0)
+  moq             Float    @default(1)
+  isActive        Boolean  @default(true)
+}
+
+model VendorPriceList {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  name            String
+  validFrom       DateTime
+  validTo         DateTime
+  discountPercent Float    @default(0.0)
+  isActive        Boolean  @default(true)
+}
+
+model VendorPOInteraction {
+  id              String   @id @default(uuid())
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  action          String   // Viewed, Accepted, Rejected
+  remarks         String?
+  timestamp       DateTime @default(now())
+}
+
+model VendorContractAcknowledge {
+  id              String   @id @default(uuid())
+  contractId      String
+  contract        VendorContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  status          String   @default("Pending") // Pending, Acknowledged, Disputed
+  acknowledgedAt  DateTime?
+  remarks         String?
+}
+
+// ==========================================
+// VENDOR LOGISTICS & ASN COLLABORATION
+// ==========================================
+
+model VendorASNInteraction {
+  id              String   @id @default(uuid())
+  asnId           String
+  asn             AdvanceShipmentNotice @relation(fields: [asnId], references: [id], onDelete: Cascade)
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  status          String   @default("Pending") // Pending, Approved, Rejected
+  remarks         String?
+  containerNumber String?
+  sealNumber      String?
+  timestamp       DateTime @default(now())
+}
+
+model VendorDeliveryAppointment {
+  id              String   @id @default(uuid())
+  asnId           String
+  asn             AdvanceShipmentNotice @relation(fields: [asnId], references: [id], onDelete: Cascade)
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  dockScheduleId  String
+  dockSchedule    DockSchedule @relation(fields: [dockScheduleId], references: [id])
+  status          String   @default("Scheduled") // Scheduled, Arrived, Unloading, Completed, Missed
+  vehiclePlate    String?
+  driverName      String?
+  driverContact   String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model VendorShipmentTracking {
+  id              String   @id @default(uuid())
+  asnId           String
+  asn             AdvanceShipmentNotice @relation(fields: [asnId], references: [id], onDelete: Cascade)
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  event           String   // Dispatched, In Transit, Arrived, Gate Entry, Unloading, Completed
+  location        String?
+  timestamp       DateTime @default(now())
+}
+
+model VendorGRNVisibility {
+  id              String   @id @default(uuid())
+  grnId           String
+  grn             GoodsReceiptNote @relation(fields: [grnId], references: [id], onDelete: Cascade)
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  canView         Boolean  @default(true)
+  viewedAt        DateTime?
+}

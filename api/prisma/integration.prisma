@@ -1,0 +1,224 @@
+// ==========================================
+// INTEGRATION HUB & API GATEWAY
+// ==========================================
+
+model Integration {
+  id              String   @id @default(uuid())
+  provider        String   // SAP, Salesforce, Stripe
+  category        String   // ERP, CRM, Payment
+  status          String   @default("Inactive") // Active, Inactive, Error
+  environment     String   @default("Production")
+  credentials     IntegrationCredential[]
+  logs            IntegrationLog[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  createdBy       String?
+}
+
+model IntegrationCredential {
+  id              String   @id @default(uuid())
+  integrationId   String
+  integration     Integration @relation(fields: [integrationId], references: [id])
+  keyName         String
+  keyValue        String   // Needs encryption in service layer
+  isSecret        Boolean  @default(true)
+  updatedAt       DateTime @updatedAt
+}
+
+model IntegrationLog {
+  id              String   @id @default(uuid())
+  integrationId   String
+  integration     Integration @relation(fields: [integrationId], references: [id])
+  direction       String   // Inbound, Outbound
+  status          String   // Success, Failed
+  payload         String?  // JSON
+  response        String?  // JSON
+  timestamp       DateTime @default(now())
+}
+
+model GatewayApiKey {
+  id              String   @id @default(uuid())
+  name            String
+  keyHash         String   @unique
+  organization    String?
+  rateLimit       Int      @default(1000)
+  isActive        Boolean  @default(true)
+  expiresAt       DateTime?
+  lastUsedAt      DateTime?
+  createdAt       DateTime @default(now())
+}
+
+model ApiToken {
+  id              String   @id @default(uuid())
+  tokenHash       String   @unique
+  userId          String?
+  scope           String?  // JSON array
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+}
+
+model Webhook {
+  id              String   @id @default(uuid())
+  name            String
+  url             String
+  events          String   // JSON array e.g. ["order.created", "shipment.updated"]
+  secret          String?
+  isActive        Boolean  @default(true)
+  history         WebhookHistory[]
+  retries         WebhookRetry[]
+  createdAt       DateTime @default(now())
+}
+
+model WebhookHistory {
+  id              String   @id @default(uuid())
+  webhookId       String
+  webhook         Webhook  @relation(fields: [webhookId], references: [id])
+  event           String
+  payload         String   // JSON
+  status          String   // Success, Failed
+  statusCode      Int?
+  response        String?
+  timestamp       DateTime @default(now())
+}
+
+model WebhookRetry {
+  id              String   @id @default(uuid())
+  webhookId       String
+  webhook         Webhook  @relation(fields: [webhookId], references: [id])
+  historyId       String?
+  attempts        Int      @default(0)
+  nextRetryAt     DateTime
+  status          String   // Pending, Exhausted
+}
+
+// ==========================================
+// IMPORT / EXPORT ENGINE
+// ==========================================
+
+model ImportHistory {
+  id              String   @id @default(uuid())
+  entity          String   // e.g. Customer, Item
+  fileName        String
+  status          String   // Processing, Completed, Failed
+  totalRows       Int      @default(0)
+  successRows     Int      @default(0)
+  errorRows       Int      @default(0)
+  errors          String?  // JSON
+  uploadedBy      String?
+  timestamp       DateTime @default(now())
+}
+
+model ExportHistory {
+  id              String   @id @default(uuid())
+  entity          String
+  format          String   // CSV, XLSX, JSON
+  status          String   // Processing, Completed, Failed
+  fileUrl         String?
+  requestedBy     String?
+  timestamp       DateTime @default(now())
+}
+
+// ==========================================
+// AI PLATFORM
+// ==========================================
+
+model AIProvider {
+  id              String   @id @default(uuid())
+  name            String   @unique // Gemini, OpenAI, Claude
+  isActive        Boolean  @default(true)
+  apiKey          String?  // Encrypted
+  models          AIModel[]
+  requests        AIRequest[]
+  usage           AIUsage[]
+}
+
+model AIModel {
+  id              String   @id @default(uuid())
+  providerId      String
+  provider        AIProvider @relation(fields: [providerId], references: [id])
+  name            String   // gpt-4, gemini-1.5-pro
+  costPer1kTokens Float    @default(0.0)
+  isActive        Boolean  @default(true)
+  requests        AIRequest[]
+}
+
+model PromptTemplate {
+  id              String   @id @default(uuid())
+  name            String   @unique // e.g. "GenerateInvoice"
+  description     String?
+  versions        PromptVersion[]
+  createdAt       DateTime @default(now())
+}
+
+model PromptVersion {
+  id              String   @id @default(uuid())
+  templateId      String
+  template        PromptTemplate @relation(fields: [templateId], references: [id])
+  version         Int      @default(1)
+  content         String
+  isActive        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+}
+
+model AIAgent {
+  id              String   @id @default(uuid())
+  name            String   @unique
+  role            String   // e.g. "Customer Support", "Data Analyst"
+  systemPrompt    String
+  modelId         String?
+  isActive        Boolean  @default(true)
+}
+
+model AIRequest {
+  id              String   @id @default(uuid())
+  providerId      String?
+  provider        AIProvider? @relation(fields: [providerId], references: [id])
+  modelId         String?
+  model           AIModel? @relation(fields: [modelId], references: [id])
+  prompt          String
+  response        String?
+  status          String   // Success, Failed
+  durationMs      Int?
+  tokensUsed      Int      @default(0)
+  userId          String?
+  timestamp       DateTime @default(now())
+}
+
+model AIUsage {
+  id              String   @id @default(uuid())
+  providerId      String
+  provider        AIProvider @relation(fields: [providerId], references: [id])
+  date            DateTime @default(now()) // Daily aggregation
+  totalRequests   Int      @default(0)
+  totalTokens     Int      @default(0)
+  estimatedCost   Float    @default(0.0)
+}
+
+model AICost {
+  id              String   @id @default(uuid())
+  month           String   // "YYYY-MM"
+  provider        String
+  cost            Float    @default(0.0)
+}
+
+// ==========================================
+// MCP SERVER MANAGEMENT
+// ==========================================
+
+model MCPServer {
+  id              String   @id @default(uuid())
+  name            String   @unique
+  url             String
+  status          String   @default("Disconnected") // Connected, Disconnected
+  tools           MCPTool[]
+  lastPing        DateTime?
+}
+
+model MCPTool {
+  id              String   @id @default(uuid())
+  serverId        String
+  server          MCPServer @relation(fields: [serverId], references: [id])
+  name            String
+  description     String?
+  isActive        Boolean  @default(true)
+}

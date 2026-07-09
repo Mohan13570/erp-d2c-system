@@ -77,6 +77,11 @@ import maintenanceOpsRouter from './routes/maintenance-ops';
 import containerOpsRouter from './routes/container-ops';
 import containerTrackingRouter from './routes/container-tracking';
 import containerFinanceRouter from './routes/container-finance';
+import adminRoutes from './routes/admin';
+import integrationRoutes from './routes/integration';
+import vendorPortalRoutes from './routes/vendor-portal';
+import vendorProcurementRoutes from './routes/vendor-procurement';
+import vendorLogisticsRoutes from './routes/vendor-logistics';
 
 dotenv.config();
 
@@ -173,13 +178,18 @@ app.use('/api/road', roadRouter);
 app.use('/api/fleet-extended', fleetExtendedRouter);
 app.use('/api/warehouse', warehouseRouter);
 app.use('/api/customs', customsRouter);
-app.use('/api/documents', documentsRouter);
+app.use('/api/admin', adminRoutes);
+app.use('/api/integration', integrationRoutes);
+app.use('/api/vendor-portal', vendorPortalRoutes);
+app.use('/api/vendor-procurement', vendorProcurementRoutes);
+app.use('/api/vendor-logistics', vendorLogisticsRoutes);
+
+// Database seed setupter);
 
 // Modules 13-18
 app.use('/api/containers', containersRouter);
 app.use('/api/procurement', procurementRouter);
 app.use('/api/shipments', shipmentRoutes);
-app.use('/api/supplychain', supplychainRoutes);
 app.use('/api/procurement', procurementRouter);
 app.use('/api/tracking', trackingRouter);
 app.use('/api/portals', portalsRouter);
@@ -282,5 +292,18 @@ io.on('connection', (socket) => {
     console.log(`[Socket.IO] Client disconnected: ${socket.id}`);
   });
 });
+
+import { MonitoringEngine } from './services/MonitoringEngine';
+MonitoringEngine.startPeriodicMonitoring(60000); // Record to DB every 60s
+
+// Live Socket.IO Metrics (Every 2 seconds)
+setInterval(async () => {
+  const serverMetrics = MonitoringEngine.getSystemMetrics();
+  const dbMetrics = await MonitoringEngine.getDatabaseMetrics();
+  io.emit('live_metrics', {
+    server: serverMetrics,
+    database: dbMetrics
+  });
+}, 2000);
 
 httpServer.listen(PORT, () => console.log(`Server and WebSockets are running on port ${PORT}`));
