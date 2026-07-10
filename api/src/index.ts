@@ -82,6 +82,9 @@ import integrationRoutes from './routes/integration';
 import vendorPortalRoutes from './routes/vendor-portal';
 import vendorProcurementRoutes from './routes/vendor-procurement';
 import vendorLogisticsRoutes from './routes/vendor-logistics';
+import vendorFinanceRoutes from './routes/vendor-finance';
+import vendorSupportRoutes from './routes/vendor-support';
+import customerPortalRoutes from './routes/customer-portal';
 
 dotenv.config();
 
@@ -183,6 +186,9 @@ app.use('/api/integration', integrationRoutes);
 app.use('/api/vendor-portal', vendorPortalRoutes);
 app.use('/api/vendor-procurement', vendorProcurementRoutes);
 app.use('/api/vendor-logistics', vendorLogisticsRoutes);
+app.use('/api/vendor-finance', vendorFinanceRoutes);
+app.use('/api/vendor-support', vendorSupportRoutes);
+app.use('/api/customer-portal', customerPortalRoutes);
 
 // Database seed setupter);
 

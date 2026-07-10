@@ -1,0 +1,116 @@
+// ==========================================
+// CUSTOMER REGISTRATION & ONBOARDING MODELS
+// ==========================================
+
+model CustomerProfile {
+  id              String   @id @default(uuid())
+  customerId      String   @unique
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  companyType     String?  // SME, Corporate, Government
+  industry        String?
+  website         String?
+  gstNumber       String?  @unique
+  panNumber       String?  @unique
+  iecNumber       String?
+  cinNumber       String?
+  businessDesc    String?
+  logoUrl         String?
+}
+
+model B2BCustomerAddress {
+  id              String   @id @default(uuid())
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  type            String   // Registered, Billing, Shipping, Pickup
+  addressLine1    String
+  addressLine2    String?
+  city            String
+  state           String
+  country         String
+  zipCode         String
+  isPrimary       Boolean  @default(false)
+}
+
+model CustomerBranch {
+  id              String   @id @default(uuid())
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  branchName      String
+  branchCode      String?
+  managerName     String?
+  email           String?
+  phone           String?
+  isActive        Boolean  @default(true)
+}
+
+
+
+model CustomerBank {
+  id              String   @id @default(uuid())
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  bankName        String
+  accountName     String
+  accountNumber   String
+  ifscCode        String?
+  swiftCode       String?
+  currency        String   @default("USD")
+  isPrimary       Boolean  @default(false)
+  verified        Boolean  @default(false)
+}
+
+model CustomerDocument {
+  id              String   @id @default(uuid())
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  documentType    String   // GST, PAN, Agreement
+  documentUrl     String
+  uploadDate      DateTime @default(now())
+  expiryDate      DateTime?
+  status          String   @default("Pending Verification") // Verified, Rejected
+}
+
+model CustomerCompliance {
+  id              String   @id @default(uuid())
+  customerId      String   @unique
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  complianceScore Float    @default(0.0)
+  riskLevel       String   @default("Unknown") // Low, Medium, High
+  lastChecked     DateTime @default(now())
+  isBlacklisted   Boolean  @default(false)
+}
+
+model CustomerKYC {
+  id              String   @id @default(uuid())
+  customerId      String   @unique
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  kycStatus       String   @default("Pending") // Pending, Approved, Rejected
+  verifiedBy      String?
+  verifiedAt      DateTime?
+  comments        String?
+}
+
+model CustomerUser {
+  id              String   @id @default(uuid())
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  email           String   @unique
+  passwordHash    String
+  firstName       String
+  lastName        String
+  role            String   @default("Admin") // Admin, User, Finance
+  isActive        Boolean  @default(true)
+  lastLogin       DateTime?
+  createdAt       DateTime @default(now())
+}
+
+model CustomerInvitation {
+  id              String   @id @default(uuid())
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  email           String
+  token           String   @unique
+  status          String   @default("Sent") // Sent, Accepted, Expired
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+}

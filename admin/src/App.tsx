@@ -8,6 +8,12 @@ import HR from './pages/HR';
 import Finance from './pages/Finance';
 import SupplyChain from './pages/SupplyChain';
 import Manufacturing from './pages/Manufacturing';
+import Customers from './pages/Customers';
+import CustomerDashboard from './pages/customer/CustomerDashboard';
+import CustomerList from './pages/customer/CustomerList';
+import CustomerProfileView from './pages/customer/CustomerProfileView';
+import CustomerRegistrationWizard from './pages/customer/CustomerRegistrationWizard';
+import Sales from './pages/Sales';
 import Projects from './pages/Projects';
 import Assets from './pages/Assets';
 import Returns from './pages/Returns';
@@ -74,6 +80,13 @@ import VendorPOView from './pages/vendor/VendorPOView';
 import VendorLogisticsDashboard from './pages/vendor/VendorLogisticsDashboard';
 import VendorASNList from './pages/vendor/VendorASNList';
 import VendorDockBooking from './pages/vendor/VendorDockBooking';
+import VendorFinanceDashboard from './pages/vendor/VendorFinanceDashboard';
+import VendorInvoiceList from './pages/vendor/VendorInvoiceList';
+import VendorLedgerView from './pages/vendor/VendorLedgerView';
+import VendorSupportCenter from './pages/vendor/VendorSupportCenter';
+import VendorChat from './pages/vendor/VendorChat';
+import VendorPerformance from './pages/vendor/VendorPerformance';
+import VendorKnowledgeBase from './pages/vendor/VendorKnowledgeBase';
 
 import Warehouse from './pages/Warehouse';
 import Customs from './pages/Customs';
@@ -420,6 +433,22 @@ function App() {
           <Route path="vendor/logistics" element={<VendorLogisticsDashboard />} />
           <Route path="vendor/asns" element={<VendorASNList />} />
           <Route path="vendor/docks" element={<VendorDockBooking />} />
+          <Route path="vendor/finance" element={<VendorFinanceDashboard />} />
+          <Route path="vendor/invoices" element={<VendorInvoiceList />} />
+          <Route path="vendor/ledger" element={<VendorLedgerView />} />
+          
+          <Route path="vendor/support" element={<VendorSupportCenter />} />
+          <Route path="vendor/chat" element={<VendorChat />} />
+          <Route path="vendor/performance" element={<VendorPerformance />} />
+          <Route path="vendor/knowledge-base" element={<VendorKnowledgeBase />} />
+
+          {/* CRM & Sales */}
+          <Route path="/customers" element={<Customers />} />
+          <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+          <Route path="/customer/directory" element={<CustomerList />} />
+          <Route path="/customer/:id" element={<CustomerProfileView />} />
+          <Route path="/customer/register" element={<CustomerRegistrationWizard />} />
+          <Route path="/sales" element={<Sales />} />
 
           {/* Logistics & TMS */}    <Route path="/customs" element={<Customs />} />
                   <Route path="/documents" element={<DocumentCenter />} />

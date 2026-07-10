@@ -1,0 +1,61 @@
+// ==========================================
+// VENDOR COLLABORATION, SUPPORT & ANALYTICS
+// ==========================================
+
+model VendorSupportTicket {
+  id              String   @id @default(uuid())
+  ticketNumber    String   @unique
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  category        String   // Technical, Finance, Procurement, Logistics
+  priority        String   @default("Medium") // Low, Medium, High, Critical
+  subject         String
+  description     String
+  status          String   @default("Open") // Open, In Progress, Resolved, Closed
+  resolution      String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model VendorChatMessage {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  sender          String   // "Vendor" or "Admin"
+  message         String
+  attachmentUrl   String?
+  isRead          Boolean  @default(false)
+  createdAt       DateTime @default(now())
+}
+
+model VendorKnowledgeArticle {
+  id              String   @id @default(uuid())
+  title           String
+  content         String
+  category        String   // FAQs, Manuals, Guides
+  published       Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model VendorPerformanceMetric {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  month           String   // e.g., "2026-07"
+  onTimeDelivery  Float    @default(100.0) // Percentage
+  invoiceAccuracy Float    @default(100.0) // Percentage
+  qualityScore    Float    @default(5.0)   // Out of 5
+  createdAt       DateTime @default(now())
+}
+
+model VendorDeveloperApp {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  appName         String
+  apiKey          String   @unique
+  webhookUrl      String?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+}

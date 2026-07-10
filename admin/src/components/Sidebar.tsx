@@ -24,6 +24,17 @@ const navSections = [
       { name: 'Shipment List', path: '/shipments/list', icon: Globe },
       { name: 'Create Shipment', path: '/shipments/create', icon: Plus },
       { 
+        name: 'CRM & Sales',
+        icon: Users,
+        subItems: [
+          { name: 'Customer Dashboard', path: '/customer/dashboard', icon: BarChart3 },
+          { name: 'Customer Directory', path: '/customer/directory', icon: Users },
+          { name: 'Customer Onboarding', path: '/customer/register', icon: Briefcase },
+          { name: 'Sales Pipeline', path: '/sales', icon: Target },
+          { name: 'Quotations & Invoices', path: '/invoices', icon: DollarSign },
+        ]
+      },
+      { 
         name: 'GPS Controller', 
         icon: Map,
         subItems: [
@@ -302,6 +313,18 @@ const navSections = [
           { name: 'Logistics Collab', path: '/vendor/logistics', icon: Truck },
           { name: 'Active ASNs', path: '/vendor/asns', icon: Package },
           { name: 'Dock Booking', path: '/vendor/docks', icon: MapPin },
+          { name: 'Finance & Billing', path: '/vendor/finance', icon: DollarSign },
+          { name: 'Invoices', path: '/vendor/invoices', icon: ReceiptText },
+          { name: 'Account Ledger', path: '/vendor/ledger', icon: FileBarChart },
+        ]
+      },
+      {
+        name: 'Vendor Support & Comms',
+        items: [
+          { name: 'Help Desk', path: '/vendor/support', icon: ShieldCheck },
+          { name: 'Live Chat', path: '/vendor/chat', icon: MessageSquare },
+          { name: 'Performance Analytics', path: '/vendor/performance', icon: Activity },
+          { name: 'Knowledge Base', path: '/vendor/knowledge-base', icon: BookOpen },
         ]
       },
       { 

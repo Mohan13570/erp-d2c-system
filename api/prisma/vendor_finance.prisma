@@ -1,0 +1,76 @@
+// ==========================================
+// VENDOR FINANCE & BILLING
+// ==========================================
+
+model VendorFinanceInvoice {
+  id              String   @id @default(uuid())
+  invoiceNumber   String   @unique
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  purchaseOrderId String?
+  purchaseOrder   PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id])
+  status          String   @default("Pending Approval") // Draft, Pending Approval, Approved, Rejected, Paid, Overdue
+  totalAmount     Float    @default(0.0)
+  taxAmount       Float    @default(0.0)
+  currency        String   @default("USD")
+  dueDate         DateTime?
+  submittedAt     DateTime @default(now())
+  
+  items           VendorFinanceInvoiceItem[]
+  payments        VendorFinancePayment[]
+  ledgerEntries   VendorFinanceLedger[]
+}
+
+model VendorFinanceInvoiceItem {
+  id              String   @id @default(uuid())
+  invoiceId       String
+  invoice         VendorFinanceInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  description     String
+  quantity        Float    @default(1.0)
+  unitPrice       Float    @default(0.0)
+  totalPrice      Float    @default(0.0)
+}
+
+model VendorFinancePayment {
+  id              String   @id @default(uuid())
+  paymentRef      String   @unique
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  invoiceId       String?
+  invoice         VendorFinanceInvoice? @relation(fields: [invoiceId], references: [id])
+  amount          Float    @default(0.0)
+  currency        String   @default("USD")
+  status          String   @default("Processing") // Pending, Processing, Paid, Failed
+  paymentDate     DateTime?
+  createdAt       DateTime @default(now())
+
+  ledgerEntries   VendorFinanceLedger[]
+}
+
+model VendorFinanceLedger {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  type            String   // Invoice, Payment, Credit Note, Debit Note
+  description     String?
+  debitAmount     Float    @default(0.0)
+  creditAmount    Float    @default(0.0)
+  balanceAmount   Float    @default(0.0)
+  
+  invoiceId       String?
+  invoice         VendorFinanceInvoice? @relation(fields: [invoiceId], references: [id])
+  paymentId       String?
+  payment         VendorFinancePayment? @relation(fields: [paymentId], references: [id])
+  
+  transactionDate DateTime @default(now())
+}
+
+model VendorTaxDocument {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  documentType    String   // GST Return, TDS Certificate, Tax Registration
+  documentUrl     String
+  uploadDate      DateTime @default(now())
+  expiryDate      DateTime?
+}
