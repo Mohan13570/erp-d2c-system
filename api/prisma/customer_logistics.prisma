@@ -1,0 +1,238 @@
+// Customer Logistics & Booking Models
+
+model CustomerShipmentBooking {
+  id                String    @id @default(uuid())
+  bookingNumber     String    @unique
+  customerId        String
+  customer          Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  shipmentType      String    // IMPORT, EXPORT, DOMESTIC, INTERNATIONAL
+  transportMode     String    // OCEAN, AIR, ROAD, RAIL, MULTIMODAL
+  status            String    // DRAFT, PENDING, CONFIRMED, REJECTED, CANCELLED, COMPLETED
+  incoterms         String?
+  
+  origin            String
+  destination       String
+  portOfLoading     String?
+  portOfDischarge   String?
+  pickupLocation    String?
+  deliveryLocation  String?
+  
+  items             CustomerBookingItem[]
+  attachments       CustomerBookingAttachment[]
+  cargos            CustomerCargo[]
+  rfqs              CustomerRFQ[]
+  pickupRequest     CustomerPickupRequest?
+  deliveryRequest   CustomerDeliveryRequest?
+  containerBooking  CustomerContainerBooking?
+  timeline          CustomerBookingTimeline[]
+  approvals         CustomerBookingApproval[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  createdBy         String?
+  updatedBy         String?
+}
+
+model CustomerBookingItem {
+  id                String    @id @default(uuid())
+  bookingId         String
+  booking           CustomerShipmentBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  description       String
+  quantity          Int
+  unit              String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model CustomerBookingAttachment {
+  id                String    @id @default(uuid())
+  bookingId         String
+  booking           CustomerShipmentBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  documentType      String    // INVOICE, PACKING_LIST, PO, CERTIFICATE_OF_ORIGIN, ETC
+  fileUrl           String
+  fileName          String
+  version           Int       @default(1)
+  createdAt         DateTime  @default(now())
+}
+
+model CustomerRFQ {
+  id                String    @id @default(uuid())
+  rfqNumber         String    @unique
+  bookingId         String
+  booking           CustomerShipmentBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  status            String    // OPEN, CLOSED, AWARDED, CANCELLED
+  expiryDate        DateTime?
+  notes             String?
+  
+  vendors           CustomerRFQVendor[]
+  quotations        CustomerQuotation[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model CustomerRFQVendor {
+  id                String    @id @default(uuid())
+  rfqId             String
+  rfq               CustomerRFQ @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+  vendorId          String
+  status            String    // PENDING, SUBMITTED, DECLINED
+  createdAt         DateTime  @default(now())
+}
+
+model CustomerQuotation {
+  id                String    @id @default(uuid())
+  quotationNumber   String    @unique
+  rfqId             String
+  rfq               CustomerRFQ @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+  vendorId          String
+  
+  amount            Float
+  currency          String
+  validUntil        DateTime
+  status            String    // PENDING, ACCEPTED, REJECTED, REVISION_REQUESTED
+  transitTimeDays   Int?
+  notes             String?
+  version           Int       @default(1)
+  
+  comparisons       CustomerQuotationComparison[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model CustomerQuotationComparison {
+  id                String    @id @default(uuid())
+  quotationId       String
+  quotation         CustomerQuotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  rfqId             String
+  score             Float     @default(0.0) // Automated scoring based on price vs time
+  rank              Int?
+  createdAt         DateTime  @default(now())
+}
+
+model CustomerCargo {
+  id                String    @id @default(uuid())
+  bookingId         String
+  booking           CustomerShipmentBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  cargoType         String    // GENERAL, HAZARDOUS, PERISHABLE, FRAGILE
+  commodity         String
+  hsCode            String?
+  
+  totalWeight       Float
+  totalVolume       Float
+  weightUnit        String    @default("KG")
+  volumeUnit        String    @default("CBM")
+  
+  isDangerousGoods  Boolean   @default(false)
+  isTemperatureCtrl Boolean   @default(false)
+  temperatureMin    Float?
+  temperatureMax    Float?
+  
+  insuranceRequired Boolean   @default(false)
+  specialHandling   String?
+  
+  packages          CustomerCargoPackage[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model CustomerCargoPackage {
+  id                String    @id @default(uuid())
+  cargoId           String
+  cargo             CustomerCargo @relation(fields: [cargoId], references: [id], onDelete: Cascade)
+  packageType       String    // PALLET, CARTON, CRATE, DRUM
+  quantity          Int
+  length            Float?
+  width             Float?
+  height            Float?
+  weight            Float?
+  createdAt         DateTime  @default(now())
+}
+
+model CustomerPickupRequest {
+  id                String    @id @default(uuid())
+  bookingId         String    @unique
+  booking           CustomerShipmentBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  address           String
+  contactName       String
+  contactPhone      String
+  instructions      String?
+  
+  schedules         CustomerPickupSchedule[]
+  
+  status            String    // REQUESTED, SCHEDULED, COMPLETED, CANCELLED
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model CustomerPickupSchedule {
+  id                String    @id @default(uuid())
+  pickupRequestId   String
+  pickupRequest     CustomerPickupRequest @relation(fields: [pickupRequestId], references: [id], onDelete: Cascade)
+  scheduledDate     DateTime
+  timeWindowStart   String?
+  timeWindowEnd     String?
+  isConfirmed       Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+}
+
+model CustomerDeliveryRequest {
+  id                String    @id @default(uuid())
+  bookingId         String    @unique
+  booking           CustomerShipmentBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  address           String
+  contactName       String
+  contactPhone      String
+  preferredDate     DateTime?
+  instructions      String?
+  
+  status            String    // PENDING, DISPATCHED, DELIVERED
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model CustomerContainerBooking {
+  id                String    @id @default(uuid())
+  bookingId         String    @unique
+  booking           CustomerShipmentBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  containerType     String    // STANDARD, HIGH_CUBE, REEFER, OPEN_TOP
+  containerSize     String    // 20FT, 40FT, 45FT
+  quantity          Int
+  
+  status            String    // REQUESTED, ALLOCATED, RESERVED
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model CustomerBookingApproval {
+  id                String    @id @default(uuid())
+  bookingId         String
+  booking           CustomerShipmentBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  approverId        String
+  status            String    // PENDING, APPROVED, REJECTED, ESCALATED
+  comments          String?
+  level             Int       @default(1)
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model CustomerBookingTimeline {
+  id                String    @id @default(uuid())
+  bookingId         String
+  booking           CustomerShipmentBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  statusUpdate      String
+  description       String?
+  location          String?
+  
+  createdAt         DateTime  @default(now())
+}

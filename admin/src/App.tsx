@@ -12,6 +12,12 @@ import CustomerDashboard from './pages/customer/CustomerDashboard';
 import CustomerList from './pages/customer/CustomerList';
 import CustomerProfileView from './pages/customer/CustomerProfileView';
 import CustomerRegistrationWizard from './pages/customer/CustomerRegistrationWizard';
+
+// Customer Logistics Portal
+import CustomerLogisticsDashboard from './pages/customer/logistics/BookingDashboard';
+import CustomerBookingWizard from './pages/customer/logistics/BookingWizard';
+import CustomerRFQDashboard from './pages/customer/logistics/RFQDashboard';
+import CustomerQuotationComparison from './pages/customer/logistics/QuotationComparison';
 import Projects from './pages/Projects';
 import Assets from './pages/Assets';
 import Returns from './pages/Returns';
@@ -445,6 +451,12 @@ function App() {
           <Route path="/customer/directory" element={<CustomerList />} />
           <Route path="/customer/:id" element={<CustomerProfileView />} />
           <Route path="/customer/register" element={<CustomerRegistrationWizard />} />
+          
+          {/* Customer Logistics Portal */}
+          <Route path="/customer/logistics" element={<CustomerLogisticsDashboard />} />
+          <Route path="/customer/logistics/booking/new" element={<CustomerBookingWizard />} />
+          <Route path="/customer/logistics/rfqs" element={<CustomerRFQDashboard />} />
+          <Route path="/customer/logistics/quotations/compare/:id" element={<CustomerQuotationComparison />} />
 
           {/* Logistics & TMS */}    <Route path="/customs" element={<Customs />} />
                   <Route path="/documents" element={<DocumentCenter />} />

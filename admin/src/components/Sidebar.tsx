@@ -376,7 +376,15 @@ const navSections = [
   {
     label: 'Portals & Apps',
     items: [
-      { name: 'Customer Portal', path: '/customer-portal', icon: UserCircle },
+      { 
+        name: 'Customer Portal', 
+        icon: UserCircle,
+        subItems: [
+          { name: 'Dashboard', path: '/customer-portal', icon: LayoutDashboard },
+          { name: 'Logistics & Bookings', path: '/customer/logistics', icon: Truck },
+          { name: 'Active RFQs', path: '/customer/logistics/rfqs', icon: FileText },
+        ]
+      },
       { name: 'Vendor Portal', path: '/vendor-portal', icon: Handshake },
       { name: 'Employee Portal', path: '/hr-portal', icon: UsersRound },
       { name: 'Driver App', path: '/mobile/driver', icon: Smartphone },
