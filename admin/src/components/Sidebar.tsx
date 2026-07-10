@@ -320,7 +320,8 @@ const navSections = [
       },
       {
         name: 'Vendor Support & Comms',
-        items: [
+        icon: MessageSquare,
+        subItems: [
           { name: 'Help Desk', path: '/vendor/support', icon: ShieldCheck },
           { name: 'Live Chat', path: '/vendor/chat', icon: MessageSquare },
           { name: 'Performance Analytics', path: '/vendor/performance', icon: Activity },
