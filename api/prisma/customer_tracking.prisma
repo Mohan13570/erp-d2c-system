@@ -1,0 +1,106 @@
+// Phase 5: Customer Shipment Tracking & Logistics Visibility
+
+model CustomerShipmentTracking {
+  id                String    @id @default(uuid())
+  bookingId         String    @unique
+  // If the booking exists in CustomerShipmentBooking, we use it. We'll map by ID since they might be in the same schema.
+  
+  status            String    // IN_TRANSIT, DELAYED, DELIVERED, CUSTOMS_HOLD
+  currentPhase      String    // ORIGIN_PORT, OCEAN_TRANSIT, DESTINATION_WAREHOUSE
+  eta               DateTime?
+  
+  originCoordinates String?   // Lat,Lng
+  destCoordinates   String?   // Lat,Lng
+  
+  events            CustomerTrackingEvent[]
+  gpsHistory        CustomerGPSLocation[]
+  alerts            CustomerTrackingAlert[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model CustomerTrackingEvent {
+  id                String    @id @default(uuid())
+  trackingId        String
+  tracking          CustomerShipmentTracking @relation(fields: [trackingId], references: [id], onDelete: Cascade)
+  
+  eventType         String    // PORT_ARRIVAL, CUSTOMS_CLEARED, DEPARTED
+  description       String
+  location          String
+  timestamp         DateTime  @default(now())
+  
+  createdAt         DateTime  @default(now())
+}
+
+model CustomerGPSLocation {
+  id                String    @id @default(uuid())
+  trackingId        String
+  tracking          CustomerShipmentTracking @relation(fields: [trackingId], references: [id], onDelete: Cascade)
+  
+  latitude          Float
+  longitude         Float
+  speedKmH          Float?
+  heading           Float?
+  timestamp         DateTime  @default(now())
+  
+  createdAt         DateTime  @default(now())
+}
+
+model CustomerWarehouseStatus {
+  id                String    @id @default(uuid())
+  bookingId         String    // Linked conceptually
+  
+  warehouseName     String
+  status            String    // RECEIVING, INSPECTED, RACKED, DISPATCH_READY
+  rack              String?
+  shelf             String?
+  bin               String?
+  
+  inventoryCount    Int
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model CustomerContainerTracking {
+  id                String    @id @default(uuid())
+  containerNumber   String    @unique
+  bookingId         String
+  
+  status            String    // AT_PORT, LOADED_ON_VESSEL, UNLOADED, IN_TRANSIT
+  currentLocation   String
+  sealStatus        String    // INTACT, BROKEN, INSPECTED
+  
+  eta               DateTime?
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model CustomerTrackingAlert {
+  id                String    @id @default(uuid())
+  trackingId        String
+  tracking          CustomerShipmentTracking @relation(fields: [trackingId], references: [id], onDelete: Cascade)
+  
+  alertType         String    // DELAY, ROUTE_DEVIATION, CUSTOMS_HOLD
+  message           String
+  isRead            Boolean   @default(false)
+  
+  createdAt         DateTime  @default(now())
+}
+
+model CustomerDeliveryProof {
+  id                String    @id @default(uuid())
+  bookingId         String    @unique
+  
+  receiverName      String
+  receiverPhone     String?
+  deliveryTime      DateTime
+  
+  signatureUrl      String?
+  photoUrl          String?
+  notes             String?
+  
+  createdAt         DateTime  @default(now())
+}

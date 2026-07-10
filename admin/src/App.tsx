@@ -18,6 +18,12 @@ import CustomerLogisticsDashboard from './pages/customer/logistics/BookingDashbo
 import CustomerBookingWizard from './pages/customer/logistics/BookingWizard';
 import CustomerRFQDashboard from './pages/customer/logistics/RFQDashboard';
 import CustomerQuotationComparison from './pages/customer/logistics/QuotationComparison';
+
+// Customer Tracking Portal
+import TrackingDashboard from './pages/customer/tracking/TrackingDashboard';
+import LiveMap from './pages/customer/tracking/LiveMap';
+import ShipmentTimeline from './pages/customer/tracking/ShipmentTimeline';
+import WarehouseVisibility from './pages/customer/tracking/WarehouseVisibility';
 import Projects from './pages/Projects';
 import Assets from './pages/Assets';
 import Returns from './pages/Returns';
@@ -457,6 +463,12 @@ function App() {
           <Route path="/customer/logistics/booking/new" element={<CustomerBookingWizard />} />
           <Route path="/customer/logistics/rfqs" element={<CustomerRFQDashboard />} />
           <Route path="/customer/logistics/quotations/compare/:id" element={<CustomerQuotationComparison />} />
+          
+          {/* Customer Tracking Portal */}
+          <Route path="/customer/tracking" element={<TrackingDashboard />} />
+          <Route path="/customer/tracking/map" element={<LiveMap />} />
+          <Route path="/customer/tracking/timeline/:id" element={<ShipmentTimeline />} />
+          <Route path="/customer/tracking/warehouse" element={<WarehouseVisibility />} />
 
           {/* Logistics & TMS */}    <Route path="/customs" element={<Customs />} />
                   <Route path="/documents" element={<DocumentCenter />} />

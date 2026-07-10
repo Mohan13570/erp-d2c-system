@@ -383,6 +383,8 @@ const navSections = [
           { name: 'Dashboard', path: '/customer-portal', icon: LayoutDashboard },
           { name: 'Logistics & Bookings', path: '/customer/logistics', icon: Truck },
           { name: 'Active RFQs', path: '/customer/logistics/rfqs', icon: FileText },
+          { name: 'Live Tracking Map', path: '/customer/tracking', icon: Map },
+          { name: 'Warehouse Visibility', path: '/customer/tracking/warehouse', icon: Box },
         ]
       },
       { name: 'Vendor Portal', path: '/vendor-portal', icon: Handshake },
