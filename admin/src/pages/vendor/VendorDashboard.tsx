@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ShieldCheck, FileCheck, Inbox, AlertTriangle } from "lucide-react";
+import { ShieldCheck, FileCheck, Inbox, AlertTriangle, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default function VendorDashboard() {

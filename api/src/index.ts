@@ -87,6 +87,11 @@ import vendorSupportRoutes from './routes/vendor-support';
 import customerPortalRoutes from './routes/customer-portal';
 import customerLogisticsRoutes from './routes/customer-logistics';
 import customerTrackingRoutes from './routes/customer-tracking';
+import customerFinanceRoutes from './routes/customer-finance';
+import customerSupportRoutes from './routes/customer-support';
+import hrEmployeeRoutes from './routes/hr-employee';
+import hrAttendanceRoutes from './routes/hr-attendance';
+import hrLeaveRoutes from './routes/hr-leave';
 
 dotenv.config();
 
@@ -193,6 +198,11 @@ app.use('/api/vendor-support', vendorSupportRoutes);
 app.use('/api/customer-portal', customerPortalRoutes);
 app.use('/api/customer-logistics', customerLogisticsRoutes);
 app.use('/api/customer-tracking', customerTrackingRoutes);
+app.use('/api/customer-finance', customerFinanceRoutes);
+app.use('/api/customer-support', customerSupportRoutes);
+app.use('/api/hr', hrEmployeeRoutes);
+app.use('/api/hr/attendance', hrAttendanceRoutes);
+app.use('/api/hr/leave', hrLeaveRoutes);
 
 // Database seed setupter);
 

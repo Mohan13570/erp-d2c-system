@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Building2, FileCheck2, UserPlus, FileWarning } from "lucide-react";
 
 export default function VendorList() {
-  const [vendors, setVendors] = useState([]);
+  const [vendors, setVendors] = useState<any[]>([]);
 
   useEffect(() => {
     fetch('http://localhost:5000/api/vendor-portal')

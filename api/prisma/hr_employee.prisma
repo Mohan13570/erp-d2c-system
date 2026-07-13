@@ -1,0 +1,106 @@
+// HR & Employee Management Schema
+
+model Employee {
+  id                String    @id @default(uuid())
+  employeeCode      String    @unique // e.g., EMP-1045
+  officialEmail     String    @unique
+  status            String    // ACTIVE, INACTIVE, SUSPENDED, TERMINATED, ON_LEAVE
+  
+  profile           EmployeeProfile?
+  employment        EmployeeEmployment?
+  documents         EmployeeDocument[]
+  bankDetails       EmployeeBank[]
+  onboarding        EmployeeOnboarding?
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model EmployeeProfile {
+  id                String    @id @default(uuid())
+  employeeId        String    @unique
+  employee          Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  
+  firstName         String
+  lastName          String
+  gender            String
+  dateOfBirth       DateTime?
+  personalEmail     String?
+  officialMobile    String?
+  personalMobile    String?
+  
+  bloodGroup        String?
+  maritalStatus     String?
+  nationality       String?
+  
+  completionPercent Int       @default(0)
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model EmployeeEmployment {
+  id                String    @id @default(uuid())
+  employeeId        String    @unique
+  employee          Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  
+  designation       String
+  jobTitle          String
+  employmentType    String    // PERMANENT, CONTRACT, INTERN
+  
+  department        String
+  businessUnit      String
+  
+  joiningDate       DateTime
+  workLocation      String
+  workMode          String    // OFFICE, REMOTE, HYBRID
+  
+  reportingManagerId String?  // Reference to another Employee.id
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model EmployeeDocument {
+  id                String    @id @default(uuid())
+  employeeId        String
+  employee          Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  
+  documentType      String    // AADHAAR, PAN, PASSPORT, OFFER_LETTER
+  documentNumber    String?
+  fileUrl           String
+  
+  isVerified        Boolean   @default(false)
+  expiryDate        DateTime?
+  
+  createdAt         DateTime  @default(now())
+}
+
+model EmployeeBank {
+  id                String    @id @default(uuid())
+  employeeId        String
+  employee          Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  
+  bankName          String
+  accountNumber     String
+  ifscCode          String
+  isPrimary         Boolean   @default(true)
+  
+  createdAt         DateTime  @default(now())
+}
+
+model EmployeeOnboarding {
+  id                String    @id @default(uuid())
+  employeeId        String    @unique
+  employee          Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  
+  laptopAllocated   Boolean   @default(false)
+  emailCreated      Boolean   @default(false)
+  idCardGenerated   Boolean   @default(false)
+  bankAccountLinked Boolean   @default(false)
+  
+  status            String    // PENDING, IN_PROGRESS, COMPLETED
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}

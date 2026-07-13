@@ -1,0 +1,109 @@
+// HR Attendance & Time Tracking Schema
+
+model HRGeoFence {
+  id                String    @id @default(uuid())
+  locationName      String
+  latitude          Float
+  longitude         Float
+  radiusMeters      Int       @default(100)
+  isActive          Boolean   @default(true)
+  
+  createdAt         DateTime  @default(now())
+}
+
+model HRShift {
+  id                String    @id @default(uuid())
+  name              String    // MORNING, EVENING, NIGHT, ROTATIONAL
+  startTime         String    // HH:mm format
+  endTime           String    // HH:mm format
+  gracePeriodMins   Int       @default(15)
+  halfDayMins       Int       @default(240) // 4 hours
+  
+  assignments       HRShiftAssignment[]
+  
+  createdAt         DateTime  @default(now())
+}
+
+model HRShiftAssignment {
+  id                String    @id @default(uuid())
+  employeeId        String
+  shiftId           String
+  shift             HRShift   @relation(fields: [shiftId], references: [id])
+  
+  effectiveDate     DateTime
+  endDate           DateTime?
+  
+  createdAt         DateTime  @default(now())
+}
+
+model HRAttendance {
+  id                String    @id @default(uuid())
+  employeeId        String
+  date              DateTime
+  
+  status            String    // PRESENT, ABSENT, HALF_DAY, LATE, HOLIDAY, WEEKEND
+  
+  firstCheckIn      DateTime?
+  lastCheckOut      DateTime?
+  
+  totalWorkMins     Int       @default(0)
+  totalBreakMins    Int       @default(0)
+  
+  isOvertime        Boolean   @default(false)
+  overtimeMins      Int       @default(0)
+  
+  logs              HRAttendanceLog[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  @@unique([employeeId, date])
+}
+
+model HRAttendanceLog {
+  id                String    @id @default(uuid())
+  attendanceId      String
+  attendance        HRAttendance @relation(fields: [attendanceId], references: [id], onDelete: Cascade)
+  
+  timestamp         DateTime  @default(now())
+  type              String    // IN, OUT, BREAK_START, BREAK_END
+  method            String    // MANUAL, GPS, BIOMETRIC, QR_CODE
+  
+  latitude          Float?
+  longitude         Float?
+  geoFenceId        String?
+  inGeoFence        Boolean   @default(false)
+  
+  deviceIp          String?
+  deviceAgent       String?
+}
+
+model HRAttendanceCorrection {
+  id                String    @id @default(uuid())
+  employeeId        String
+  date              DateTime  
+  
+  requestedTime     DateTime
+  type              String    // MISSED_IN, MISSED_OUT, WRONG_TIME
+  reason            String
+  
+  status            String    // PENDING, APPROVED, REJECTED
+  approvedBy        String?   // Manager ID
+  approvalDate      DateTime?
+  
+  createdAt         DateTime  @default(now())
+}
+
+model HROvertimeApproval {
+  id                String    @id @default(uuid())
+  employeeId        String
+  date              DateTime  
+  
+  requestedMins     Int
+  approvedMins      Int?
+  
+  status            String    // PENDING, APPROVED, REJECTED
+  approvedBy        String?   // Manager ID
+  
+  createdAt         DateTime  @default(now())
+}

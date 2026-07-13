@@ -7352,3 +7352,335 @@ model CustomerDeliveryProof {
 
   createdAt DateTime @default(now())
 }
+
+// Customer Finance & Billing Portal Schema
+
+model CustomerInvoice {
+  id            String @id @default(uuid())
+  invoiceNumber String @unique
+  customerId    String // Link to Customer profile
+
+  // Optional links to operational entities
+  bookingId   String?
+  containerId String?
+
+  status String // DRAFT, GENERATED, SENT, PARTIALLY_PAID, PAID, OVERDUE, CANCELLED
+
+  issueDate DateTime @default(now())
+  dueDate   DateTime
+
+  subtotal    Float @default(0.0)
+  taxAmount   Float @default(0.0)
+  totalAmount Float @default(0.0)
+  amountPaid  Float @default(0.0)
+
+  notes  String?
+  pdfUrl String?
+
+  items    CustomerInvoiceItem[]
+  payments PaymentTransaction[]
+  disputes InvoiceDispute[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CustomerInvoiceItem {
+  id        String          @id @default(uuid())
+  invoiceId String
+  invoice   CustomerInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  chargeType  String // FREIGHT, STORAGE, INSURANCE, CUSTOMS, HANDLING
+  description String
+  quantity    Float
+  unitPrice   Float
+  total       Float
+
+  createdAt DateTime @default(now())
+}
+
+model PaymentTransaction {
+  id             String           @id @default(uuid())
+  transactionRef String           @unique
+  invoiceId      String?
+  invoice        CustomerInvoice? @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  customerId     String
+
+  amount         Float
+  paymentMethod  String // CREDIT_CARD, NET_BANKING, UPI, STRIPE, PAYPAL
+  paymentGateway String?
+
+  status      String // PENDING, SUCCESS, FAILED, REFUNDED
+  paymentDate DateTime @default(now())
+  receiptUrl  String?
+
+  createdAt DateTime @default(now())
+}
+
+model CustomerLedger {
+  id              String   @id @default(uuid())
+  customerId      String
+  transactionDate DateTime @default(now())
+
+  type           String // DEBIT (Invoice), CREDIT (Payment)
+  description    String
+  amount         Float
+  runningBalance Float
+
+  referenceId String? // Link to Invoice or Payment ID
+
+  createdAt DateTime @default(now())
+}
+
+model CustomerCreditLimit {
+  id         String @id @default(uuid())
+  customerId String @unique
+
+  approvedLimit     Float @default(0.0)
+  availableCredit   Float @default(0.0)
+  utilizationAmount Float @default(0.0)
+
+  status String // ACTIVE, SUSPENDED, UNDER_REVIEW
+
+  requests CustomerCreditRequest[]
+
+  updatedAt DateTime @updatedAt
+}
+
+model CustomerCreditRequest {
+  id            String              @id @default(uuid())
+  creditLimitId String
+  creditLimit   CustomerCreditLimit @relation(fields: [creditLimitId], references: [id], onDelete: Cascade)
+
+  requestedAmount Float
+  reason          String
+  status          String // PENDING, APPROVED, REJECTED
+
+  createdAt DateTime @default(now())
+}
+
+model InvoiceDispute {
+  id        String          @id @default(uuid())
+  invoiceId String
+  invoice   CustomerInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  reason      String
+  description String
+  status      String // OPEN, UNDER_INVESTIGATION, RESOLVED
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// HR Attendance & Time Tracking Schema
+
+model HRGeoFence {
+  id           String  @id @default(uuid())
+  locationName String
+  latitude     Float
+  longitude    Float
+  radiusMeters Int     @default(100)
+  isActive     Boolean @default(true)
+
+  createdAt DateTime @default(now())
+}
+
+model HRShift {
+  id              String @id @default(uuid())
+  name            String // MORNING, EVENING, NIGHT, ROTATIONAL
+  startTime       String // HH:mm format
+  endTime         String // HH:mm format
+  gracePeriodMins Int    @default(15)
+  halfDayMins     Int    @default(240) // 4 hours
+
+  assignments HRShiftAssignment[]
+
+  createdAt DateTime @default(now())
+}
+
+model HRShiftAssignment {
+  id         String  @id @default(uuid())
+  employeeId String
+  shiftId    String
+  shift      HRShift @relation(fields: [shiftId], references: [id])
+
+  effectiveDate DateTime
+  endDate       DateTime?
+
+  createdAt DateTime @default(now())
+}
+
+model HRAttendance {
+  id         String   @id @default(uuid())
+  employeeId String
+  date       DateTime
+
+  status String // PRESENT, ABSENT, HALF_DAY, LATE, HOLIDAY, WEEKEND
+
+  firstCheckIn DateTime?
+  lastCheckOut DateTime?
+
+  totalWorkMins  Int @default(0)
+  totalBreakMins Int @default(0)
+
+  isOvertime   Boolean @default(false)
+  overtimeMins Int     @default(0)
+
+  logs HRAttendanceLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([employeeId, date])
+}
+
+model HRAttendanceLog {
+  id           String       @id @default(uuid())
+  attendanceId String
+  attendance   HRAttendance @relation(fields: [attendanceId], references: [id], onDelete: Cascade)
+
+  timestamp DateTime @default(now())
+  type      String // IN, OUT, BREAK_START, BREAK_END
+  method    String // MANUAL, GPS, BIOMETRIC, QR_CODE
+
+  latitude   Float?
+  longitude  Float?
+  geoFenceId String?
+  inGeoFence Boolean @default(false)
+
+  deviceIp    String?
+  deviceAgent String?
+}
+
+model HRAttendanceCorrection {
+  id         String   @id @default(uuid())
+  employeeId String
+  date       DateTime
+
+  requestedTime DateTime
+  type          String // MISSED_IN, MISSED_OUT, WRONG_TIME
+  reason        String
+
+  status       String // PENDING, APPROVED, REJECTED
+  approvedBy   String? // Manager ID
+  approvalDate DateTime?
+
+  createdAt DateTime @default(now())
+}
+
+model HROvertimeApproval {
+  id         String   @id @default(uuid())
+  employeeId String
+  date       DateTime
+
+  requestedMins Int
+  approvedMins  Int?
+
+  status     String // PENDING, APPROVED, REJECTED
+  approvedBy String? // Manager ID
+
+  createdAt DateTime @default(now())
+}
+
+// HR Leave Management Schema
+
+model HRLeaveType {
+  id               String  @id @default(uuid())
+  code             String  @unique // CASUAL, SICK, EARNED, MATERNITY, LOP
+  name             String
+  description      String?
+  isPaid           Boolean @default(true)
+  isCarryForward   Boolean @default(false)
+  maxCarryForward  Int     @default(0)
+  requiresDocument Boolean @default(false)
+
+  balances HRLeaveBalance[]
+  requests HRLeaveRequest[]
+
+  createdAt DateTime @default(now())
+}
+
+model HRLeaveBalance {
+  id          String      @id @default(uuid())
+  employeeId  String
+  leaveTypeId String
+  leaveType   HRLeaveType @relation(fields: [leaveTypeId], references: [id])
+
+  accrued        Float @default(0)
+  used           Float @default(0)
+  carriedForward Float @default(0)
+  balance        Float @default(0) // (accrued + carriedForward) - used
+
+  year Int
+
+  ledgers HRLeaveLedger[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([employeeId, leaveTypeId, year])
+}
+
+model HRLeaveLedger {
+  id            String         @id @default(uuid())
+  balanceId     String
+  balanceRecord HRLeaveBalance @relation(fields: [balanceId], references: [id])
+
+  transactionType String // ACCRUAL, DEDUCTION, ADJUSTMENT, ENCASHMENT
+  amount          Float
+  remarks         String?
+
+  timestamp DateTime @default(now())
+}
+
+model HRLeaveRequest {
+  id         String @id @default(uuid())
+  employeeId String
+
+  leaveTypeId String
+  leaveType   HRLeaveType @relation(fields: [leaveTypeId], references: [id])
+
+  startDate DateTime
+  endDate   DateTime
+  totalDays Float
+
+  reason String
+  status String // PENDING, APPROVED, REJECTED, CANCELLED
+
+  backupEmployeeId String?
+  documentUrl      String?
+
+  approvedBy      String? // Manager ID
+  approvalDate    DateTime?
+  rejectionReason String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model HRHoliday {
+  id          String   @id @default(uuid())
+  name        String
+  date        DateTime
+  type        String // NATIONAL, REGIONAL, OPTIONAL
+  isRecurring Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+}
+
+model HRWorkforcePlan {
+  id           String   @id @default(uuid())
+  departmentId String
+  date         DateTime
+
+  requiredHeadcount Int
+  actualHeadcount   Int
+  onLeave           Int
+  deficit           Int
+
+  aiSuggestion String?
+
+  createdAt DateTime @default(now())
+
+  @@unique([departmentId, date])
+}

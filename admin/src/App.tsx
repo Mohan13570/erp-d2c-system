@@ -20,10 +20,47 @@ import CustomerRFQDashboard from './pages/customer/logistics/RFQDashboard';
 import CustomerQuotationComparison from './pages/customer/logistics/QuotationComparison';
 
 // Customer Tracking Portal
-import TrackingDashboard from './pages/customer/tracking/TrackingDashboard';
-import LiveMap from './pages/customer/tracking/LiveMap';
-import ShipmentTimeline from './pages/customer/tracking/ShipmentTimeline';
-import WarehouseVisibility from './pages/customer/tracking/WarehouseVisibility';
+import CustomerTrackingDashboard from './pages/customer/tracking/TrackingDashboard';
+import CustomerLiveMap from './pages/customer/tracking/LiveMap';
+import CustomerShipmentTimeline from './pages/customer/tracking/ShipmentTimeline';
+import CustomerWarehouseVisibility from './pages/customer/tracking/WarehouseVisibility';
+
+// Customer Finance Portal
+import CustomerFinanceDashboard from './pages/customer/finance/FinanceDashboard';
+import CustomerInvoiceList from './pages/customer/finance/InvoiceList';
+import CustomerInvoiceDetail from './pages/customer/finance/InvoiceDetail';
+import CustomerPaymentGateway from './pages/customer/finance/PaymentGateway';
+import CustomerLedger from './pages/customer/finance/CustomerLedger';
+import CustomerCreditManagement from './pages/customer/finance/CreditManagement';
+
+// Customer Support & Analytics
+import CustomerSupportDashboard from './pages/customer/support/SupportDashboard';
+import CustomerAnalyticsDashboard from './pages/customer/support/AnalyticsDashboard';
+import CustomerAIAssistant from './pages/customer/support/AIAssistant';
+import CustomerDeveloperPortal from './pages/customer/support/DeveloperPortal';
+import CustomerSettingsProfile from './pages/customer/support/SettingsProfile';
+
+// HR & Employee Management
+import EmployeeDashboard from './pages/hr/EmployeeDashboard';
+import EmployeeDirectory from './pages/hr/EmployeeDirectory';
+import EmployeeRegistrationWizard from './pages/hr/EmployeeRegistrationWizard';
+import HROrganizationChart from './pages/hr/OrganizationChart';
+import HREmployeeProfile from './pages/hr/EmployeeProfile';
+
+// HR Attendance
+import AttendanceDashboard from './pages/hr/attendance/AttendanceDashboard';
+import LiveCheckIn from './pages/hr/attendance/LiveCheckIn';
+import AttendanceCalendar from './pages/hr/attendance/AttendanceCalendar';
+import ShiftManager from './pages/hr/attendance/ShiftManager';
+import OvertimeApprovals from './pages/hr/attendance/OvertimeApprovals';
+import Timesheets from './pages/hr/attendance/Timesheets';
+
+// HR Leave & Workforce Planning
+import LeaveDashboard from './pages/hr/leave/LeaveDashboard';
+import ApplyLeave from './pages/hr/leave/ApplyLeave';
+import LeaveCalendar from './pages/hr/leave/LeaveCalendar';
+import LeaveBalance from './pages/hr/leave/LeaveBalance';
+import WorkforcePlanning from './pages/hr/leave/WorkforcePlanning';
 import Projects from './pages/Projects';
 import Assets from './pages/Assets';
 import Returns from './pages/Returns';
@@ -465,10 +502,47 @@ function App() {
           <Route path="/customer/logistics/quotations/compare/:id" element={<CustomerQuotationComparison />} />
           
           {/* Customer Tracking Portal */}
-          <Route path="/customer/tracking" element={<TrackingDashboard />} />
-          <Route path="/customer/tracking/map" element={<LiveMap />} />
-          <Route path="/customer/tracking/timeline/:id" element={<ShipmentTimeline />} />
-          <Route path="/customer/tracking/warehouse" element={<WarehouseVisibility />} />
+          <Route path="/customer/tracking" element={<CustomerTrackingDashboard />} />
+          <Route path="/customer/tracking/map" element={<CustomerLiveMap />} />
+          <Route path="/customer/tracking/timeline/:id" element={<CustomerShipmentTimeline />} />
+          <Route path="/customer/tracking/warehouse" element={<CustomerWarehouseVisibility />} />
+
+          {/* Customer Finance Portal */}
+          <Route path="/customer/finance" element={<CustomerFinanceDashboard />} />
+          <Route path="/customer/finance/invoices" element={<CustomerInvoiceList />} />
+          <Route path="/customer/finance/invoices/:id" element={<CustomerInvoiceDetail />} />
+          <Route path="/customer/finance/payments" element={<CustomerPaymentGateway />} />
+          <Route path="/customer/finance/ledger" element={<CustomerLedger />} />
+          <Route path="/customer/finance/credit" element={<CustomerCreditManagement />} />
+
+          {/* Customer Support & Analytics */}
+          <Route path="/customer/support" element={<CustomerSupportDashboard />} />
+          <Route path="/customer/analytics" element={<CustomerAnalyticsDashboard />} />
+          <Route path="/customer/ai" element={<CustomerAIAssistant />} />
+          <Route path="/customer/developer" element={<CustomerDeveloperPortal />} />
+          <Route path="/customer/settings" element={<CustomerSettingsProfile />} />
+
+          {/* HR & Employee Management */}
+          <Route path="/hr" element={<EmployeeDashboard />} />
+          <Route path="/hr/directory" element={<EmployeeDirectory />} />
+          <Route path="/hr/register" element={<EmployeeRegistrationWizard />} />
+          <Route path="/hr/org-chart" element={<HROrganizationChart />} />
+          <Route path="/hr/profile/:id" element={<HREmployeeProfile />} />
+
+          {/* HR Attendance & Time Management */}
+          <Route path="/hr/attendance" element={<AttendanceDashboard />} />
+          <Route path="/hr/attendance/check-in" element={<LiveCheckIn />} />
+          <Route path="/hr/attendance/calendar" element={<AttendanceCalendar />} />
+          <Route path="/hr/attendance/shifts" element={<ShiftManager />} />
+          <Route path="/hr/attendance/overtime" element={<OvertimeApprovals />} />
+          <Route path="/hr/attendance/timesheets" element={<Timesheets />} />
+
+          {/* HR Leave & Workforce Planning */}
+          <Route path="/hr/leave" element={<LeaveDashboard />} />
+          <Route path="/hr/leave/apply" element={<ApplyLeave />} />
+          <Route path="/hr/leave/calendar" element={<LeaveCalendar />} />
+          <Route path="/hr/leave/balance" element={<LeaveBalance />} />
+          <Route path="/hr/leave/workforce" element={<WorkforcePlanning />} />
 
           {/* Logistics & TMS */}    <Route path="/customs" element={<Customs />} />
                   <Route path="/documents" element={<DocumentCenter />} />

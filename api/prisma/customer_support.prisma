@@ -1,0 +1,109 @@
+// Customer Support & Analytics Schema
+
+model SupportTicket {
+  id                String    @id @default(uuid())
+  ticketNumber      String    @unique
+  customerId        String
+  
+  subject           String
+  description       String
+  category          String    // TECHNICAL, SHIPMENT, FINANCE, CUSTOMS
+  priority          String    // LOW, MEDIUM, HIGH, CRITICAL
+  status            String    // OPEN, IN_PROGRESS, ESCALATED, RESOLVED, CLOSED
+  
+  assignedTo        String?   // User ID of the support agent
+  
+  comments          TicketComment[]
+  attachments       TicketAttachment[]
+  
+  resolutionTime    Int?      // Time taken to resolve in hours
+  slaBreached       Boolean   @default(false)
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model TicketComment {
+  id                String    @id @default(uuid())
+  ticketId          String
+  ticket            SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  
+  authorId          String    // Customer ID or Agent ID
+  authorType        String    // CUSTOMER, AGENT, SYSTEM
+  message           String
+  isInternal        Boolean   @default(false) // Visible only to agents
+  
+  createdAt         DateTime  @default(now())
+}
+
+model TicketAttachment {
+  id                String    @id @default(uuid())
+  ticketId          String
+  ticket            SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  fileName          String
+  fileUrl           String
+  uploadedBy        String
+  createdAt         DateTime  @default(now())
+}
+
+model CustomerAnalytics {
+  id                String    @id @default(uuid())
+  customerId        String    @unique
+  
+  totalShipments    Int       @default(0)
+  successfulDelivery Int      @default(0)
+  delayedShipments  Int       @default(0)
+  
+  totalRevenue      Float     @default(0.0)
+  averageTransitTime Float    @default(0.0) // In Days
+  
+  customerScore     Float     @default(100.0) // Out of 100
+  
+  lastCalculated    DateTime  @default(now())
+}
+
+model CustomerAIConversation {
+  id                String    @id @default(uuid())
+  customerId        String
+  title             String?
+  status            String    // ACTIVE, ARCHIVED
+  prompts           CustomerAIPrompt[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model CustomerAIPrompt {
+  id                String    @id @default(uuid())
+  conversationId    String
+  conversation      CustomerAIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  role              String    // USER, ASSISTANT, SYSTEM
+  content           String
+  
+  createdAt         DateTime  @default(now())
+}
+
+model APIKey {
+  id                String    @id @default(uuid())
+  customerId        String
+  name              String
+  keyHash           String    @unique
+  status            String    // ACTIVE, REVOKED
+  lastUsed          DateTime?
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model Webhook {
+  id                String    @id @default(uuid())
+  customerId        String
+  url               String
+  events            String    // Comma separated list of events (e.g., SHIPMENT_STATUS, INVOICE_GENERATED)
+  secret            String
+  status            String    // ACTIVE, DISABLED
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { MessageSquare, BookOpen, Scale, Activity, Anchor, ArrowDownToLine, ArrowRightLeft, BarChart2, BarChart3, Box, BrainCircuit, Briefcase, Building2, Calendar, Car, CheckCircle, ChevronDown, ChevronRight, ClipboardCheck, ClipboardList, Command, Cpu, CreditCard, Crosshair, DollarSign, DownloadCloud, FileBarChart, FileText, FolderKanban, Globe, Handshake, History, Landmark, Layers, LayoutDashboard, LayoutGrid, LogOut, Map, MapPin, Megaphone, Navigation, Navigation2, Package, PackageOpen, PackageSearch, Plane, Plus, QrCode, ReceiptText, RefreshCcw, RotateCcw, Route, Send, Settings, Shield, ShieldCheck, Ship, ShoppingCart, Smartphone, Target, TerminalSquare, ThermometerSnowflake, TrendingUp, Truck, UserCheck, UserCircle, Users, UsersRound, Wrench, GitMerge, Workflow, Bell, FileCode2, Database, Table, KeyRound, Webhook, Link2, Key, FileCheck, Inbox } from 'lucide-react';
+import { MessageSquare, BookOpen, Scale, Activity, Anchor, ArrowDownToLine, ArrowRightLeft, BarChart2, BarChart3, Box, BrainCircuit, Briefcase, Building2, Calendar, Car, CheckCircle, ChevronDown, ChevronRight, ClipboardCheck, ClipboardList, Command, Cpu, CreditCard, Crosshair, DollarSign, DownloadCloud, FileBarChart, FileText, FolderKanban, Globe, Handshake, History, Landmark, Layers, LayoutDashboard, LayoutGrid, LogOut, Map, MapPin, Megaphone, Navigation, Navigation2, Package, PackageOpen, PackageSearch, Plane, Plus, QrCode, ReceiptText, RefreshCcw, RotateCcw, Route, Send, Settings, Shield, ShieldCheck, Ship, ShoppingCart, Smartphone, Target, TerminalSquare, ThermometerSnowflake, TrendingUp, Truck, UserCheck, UserCircle, Users, UsersRound, Wrench, GitMerge, Workflow, Bell, FileCode2, Database, Table, KeyRound, Webhook, Link2, Key, FileCheck, Inbox, Bot, Code, Clock, UserCog, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const navSections = [
@@ -261,7 +261,40 @@ const navSections = [
   {
     label: 'People & Finance',
     items: [
-      { name: 'HR & Payroll', path: '/hr', icon: Users },
+      { 
+        name: 'HR & Payroll', 
+        icon: Users,
+        subItems: [
+          { name: 'HR Dashboard', path: '/hr', icon: LayoutDashboard },
+          { name: 'Employee Directory', path: '/hr/directory', icon: Users },
+          { name: 'Organization Chart', path: '/hr/org-chart', icon: UsersRound },
+          { name: 'Employee Onboarding', path: '/hr/register', icon: Briefcase },
+          { name: 'My Profile', path: '/hr/profile/me', icon: UserCircle },
+        ]
+      },
+      { 
+        name: 'Time & Attendance', 
+        icon: Clock,
+        subItems: [
+          { name: 'Live Check-In', path: '/hr/attendance/check-in', icon: MapPin },
+          { name: 'WFM Dashboard', path: '/hr/attendance', icon: LayoutDashboard },
+          { name: 'My Calendar', path: '/hr/attendance/calendar', icon: Calendar },
+          { name: 'Shift Management', path: '/hr/attendance/shifts', icon: Clock },
+          { name: 'Overtime Approvals', path: '/hr/attendance/overtime', icon: AlertCircle },
+          { name: 'Timesheets', path: '/hr/attendance/timesheets', icon: FileBarChart },
+        ]
+      },
+      { 
+        name: 'Leave & Absences', 
+        icon: Plane,
+        subItems: [
+          { name: 'Leave Dashboard', path: '/hr/leave', icon: LayoutDashboard },
+          { name: 'Apply Leave', path: '/hr/leave/apply', icon: Plus },
+          { name: 'My Balances', path: '/hr/leave/balance', icon: Briefcase },
+          { name: 'Holiday Calendar', path: '/hr/leave/calendar', icon: Calendar },
+          { name: 'Workforce Planning', path: '/hr/leave/workforce', icon: Users },
+        ]
+      },
       { name: 'Finance', path: '/finance', icon: DollarSign },
       { name: 'Company Stock', path: '/stock', icon: Briefcase },
     ]
@@ -300,34 +333,7 @@ const navSections = [
           { name: 'Prompt Library', path: '/ai/prompts', icon: FileText },
         ]
       },
-      {
-        name: 'Vendor Portal',
-        icon: Building2,
-        subItems: [
-          { name: 'Vendor Directory', path: '/vendor/list', icon: Users },
-          { name: 'Self Registration', path: '/vendor/registration', icon: FileCheck },
-          { name: 'External Portal', path: '/vendor/portal', icon: ShieldCheck },
-          { name: 'Procurement Collab', path: '/vendor/procurement', icon: ShoppingCart },
-          { name: 'RFQs & Quotes', path: '/vendor/rfqs', icon: FileText },
-          { name: 'Purchase Orders', path: '/vendor/pos', icon: Inbox },
-          { name: 'Logistics Collab', path: '/vendor/logistics', icon: Truck },
-          { name: 'Active ASNs', path: '/vendor/asns', icon: Package },
-          { name: 'Dock Booking', path: '/vendor/docks', icon: MapPin },
-          { name: 'Finance & Billing', path: '/vendor/finance', icon: DollarSign },
-          { name: 'Invoices', path: '/vendor/invoices', icon: ReceiptText },
-          { name: 'Account Ledger', path: '/vendor/ledger', icon: FileBarChart },
-        ]
-      },
-      {
-        name: 'Vendor Support & Comms',
-        icon: MessageSquare,
-        subItems: [
-          { name: 'Help Desk', path: '/vendor/support', icon: ShieldCheck },
-          { name: 'Live Chat', path: '/vendor/chat', icon: MessageSquare },
-          { name: 'Performance Analytics', path: '/vendor/performance', icon: Activity },
-          { name: 'Knowledge Base', path: '/vendor/knowledge-base', icon: BookOpen },
-        ]
-      },
+
       { 
         name: 'Organization', 
         icon: Building2,
@@ -385,9 +391,42 @@ const navSections = [
           { name: 'Active RFQs', path: '/customer/logistics/rfqs', icon: FileText },
           { name: 'Live Tracking Map', path: '/customer/tracking', icon: Map },
           { name: 'Warehouse Visibility', path: '/customer/tracking/warehouse', icon: Box },
+          { name: 'Billing & Payments', path: '/customer/finance', icon: DollarSign },
+          { name: 'Support Tickets', path: '/customer/support', icon: MessageSquare },
+          { name: 'Enterprise Analytics', path: '/customer/analytics', icon: Activity },
+          { name: 'AI Assistant', path: '/customer/ai', icon: Bot },
+          { name: 'Developer API', path: '/customer/developer', icon: Code },
+          { name: 'Settings & Profile', path: '/customer/settings', icon: Settings },
         ]
       },
-      { name: 'Vendor Portal', path: '/vendor-portal', icon: Handshake },
+      {
+        name: 'Vendor Portal',
+        icon: Building2,
+        subItems: [
+          { name: 'Vendor Directory', path: '/vendor/list', icon: Users },
+          { name: 'Self Registration', path: '/vendor/registration', icon: FileCheck },
+          { name: 'External Portal', path: '/vendor/portal', icon: ShieldCheck },
+          { name: 'Procurement Collab', path: '/vendor/procurement', icon: ShoppingCart },
+          { name: 'RFQs & Quotes', path: '/vendor/rfqs', icon: FileText },
+          { name: 'Purchase Orders', path: '/vendor/pos', icon: Inbox },
+          { name: 'Logistics Collab', path: '/vendor/logistics', icon: Truck },
+          { name: 'Active ASNs', path: '/vendor/asns', icon: Package },
+          { name: 'Dock Booking', path: '/vendor/docks', icon: MapPin },
+          { name: 'Finance & Billing', path: '/vendor/finance', icon: DollarSign },
+          { name: 'Invoices', path: '/vendor/invoices', icon: ReceiptText },
+          { name: 'Account Ledger', path: '/vendor/ledger', icon: FileBarChart },
+        ]
+      },
+      {
+        name: 'Vendor Support & Comms',
+        icon: MessageSquare,
+        subItems: [
+          { name: 'Help Desk', path: '/vendor/support', icon: ShieldCheck },
+          { name: 'Live Chat', path: '/vendor/chat', icon: MessageSquare },
+          { name: 'Performance Analytics', path: '/vendor/performance', icon: Activity },
+          { name: 'Knowledge Base', path: '/vendor/knowledge-base', icon: BookOpen },
+        ]
+      },
       { name: 'Employee Portal', path: '/hr-portal', icon: UsersRound },
       { name: 'Driver App', path: '/mobile/driver', icon: Smartphone },
       { name: 'Warehouse App', path: '/mobile/warehouse', icon: Smartphone },

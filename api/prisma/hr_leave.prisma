@@ -1,0 +1,102 @@
+// HR Leave Management Schema
+
+model HRLeaveType {
+  id                String    @id @default(uuid())
+  code              String    @unique // CASUAL, SICK, EARNED, MATERNITY, LOP
+  name              String
+  description       String?
+  isPaid            Boolean   @default(true)
+  isCarryForward    Boolean   @default(false)
+  maxCarryForward   Int       @default(0)
+  requiresDocument  Boolean   @default(false)
+  
+  balances          HRLeaveBalance[]
+  requests          HRLeaveRequest[]
+  
+  createdAt         DateTime  @default(now())
+}
+
+model HRLeaveBalance {
+  id                String    @id @default(uuid())
+  employeeId        String
+  leaveTypeId       String
+  leaveType         HRLeaveType @relation(fields: [leaveTypeId], references: [id])
+  
+  accrued           Float     @default(0)
+  used              Float     @default(0)
+  carriedForward    Float     @default(0)
+  balance           Float     @default(0) // (accrued + carriedForward) - used
+  
+  year              Int
+  
+  ledgers           HRLeaveLedger[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  @@unique([employeeId, leaveTypeId, year])
+}
+
+model HRLeaveLedger {
+  id                String    @id @default(uuid())
+  balanceId         String
+  balanceRecord     HRLeaveBalance @relation(fields: [balanceId], references: [id])
+  
+  transactionType   String    // ACCRUAL, DEDUCTION, ADJUSTMENT, ENCASHMENT
+  amount            Float
+  remarks           String?
+  
+  timestamp         DateTime  @default(now())
+}
+
+model HRLeaveRequest {
+  id                String    @id @default(uuid())
+  employeeId        String
+  
+  leaveTypeId       String
+  leaveType         HRLeaveType @relation(fields: [leaveTypeId], references: [id])
+  
+  startDate         DateTime
+  endDate           DateTime
+  totalDays         Float
+  
+  reason            String
+  status            String    // PENDING, APPROVED, REJECTED, CANCELLED
+  
+  backupEmployeeId  String?
+  documentUrl       String?
+  
+  approvedBy        String?   // Manager ID
+  approvalDate      DateTime?
+  rejectionReason   String?
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model HRHoliday {
+  id                String    @id @default(uuid())
+  name              String
+  date              DateTime
+  type              String    // NATIONAL, REGIONAL, OPTIONAL
+  isRecurring       Boolean   @default(false)
+  
+  createdAt         DateTime  @default(now())
+}
+
+model HRWorkforcePlan {
+  id                String    @id @default(uuid())
+  departmentId      String
+  date              DateTime
+  
+  requiredHeadcount Int
+  actualHeadcount   Int
+  onLeave           Int
+  deficit           Int
+  
+  aiSuggestion      String?
+  
+  createdAt         DateTime  @default(now())
+  
+  @@unique([departmentId, date])
+}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Award, Clock, DollarSign, MessageSquare, Anchor, TrendingDown } from 'lucide-react';
+import { ShieldCheck, Award, Clock, DollarSign, MessageSquare, Anchor, TrendingDown, Calendar, CheckCircle } from 'lucide-react';
 import { useParams, Link } from 'react-router-dom';
 
 const mockQuotes = [

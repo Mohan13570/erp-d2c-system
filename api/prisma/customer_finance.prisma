@@ -1,0 +1,118 @@
+// Customer Finance & Billing Portal Schema
+
+model CustomerInvoice {
+  id                String    @id @default(uuid())
+  invoiceNumber     String    @unique
+  customerId        String    // Link to Customer profile
+  
+  // Optional links to operational entities
+  bookingId         String?   
+  containerId       String?   
+  
+  status            String    // DRAFT, GENERATED, SENT, PARTIALLY_PAID, PAID, OVERDUE, CANCELLED
+  
+  issueDate         DateTime  @default(now())
+  dueDate           DateTime
+  
+  subtotal          Float     @default(0.0)
+  taxAmount         Float     @default(0.0)
+  totalAmount       Float     @default(0.0)
+  amountPaid        Float     @default(0.0)
+  
+  notes             String?
+  pdfUrl            String?
+  
+  items             CustomerInvoiceItem[]
+  payments          PaymentTransaction[]
+  disputes          InvoiceDispute[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model CustomerInvoiceItem {
+  id                String    @id @default(uuid())
+  invoiceId         String
+  invoice           CustomerInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  chargeType        String    // FREIGHT, STORAGE, INSURANCE, CUSTOMS, HANDLING
+  description       String
+  quantity          Float
+  unitPrice         Float
+  total             Float
+  
+  createdAt         DateTime  @default(now())
+}
+
+model PaymentTransaction {
+  id                String    @id @default(uuid())
+  transactionRef    String    @unique
+  invoiceId         String?
+  invoice           CustomerInvoice? @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  customerId        String
+  
+  amount            Float
+  paymentMethod     String    // CREDIT_CARD, NET_BANKING, UPI, STRIPE, PAYPAL
+  paymentGateway    String?
+  
+  status            String    // PENDING, SUCCESS, FAILED, REFUNDED
+  paymentDate       DateTime  @default(now())
+  receiptUrl        String?
+  
+  createdAt         DateTime  @default(now())
+}
+
+model CustomerLedger {
+  id                String    @id @default(uuid())
+  customerId        String
+  transactionDate   DateTime  @default(now())
+  
+  type              String    // DEBIT (Invoice), CREDIT (Payment)
+  description       String
+  amount            Float
+  runningBalance    Float
+  
+  referenceId       String?   // Link to Invoice or Payment ID
+  
+  createdAt         DateTime  @default(now())
+}
+
+model CustomerCreditLimit {
+  id                String    @id @default(uuid())
+  customerId        String    @unique
+  
+  approvedLimit     Float     @default(0.0)
+  availableCredit   Float     @default(0.0)
+  utilizationAmount Float     @default(0.0)
+  
+  status            String    // ACTIVE, SUSPENDED, UNDER_REVIEW
+  
+  requests          CustomerCreditRequest[]
+  
+  updatedAt         DateTime  @updatedAt
+}
+
+model CustomerCreditRequest {
+  id                String    @id @default(uuid())
+  creditLimitId     String
+  creditLimit       CustomerCreditLimit @relation(fields: [creditLimitId], references: [id], onDelete: Cascade)
+  
+  requestedAmount   Float
+  reason            String
+  status            String    // PENDING, APPROVED, REJECTED
+  
+  createdAt         DateTime  @default(now())
+}
+
+model InvoiceDispute {
+  id                String    @id @default(uuid())
+  invoiceId         String
+  invoice           CustomerInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  reason            String
+  description       String
+  status            String    // OPEN, UNDER_INVESTIGATION, RESOLVED
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}

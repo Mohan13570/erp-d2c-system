@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { CheckCircle2, Circle, ChevronRight } from "lucide-react";
+import { CheckCircle2, Circle, ChevronRight, FileCheck2 } from "lucide-react";
 
 export default function VendorRegistrationWizard() {
   const [step, setStep] = useState(1);
