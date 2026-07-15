@@ -93,6 +93,7 @@ import hrEmployeeRoutes from './routes/hr-employee';
 import hrAttendanceRoutes from './routes/hr-attendance';
 import hrLeaveRoutes from './routes/hr-leave';
 import erpBillingRoutes from './routes/erp-billing';
+import erpPricingRoutes from './routes/erp-pricing';
 
 dotenv.config();
 
@@ -207,6 +208,7 @@ app.use('/api/hr-leave', hrLeaveRoutes);
 
 // Core ERP Modules
 app.use('/api/erp/billing', erpBillingRoutes);
+app.use('/api/erp/pricing', erpPricingRoutes);
 
 // Database seed setupter);
 

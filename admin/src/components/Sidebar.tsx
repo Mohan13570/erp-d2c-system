@@ -302,6 +302,8 @@ const navSections = [
           { name: 'Billing Dashboard', path: '/finance/billing', icon: LayoutDashboard },
           { name: 'Invoices', path: '/finance/billing/invoices', icon: FileText },
           { name: 'Create Invoice', path: '/finance/billing/create', icon: Plus },
+          { name: 'Rate Engine', path: '/finance/pricing', icon: DollarSign },
+          { name: 'Live Quote', path: '/finance/pricing/calculator', icon: Calculator },
         ]
       },
       { name: 'Company Stock', path: '/stock', icon: Briefcase },

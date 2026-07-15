@@ -7772,3 +7772,94 @@ model ErpInvoiceHistory {
   performedBy String
   createdAt   DateTime @default(now())
 }
+
+model ErpPricingContract {
+  id             String   @id @default(uuid())
+  contractNumber String   @unique
+  customerId     String
+  validFrom      DateTime
+  validTo        DateTime
+  currency       String   @default("USD")
+  creditTerms    Int      @default(30)
+  status         String   @default("ACTIVE") // ACTIVE, EXPIRED, DRAFT
+
+  discountPercent Float  @default(0)
+  discountType    String @default("VOLUME") // VOLUME, FLAT, SEASONAL
+
+  rates ErpContractRate[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ErpContractRate {
+  id         String             @id @default(uuid())
+  contractId String
+  contract   ErpPricingContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  originCode      String
+  destinationCode String
+  transportMode   String // OCEAN, AIR, ROAD
+
+  unitType   String // KG, CBM, TEU, FEU, TRIP
+  rateAmount Float
+
+  minimumCharge Float  @default(0)
+  maximumCharge Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ErpRateCard {
+  id           String  @id @default(uuid())
+  providerType String // CARRIER, VENDOR, STANDARD
+  providerId   String? // Carrier ID or Vendor ID
+
+  originCode      String
+  destinationCode String
+  transportMode   String // OCEAN, AIR, ROAD
+
+  unitType String // KG, CBM, TEU, FEU, TRIP
+  baseRate Float
+  currency String @default("USD")
+
+  validFrom DateTime
+  validTo   DateTime
+
+  status String @default("ACTIVE")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ErpSurchargeRule {
+  id            String @id @default(uuid())
+  chargeType    String // FUEL, PEAK_SEASON, HAZMAT, OVERSIZE
+  transportMode String // OCEAN, AIR, ROAD, ALL
+
+  calculationType String // PERCENTAGE, FLAT_RATE, PER_UNIT
+  amount          Float
+
+  applicableZones String? // JSON array or comma separated
+  validFrom       DateTime
+  validTo         DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ErpMarginAnalysis {
+  id         String @id @default(uuid())
+  shipmentId String
+  customerId String
+  carrierId  String
+
+  buyAmount     Float
+  sellAmount    Float
+  marginAmount  Float // sellAmount - buyAmount
+  marginPercent Float // (marginAmount / sellAmount) * 100
+  currency      String @default("USD")
+
+  calculatedAt DateTime @default(now())
+}

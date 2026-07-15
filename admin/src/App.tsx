@@ -68,6 +68,12 @@ import InvoiceList from './pages/finance/billing/InvoiceList';
 import CreateInvoice from './pages/finance/billing/CreateInvoice';
 import InvoiceDetails from './pages/finance/billing/InvoiceDetails';
 
+// Core ERP Rate Engine
+import PricingDashboard from './pages/finance/pricing/PricingDashboard';
+import RateCards from './pages/finance/pricing/RateCards';
+import CustomerContracts from './pages/finance/pricing/CustomerContracts';
+import LiveCalculator from './pages/finance/pricing/LiveCalculator';
+
 import Projects from './pages/Projects';
 import Assets from './pages/Assets';
 import Returns from './pages/Returns';
@@ -556,6 +562,12 @@ function App() {
           <Route path="/finance/billing/invoices" element={<InvoiceList />} />
           <Route path="/finance/billing/create" element={<CreateInvoice />} />
           <Route path="/finance/billing/:id" element={<InvoiceDetails />} />
+
+          {/* Core ERP Rate Engine */}
+          <Route path="/finance/pricing" element={<PricingDashboard />} />
+          <Route path="/finance/pricing/rates" element={<RateCards />} />
+          <Route path="/finance/pricing/contracts" element={<CustomerContracts />} />
+          <Route path="/finance/pricing/calculator" element={<LiveCalculator />} />
 
           {/* Logistics & TMS */}    <Route path="/customs" element={<Customs />} />
                   <Route path="/documents" element={<DocumentCenter />} />
