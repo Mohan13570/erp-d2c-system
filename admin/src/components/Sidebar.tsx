@@ -306,6 +306,17 @@ const navSections = [
           { name: 'Live Quote', path: '/finance/pricing/calculator', icon: Calculator },
         ]
       },
+      {
+        name: 'Accounts Receivable',
+        path: '/finance/ar',
+        icon: TrendingDown,
+        subItems: [
+          { name: 'AR Dashboard', path: '/finance/ar', icon: BarChart3 },
+          { name: 'Customer Ledgers', path: '/finance/ar/ledger', icon: FileText },
+          { name: 'Payment Allocation', path: '/finance/ar/allocate', icon: DollarSign },
+          { name: 'Collections', path: '/finance/ar/collections', icon: Users },
+        ]
+      },
       { name: 'Company Stock', path: '/stock', icon: Briefcase },
     ]
   },

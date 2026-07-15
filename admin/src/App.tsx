@@ -74,6 +74,12 @@ import RateCards from './pages/finance/pricing/RateCards';
 import CustomerContracts from './pages/finance/pricing/CustomerContracts';
 import LiveCalculator from './pages/finance/pricing/LiveCalculator';
 
+// Core ERP Accounts Receivable
+import ARDashboard from './pages/finance/ar/ARDashboard';
+import CustomerLedger from './pages/finance/ar/CustomerLedger';
+import PaymentAllocation from './pages/finance/ar/PaymentAllocation';
+import CollectionsDashboard from './pages/finance/ar/CollectionsDashboard';
+
 import Projects from './pages/Projects';
 import Assets from './pages/Assets';
 import Returns from './pages/Returns';
@@ -568,6 +574,12 @@ function App() {
           <Route path="/finance/pricing/rates" element={<RateCards />} />
           <Route path="/finance/pricing/contracts" element={<CustomerContracts />} />
           <Route path="/finance/pricing/calculator" element={<LiveCalculator />} />
+
+          {/* Core ERP Accounts Receivable */}
+          <Route path="/finance/ar" element={<ARDashboard />} />
+          <Route path="/finance/ar/ledger" element={<CustomerLedger />} />
+          <Route path="/finance/ar/allocate" element={<PaymentAllocation />} />
+          <Route path="/finance/ar/collections" element={<CollectionsDashboard />} />
 
           {/* Logistics & TMS */}    <Route path="/customs" element={<Customs />} />
                   <Route path="/documents" element={<DocumentCenter />} />

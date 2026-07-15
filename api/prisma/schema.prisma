@@ -7863,3 +7863,84 @@ model ErpMarginAnalysis {
 
   calculatedAt DateTime @default(now())
 }
+
+model ArCustomerProfile {
+  id         String @id @default(uuid())
+  customerId String @unique
+
+  creditLimit     Float @default(0)
+  usedCredit      Float @default(0)
+  availableCredit Float @default(0) // creditLimit - usedCredit
+
+  isOnCreditHold Boolean @default(false)
+  riskScore      String  @default("LOW") // LOW, MEDIUM, HIGH
+
+  ledgers     ArLedgerEntry[]
+  collections ArCollectionActivity[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ArLedgerEntry {
+  id        String            @id @default(uuid())
+  profileId String
+  profile   ArCustomerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  transactionDate DateTime @default(now())
+  transactionType String // INVOICE, PAYMENT, CREDIT_NOTE, DEBIT_NOTE
+  referenceId     String // Invoice ID, Payment ID, etc.
+  description     String
+
+  debitAmount    Float @default(0) // Increases customer debt
+  creditAmount   Float @default(0) // Decreases customer debt
+  runningBalance Float // Balance immediately after this transaction
+
+  currency String @default("USD")
+
+  createdAt DateTime @default(now())
+}
+
+model ArPaymentAllocation {
+  id           String @id @default(uuid())
+  paymentRefId String // E.g. Bank Wire Ref
+  invoiceId    String // Link to ErpInvoice
+
+  allocatedAmount Float
+  currency        String @default("USD")
+
+  allocatedBy String
+  createdAt   DateTime @default(now())
+}
+
+model ArCollectionActivity {
+  id        String            @id @default(uuid())
+  profileId String
+  profile   ArCustomerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  activityType     String // CALL, EMAIL, MEETING
+  notes            String
+  promiseToPayDate DateTime?
+  promiseAmount    Float?
+
+  status     String  @default("OPEN") // OPEN, CLOSED
+  assignedTo String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ArDispute {
+  id        String @id @default(uuid())
+  invoiceId String
+
+  disputeReason  String // PRICING, DAMAGE, TAX_ERROR
+  disputedAmount Float
+  status         String @default("PENDING") // PENDING, RESOLVED_CREDIT, RESOLVED_REJECTED
+
+  notes    String?
+  raisedBy String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
