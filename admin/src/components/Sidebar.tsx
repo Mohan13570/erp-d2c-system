@@ -317,6 +317,17 @@ const navSections = [
           { name: 'Collections', path: '/finance/ar/collections', icon: Users },
         ]
       },
+      {
+        name: 'Treasury & Payments',
+        path: '/finance/payments',
+        icon: Landmark,
+        subItems: [
+          { name: 'Payment Dashboard', path: '/finance/payments', icon: Wallet },
+          { name: 'Receive Payment', path: '/finance/payments/receive', icon: CreditCard },
+          { name: 'Bank Recon', path: '/finance/payments/reconciliation', icon: RefreshCcw },
+          { name: 'Cash Book', path: '/finance/payments/cashbook', icon: FileText },
+        ]
+      },
       { name: 'Company Stock', path: '/stock', icon: Briefcase },
     ]
   },

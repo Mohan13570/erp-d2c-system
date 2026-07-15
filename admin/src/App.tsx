@@ -80,6 +80,12 @@ import CustomerLedger from './pages/finance/ar/CustomerLedger';
 import PaymentAllocation from './pages/finance/ar/PaymentAllocation';
 import CollectionsDashboard from './pages/finance/ar/CollectionsDashboard';
 
+// Core ERP Treasury & Payments
+import PaymentDashboard from './pages/finance/payments/PaymentDashboard';
+import ReceivePayment from './pages/finance/payments/ReceivePayment';
+import BankReconciliation from './pages/finance/payments/BankReconciliation';
+import CashBook from './pages/finance/payments/CashBook';
+
 import Projects from './pages/Projects';
 import Assets from './pages/Assets';
 import Returns from './pages/Returns';
@@ -580,6 +586,12 @@ function App() {
           <Route path="/finance/ar/ledger" element={<CustomerLedger />} />
           <Route path="/finance/ar/allocate" element={<PaymentAllocation />} />
           <Route path="/finance/ar/collections" element={<CollectionsDashboard />} />
+
+          {/* Core ERP Treasury & Payments */}
+          <Route path="/finance/payments" element={<PaymentDashboard />} />
+          <Route path="/finance/payments/receive" element={<ReceivePayment />} />
+          <Route path="/finance/payments/reconciliation" element={<BankReconciliation />} />
+          <Route path="/finance/payments/cashbook" element={<CashBook />} />
 
           {/* Logistics & TMS */}    <Route path="/customs" element={<Customs />} />
                   <Route path="/documents" element={<DocumentCenter />} />

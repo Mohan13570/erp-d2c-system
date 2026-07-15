@@ -95,6 +95,7 @@ import hrLeaveRoutes from './routes/hr-leave';
 import erpBillingRoutes from './routes/erp-billing';
 import erpPricingRoutes from './routes/erp-pricing';
 import erpArRoutes from './routes/erp-ar';
+import erpPaymentsRoutes from './routes/erp-payments';
 
 dotenv.config();
 
@@ -211,6 +212,7 @@ app.use('/api/hr-leave', hrLeaveRoutes);
 app.use('/api/erp/billing', erpBillingRoutes);
 app.use('/api/erp/pricing', erpPricingRoutes);
 app.use('/api/erp/ar', erpArRoutes);
+app.use('/api/erp/payments', erpPaymentsRoutes);
 
 // Database seed setupter);
 

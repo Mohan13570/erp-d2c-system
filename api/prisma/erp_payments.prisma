@@ -1,0 +1,88 @@
+model ErpBankAccount {
+  id              String             @id @default(uuid())
+  bankName        String
+  accountNumber   String             @unique
+  routingNumber   String?
+  swiftCode       String?
+  currency        String             @default("USD")
+  
+  currentBalance  Float              @default(0)
+  
+  status          String             @default("ACTIVE") // ACTIVE, FROZEN, CLOSED
+  
+  payments        ErpPaymentReceipt[]
+  statements      ErpBankStatementItem[]
+  
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+}
+
+model ErpPaymentReceipt {
+  id              String             @id @default(uuid())
+  receiptNumber   String             @unique // e.g. REC-2026-001
+  customerId      String
+  
+  paymentMethod   String             // WIRE, CHEQUE, CASH, CREDIT_CARD, STRIPE
+  referenceNumber String?            // Bank transaction ref or cheque number
+  amount          Float
+  currency        String             @default("USD")
+  
+  status          String             @default("UNRECONCILED") // UNRECONCILED, RECONCILED, BOUNCED, REFUNDED
+  receivedDate    DateTime           @default(now())
+  
+  bankAccountId   String?
+  bankAccount     ErpBankAccount?    @relation(fields: [bankAccountId], references: [id])
+  
+  reconciliation  ErpBankReconciliation?
+  
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+}
+
+model ErpBankStatementItem {
+  id              String             @id @default(uuid())
+  bankAccountId   String
+  bankAccount     ErpBankAccount     @relation(fields: [bankAccountId], references: [id], onDelete: Cascade)
+  
+  transactionDate DateTime
+  description     String
+  reference       String?
+  
+  amount          Float              // Positive = Deposit, Negative = Withdrawal
+  closingBalance  Float?
+  
+  isReconciled    Boolean            @default(false)
+  reconciliation  ErpBankReconciliation?
+  
+  createdAt       DateTime           @default(now())
+}
+
+model ErpBankReconciliation {
+  id              String             @id @default(uuid())
+  
+  statementItemId String             @unique
+  statementItem   ErpBankStatementItem @relation(fields: [statementItemId], references: [id], onDelete: Cascade)
+  
+  receiptId       String?            @unique
+  receipt         ErpPaymentReceipt? @relation(fields: [receiptId], references: [id])
+  
+  // Could also link to an AP Payment to Vendor if it was an outgoing withdrawal
+  // outgoingPaymentId String? 
+  
+  matchedBy       String             // SYSTEM, or User ID
+  matchedAt       DateTime           @default(now())
+  varianceAmount  Float              @default(0) // Usually 0 if perfectly matched
+}
+
+model ErpCashBookTransaction {
+  id              String             @id @default(uuid())
+  transactionDate DateTime           @default(now())
+  type            String             // CASH_IN, CASH_OUT
+  category        String             // PETTY_CASH, ADVANCE, MISC
+  
+  amount          Float
+  description     String
+  recordedBy      String
+  
+  createdAt       DateTime           @default(now())
+}
