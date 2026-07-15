@@ -226,6 +226,7 @@ model Item {
   isD2cVisible  Boolean            @default(true)
   taxRate       Float              @default(0.0)
   weight        Float?
+  minimum_stock Float              @default(0.0)
   stockEntries  StockLedgerEntry[]
   orderItems    SalesOrderItem[]
   stockLevels   StockLevel[]

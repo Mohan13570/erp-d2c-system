@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
+import { checkAndGenerateLowStockAlert } from '../utils/inventoryHelper';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -81,6 +82,11 @@ router.post('/checkout', async (req: Request, res: Response) => {
 
       return order;
     });
+
+    // 4. Trigger alert checking post-transaction
+    for (const item of items) {
+      await checkAndGenerateLowStockAlert(item.itemCode, 'Aura Main Warehouse');
+    }
 
     res.json({ success: true, orderId: salesOrder.id, message: 'Order placed successfully!' });
 

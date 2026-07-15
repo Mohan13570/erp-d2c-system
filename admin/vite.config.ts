@@ -7,7 +7,7 @@ export default defineConfig({
   base: '/admin/',
   server: {
     hmr: false,
-    allowedHosts: 'all',
+    allowedHosts: true,
     proxy: {
       '/api': 'http://localhost:5000'
     }

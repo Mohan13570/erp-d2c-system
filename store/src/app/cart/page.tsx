@@ -97,66 +97,66 @@ export default function CartPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-12 px-4 relative">
+    <div className="max-w-4xl mx-auto py-12 px-6 relative">
       {/* Checkout Modal Overlay */}
       {showCheckoutForm && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl w-full max-w-xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-300">
-            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-              <h2 className="text-2xl font-bold text-gray-900">Checkout Details</h2>
-              <button onClick={() => setShowCheckoutForm(false)} className="text-gray-400 hover:text-gray-900 transition-colors">
-                <X size={24} />
+        <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl w-full max-w-xl overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-100 animate-in fade-in zoom-in-95 duration-300">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+              <h2 className="text-xl font-extrabold text-slate-950">Checkout Details</h2>
+              <button onClick={() => setShowCheckoutForm(false)} className="text-slate-400 hover:text-slate-900 transition-colors bg-slate-100 p-1.5 rounded-full">
+                <X size={18} />
               </button>
             </div>
             <form onSubmit={handleCheckoutSubmit} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">First Name</label>
-                  <input type="text" required name="firstName" value={formData.firstName} onChange={handleInputChange} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none" />
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">First Name</label>
+                  <input type="text" required name="firstName" value={formData.firstName} onChange={handleInputChange} className="w-full px-4 py-3 text-sm font-semibold rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Last Name</label>
-                  <input type="text" required name="lastName" value={formData.lastName} onChange={handleInputChange} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none" />
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Last Name</label>
+                  <input type="text" required name="lastName" value={formData.lastName} onChange={handleInputChange} className="w-full px-4 py-3 text-sm font-semibold rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Email Address</label>
-                  <input type="email" required name="email" value={formData.email} onChange={handleInputChange} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none" />
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Email Address</label>
+                  <input type="email" required name="email" value={formData.email} onChange={handleInputChange} className="w-full px-4 py-3 text-sm font-semibold rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Phone Number</label>
-                  <input type="tel" required name="phone" value={formData.phone} onChange={handleInputChange} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none" />
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Phone Number</label>
+                  <input type="tel" required name="phone" value={formData.phone} onChange={handleInputChange} className="w-full px-4 py-3 text-sm font-semibold rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Shipping Address</label>
-                <input type="text" required name="address" value={formData.address} onChange={handleInputChange} placeholder="123 Main St, Apt 4B" className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none" />
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Shipping Address</label>
+                <input type="text" required name="address" value={formData.address} onChange={handleInputChange} placeholder="123 Main St, Apt 4B" className="w-full px-4 py-3 text-sm font-semibold rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">City</label>
-                  <input type="text" required name="city" value={formData.city} onChange={handleInputChange} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none" />
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">City</label>
+                  <input type="text" required name="city" value={formData.city} onChange={handleInputChange} className="w-full px-4 py-3 text-sm font-semibold rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Zip Code</label>
-                  <input type="text" required name="zipCode" value={formData.zipCode} onChange={handleInputChange} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none" />
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Zip Code</label>
+                  <input type="text" required name="zipCode" value={formData.zipCode} onChange={handleInputChange} className="w-full px-4 py-3 text-sm font-semibold rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all" />
                 </div>
               </div>
-              <div className="pt-6 mt-6 border-t border-gray-100 flex justify-between items-center">
+              <div className="pt-6 mt-6 border-t border-slate-100 flex justify-between items-center">
                 <div>
-                  <p className="text-sm text-gray-500 font-medium">Total to pay</p>
-                  <p className="text-2xl font-bold text-gray-900">${cartTotal.toFixed(2)}</p>
+                  <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Total to pay</p>
+                  <p className="text-3xl font-black text-slate-950">${cartTotal.toFixed(2)}</p>
                 </div>
                 <button 
                   type="submit" 
                   disabled={isCheckingOut}
-                  className="bg-indigo-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 flex items-center"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-8 rounded-xl transition-all disabled:opacity-50 flex items-center text-sm shadow-md shadow-indigo-600/10"
                 >
                   {isCheckingOut ? (
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   ) : (
-                    <>Confirm Payment <ArrowRight className="w-5 h-5 ml-2" /></>
+                    <>Confirm Payment <ArrowRight className="w-4 h-4 ml-2" /></>
                   )}
                 </button>
               </div>
@@ -165,37 +165,37 @@ export default function CartPage() {
         </div>
       )}
 
-      <h1 className="text-3xl font-bold text-gray-900 mb-10 tracking-tight">Shopping Cart</h1>
+      <h1 className="text-3xl font-black text-slate-950 mb-10 tracking-tight">Shopping Cart</h1>
       
       {items.length === 0 ? (
-        <div className="text-center py-20 bg-gray-50 rounded-3xl border border-gray-100">
-          <p className="text-gray-500 font-medium text-lg mb-6">Your cart is currently empty.</p>
-          <Link href="/" className="text-indigo-600 font-semibold hover:text-indigo-700">Browse Collection &rarr;</Link>
+        <div className="text-center py-24 bg-slate-50 rounded-3xl border border-slate-100">
+          <p className="text-slate-500 font-semibold text-lg mb-6">Your cart is currently empty.</p>
+          <Link href="/" className="text-indigo-600 font-bold hover:text-indigo-700 hover:underline">Browse Collection &rarr;</Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Cart Items */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-6">
             {items.map((item) => (
-              <div key={item.itemCode} className="flex space-x-6 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                <div className="w-24 h-24 relative bg-gray-50 rounded-xl overflow-hidden shrink-0">
+              <div key={item.itemCode} className="flex space-x-6 bg-white p-5 rounded-3xl border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.005)]">
+                <div className="w-24 h-24 relative bg-slate-50 rounded-2xl overflow-hidden shrink-0 shadow-inner">
                   <Image src={item.image} alt={item.itemName} fill className="object-cover" unoptimized />
                 </div>
                 <div className="flex flex-col flex-1">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-bold text-gray-900 text-lg">{item.itemName}</h3>
-                    <p className="font-bold text-gray-900">${(item.rate * item.qty).toFixed(2)}</p>
+                  <div className="flex justify-between items-start mb-1 gap-4">
+                    <h3 className="font-extrabold text-slate-950 text-base line-clamp-1">{item.itemName}</h3>
+                    <p className="font-black text-slate-950 text-base">${(item.rate * item.qty).toFixed(2)}</p>
                   </div>
-                  <p className="text-sm text-gray-500 mb-auto">${item.rate.toFixed(2)} each</p>
+                  <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-auto">Code: {item.itemCode}</p>
                   
                   <div className="flex justify-between items-center mt-4">
-                    <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                      <button onClick={() => updateQuantity(item.itemCode, item.qty - 1)} className="px-3 py-1 hover:bg-gray-50 text-gray-600 font-bold">-</button>
-                      <span className="px-4 py-1 font-medium text-sm text-gray-900 border-x border-gray-200">{item.qty}</span>
-                      <button onClick={() => updateQuantity(item.itemCode, item.qty + 1)} className="px-3 py-1 hover:bg-gray-50 text-gray-600 font-bold">+</button>
+                    <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
+                      <button onClick={() => updateQuantity(item.itemCode, item.qty - 1)} className="px-3.5 py-1.5 hover:bg-slate-100 text-slate-600 font-bold transition-colors">-</button>
+                      <span className="px-4 py-1.5 font-bold text-sm text-slate-950 border-x border-slate-200">{item.qty}</span>
+                      <button onClick={() => updateQuantity(item.itemCode, item.qty + 1)} className="px-3.5 py-1.5 hover:bg-slate-100 text-slate-600 font-bold transition-colors">+</button>
                     </div>
-                    <button onClick={() => removeFromCart(item.itemCode)} className="text-gray-400 hover:text-red-500 transition-colors p-2">
-                      <Trash2 className="w-5 h-5" />
+                    <button onClick={() => removeFromCart(item.itemCode)} className="text-slate-400 hover:text-red-500 transition-colors p-2 bg-slate-50 hover:bg-red-50 rounded-xl">
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
@@ -204,27 +204,27 @@ export default function CartPage() {
           </div>
 
           {/* Order Summary */}
-          <div className="bg-gray-50 p-8 rounded-3xl h-fit sticky top-28">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
-            <div className="space-y-4 mb-6 pb-6 border-b border-gray-200">
-              <div className="flex justify-between text-gray-600">
+          <div className="bg-slate-50/60 border border-slate-100 p-8 rounded-3xl h-fit sticky top-28">
+            <h2 className="text-lg font-extrabold text-slate-950 mb-6">Order Summary</h2>
+            <div className="space-y-4 mb-6 pb-6 border-b border-slate-200 font-semibold text-sm">
+              <div className="flex justify-between text-slate-500">
                 <span>Subtotal</span>
-                <span>${cartTotal.toFixed(2)}</span>
+                <span className="text-slate-950 font-extrabold">${cartTotal.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-gray-600">
+              <div className="flex justify-between text-slate-500">
                 <span>Shipping</span>
-                <span className="text-emerald-600 font-medium">Free</span>
+                <span className="text-emerald-600 font-bold">Free</span>
               </div>
             </div>
-            <div className="flex justify-between text-xl font-bold text-gray-900 mb-8">
+            <div className="flex justify-between text-lg font-black text-slate-950 mb-8">
               <span>Total</span>
               <span>${cartTotal.toFixed(2)}</span>
             </div>
             <button 
               onClick={() => setShowCheckoutForm(true)}
-              className="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl hover:bg-indigo-700 transition-colors flex items-center justify-center"
+              className="w-full bg-slate-950 text-white font-bold py-4 rounded-full hover:bg-indigo-600 transition-all flex items-center justify-center text-sm shadow-md"
             >
-              Proceed to Checkout <ArrowRight className="w-5 h-5 ml-2" />
+              Proceed to Checkout <ArrowRight className="w-4 h-4 ml-2" />
             </button>
           </div>
         </div>

@@ -11,6 +11,7 @@ const navSections = [
       { name: 'Dashboard', path: '/', icon: LayoutDashboard },
       { name: 'Analytics', path: '/analytics', icon: BarChart3 },
       { name: 'BI Dashboard', path: '/bi-dashboard', icon: TrendingUp },
+      { name: 'Reports', path: '/reports', icon: FileText },
       { name: 'AI Operations Hub', path: '/ai-hub', icon: BrainCircuit },
       { name: 'CRM & Sales', path: '/crm', icon: Users },
       { name: 'Quotations', path: '/quotations', icon: FolderKanban },
@@ -103,14 +104,14 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="w-72 bg-white border-r border-gray-100 flex flex-col h-full shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-20 overflow-y-auto">
-      <div className="p-6 flex items-center space-x-3 border-b border-gray-100">
-        <div className="bg-indigo-600 p-2 rounded-xl text-white shadow-sm">
-          <Command size={22} />
+    <div className="w-72 bg-slate-950 text-slate-400 flex flex-col h-full border-r border-slate-900/60 z-20 overflow-y-auto">
+      <div className="p-6 flex items-center space-x-3 border-b border-slate-900/60">
+        <div className="bg-gradient-to-tr from-indigo-500 to-purple-500 p-2.5 rounded-xl text-white shadow-[0_4px_20px_rgba(99,102,241,0.25)]">
+          <Command size={18} className="stroke-[2.5]" />
         </div>
-        <span className="text-xl font-bold tracking-tight text-gray-900">Aura<span className="text-indigo-600">.</span></span>
+        <span className="text-xl font-black tracking-tight text-white">Aura<span className="text-indigo-500 font-extrabold">.</span></span>
       </div>
-      <nav className="flex-1 px-4 py-4 space-y-6">
+      <nav className="flex-1 px-4 py-6 space-y-6">
         {navSections
           .filter(section => {
             if (user?.role === 'System Admin' || user?.role === 'Admin') return true;
@@ -123,18 +124,21 @@ export default function Sidebar() {
             return hasPermission;
           })
           .map(section => (
-          <div key={section.label}>
-            <p className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{section.label}</p>
-            <div className="space-y-0.5">
+          <div key={section.label} className="space-y-1.5">
+            <p className="px-3 text-[10px] font-black text-slate-600 uppercase tracking-widest">{section.label}</p>
+            <div className="space-y-1">
               {section.items
                 .filter(item => user?.role === 'System Admin' || user?.role === 'Admin' || user?.permissions?.includes(item.name) || user?.permissions?.includes('All Modules'))
                 .map(item => {
                 const isActive = location.pathname === item.path;
                 return (
                   <Link key={item.name} to={item.path}
-                    className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all duration-150 font-medium text-sm ${isActive ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}>
-                    <item.icon size={17} className={isActive ? 'text-indigo-600' : 'text-gray-400'} />
+                    className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all duration-200 font-semibold text-xs relative group ${isActive ? 'bg-indigo-600/15 text-white border border-indigo-500/25 shadow-[0_4px_20px_rgba(99,102,241,0.03)]' : 'text-slate-400 hover:bg-slate-900/40 hover:text-slate-200'}`}>
+                    <item.icon size={15} className={`transition-colors ${isActive ? 'text-indigo-400 stroke-[2.5]' : 'text-slate-500 group-hover:text-slate-400'}`} />
                     <span>{item.name}</span>
+                    {isActive && (
+                      <span className="absolute right-3 w-1.5 h-1.5 rounded-full bg-indigo-400 shadow-[0_0_8px_#818cf8]" />
+                    )}
                   </Link>
                 );
               })}
@@ -142,20 +146,23 @@ export default function Sidebar() {
           </div>
         ))}
       </nav>
-      <div className="p-5 border-t border-gray-100 flex flex-col space-y-4">
-        <a href="http://localhost:3000" target="_blank" rel="noreferrer" className="flex items-center justify-center space-x-2 w-full py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-sm font-medium transition-colors border border-gray-200">
-          <ShoppingCart size={16} />
+      <div className="p-5 border-t border-slate-900/60 flex flex-col space-y-4">
+        <a href="http://localhost:3000" target="_blank" rel="noreferrer" className="flex items-center justify-center space-x-2 w-full py-2.5 bg-slate-900 hover:bg-slate-850 text-slate-200 rounded-xl text-xs font-bold transition-all border border-slate-800/80 shadow-inner">
+          <ShoppingCart size={14} className="text-slate-400" />
           <span>Open Customer Store</span>
         </a>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between bg-slate-900/40 border border-slate-900/30 p-3 rounded-2xl">
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-indigo-100 to-purple-100 flex items-center justify-center text-indigo-700 font-bold text-sm">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-black text-xs shadow-md">
                 {user?.firstName?.charAt(0) || 'A'}
             </div>
-            <div><p className="text-sm font-semibold text-gray-900">{user?.firstName || 'Admin'} User</p><p className="text-xs text-gray-500">{user?.role || 'Administrator'}</p></div>
+            <div>
+              <p className="text-xs font-bold text-white leading-none mb-1">{user?.firstName || 'Admin'} User</p>
+              <p className="text-[10px] text-slate-500 font-semibold">{user?.role || 'Administrator'}</p>
+            </div>
           </div>
-          <button onClick={handleLogout} title="Sign out" className="text-gray-400 hover:text-red-500 transition-colors p-1">
-            <LogOut size={16} />
+          <button onClick={handleLogout} title="Sign out" className="text-slate-500 hover:text-red-400 transition-colors p-1.5 bg-slate-900/40 hover:bg-slate-900 rounded-lg">
+            <LogOut size={14} />
           </button>
         </div>
       </div>

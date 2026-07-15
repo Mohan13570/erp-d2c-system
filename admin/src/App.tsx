@@ -41,6 +41,7 @@ import BIDashboard from './pages/BIDashboard';
 import AIHub from './pages/AIHub';
 import DriverApp from './pages/mobile/DriverApp';
 import WarehouseApp from './pages/mobile/WarehouseApp';
+import Reports from './pages/Reports';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isInitializing } = useAuth();
@@ -52,6 +53,24 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
     );
   }
   if (!isAuthenticated) return <Navigate to="/login" replace />;
+  return <>{children}</>;
+}
+
+function RequirePermission({ children, module }: { children: React.ReactNode; module: string }) {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/login" replace />;
+  if (user.role === 'System Admin' || user.role === 'Admin' || user.role === 'Administrator') {
+    return <>{children}</>;
+  }
+  const hasPermission = user.permissions?.includes(module) || user.permissions?.includes('All Modules');
+  if (!hasPermission) {
+    return (
+      <div className="h-[70vh] flex flex-col items-center justify-center">
+        <h2 className="text-2xl font-black text-slate-800">Access Denied</h2>
+        <p className="text-slate-500 font-semibold mt-2">You do not have permission to access the {module} module.</p>
+      </div>
+    );
+  }
   return <>{children}</>;
 }
 
@@ -67,8 +86,8 @@ function App() {
               <main className="flex-1 overflow-y-auto p-8">
                 <Routes>
                   <Route path="/" element={<Dashboard />} />
-                  <Route path="/inventory" element={<Inventory />} />
-                  <Route path="/orders" element={<SalesOrders />} />
+                  <Route path="/inventory" element={<RequirePermission module="Inventory"><Inventory /></RequirePermission>} />
+                  <Route path="/orders" element={<RequirePermission module="Sales Orders"><SalesOrders /></RequirePermission>} />
                   <Route path="/hr" element={<HR />} />
                   <Route path="/finance" element={<Finance />} />
                   <Route path="/supply-chain" element={<SupplyChain />} />
@@ -92,6 +111,7 @@ function App() {
                   <Route path="/billing" element={<Billing />} />
                   <Route path="/insurance" element={<Insurance />} />
                   <Route path="/tracking" element={<Tracking />} />
+                  <Route path="/reports" element={<Reports />} />
 
                   {/* Portals */}
                   <Route path="/customer-portal" element={<CustomerPortal />} />
@@ -108,7 +128,7 @@ function App() {
 
                   <Route path="/marketing" element={<Marketing />} />
                   <Route path="/analytics" element={<Analytics />} />
-                  <Route path="/rbac" element={<RBAC />} />
+                  <Route path="/rbac" element={<RequirePermission module="Auth & RBAC"><RBAC /></RequirePermission>} />
                   <Route path="/access" element={<EmployeeAccess />} />
                   <Route path="/stock" element={<CompanyStock />} />
                   <Route path="/company-management" element={<CompanyManagement />} />

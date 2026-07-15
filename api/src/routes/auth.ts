@@ -74,12 +74,14 @@ router.post('/login', async (req: Request, res: Response) => {
       });
     }
 
+    const permissions = type !== 'Customer' && (userRecord as any).role?.permissions ? (userRecord as any).role.permissions.map((p: any) => p.module) : [];
     const token = jwt.sign(
       { 
         id: userRecord.id, 
         email: userRecord.email, 
         role: role,
-        type: type 
+        type: type,
+        permissions: permissions
       }, 
       JWT_SECRET, 
       { expiresIn: '24h' }
@@ -93,7 +95,7 @@ router.post('/login', async (req: Request, res: Response) => {
         lastName: userRecord.lastName,
         role: role,
         type: type,
-        permissions: type !== 'Customer' && (userRecord as any).role?.permissions ? (userRecord as any).role.permissions.map((p: any) => p.module) : []
+        permissions: permissions
       }
     });
 

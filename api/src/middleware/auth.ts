@@ -21,9 +21,26 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
 };
 
 export const requireAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
-  if (req.user && req.user.role === 'System Admin') {
+  if (req.user && (req.user.role === 'System Admin' || req.user.role === 'Admin' || req.user.role === 'Administrator')) {
     next();
   } else {
     res.status(403).json({ error: 'Requires Administrator privileges' });
   }
 };
+
+export const checkPermission = (moduleName: string) => {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    if (req.user.role === 'System Admin' || req.user.role === 'Admin' || req.user.role === 'Administrator') {
+      return next();
+    }
+    const permissions = req.user.permissions || [];
+    if (permissions.includes('All Modules') || permissions.includes(moduleName)) {
+      return next();
+    }
+    res.status(403).json({ error: `Forbidden: Requires permission for ${moduleName}` });
+  };
+};
+

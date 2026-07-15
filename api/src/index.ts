@@ -35,10 +35,12 @@ import portalsRouter from './routes/portals';
 import notificationsRouter from './routes/notifications';
 import biReportsRouter from './routes/bi-reports';
 import aiRouter from './routes/ai';
+import aiModuleRouter from './ai/routes/ai.routes';
 import shipmentRoutes from './routes/shipments';
 import fleetRoutes from './routes/fleet';
 import companyManagementRoutes from './routes/company-management';
 import quotationRoutes from './routes/quotations';
+import reportsRouter from './routes/reports';
 dotenv.config();
 
 const app = express();
@@ -85,12 +87,14 @@ app.use('/api/portals', portalsRouter);
 app.use('/api/notifications', notificationsRouter);
 app.use('/api/bi', biReportsRouter);
 app.use('/api/ai', aiRouter);
+app.use('/api/ai', aiModuleRouter);
 app.use('/api/shipments', shipmentRoutes);
 app.use('/api/fleet', fleetRoutes);
 app.use('/api/company-management', companyManagementRoutes);
 app.use('/api/quotations', quotationRoutes);
+app.use('/api/reports', reportsRouter);
 
-app.get('/api/health', (_req, res) => res.json({ status: 'OK', modules: 19, version: '2.0.0' }));
+app.get('/api/health', (_req, res) => res.json({ status: 'OK', modules: 20, version: '2.0.0' }));
 
 // Global Error Handler (Returns JSON instead of HTML stack traces)
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

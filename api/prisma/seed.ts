@@ -88,20 +88,36 @@ async function main() {
 
   console.log('Creating 10 Items & Stock Levels...');
   for (const item of itemsData) {
+    let minimum_stock = 0.0;
+    if (item.c === 'ITEM-001') minimum_stock = 150.0;
+    else if (item.c === 'ITEM-003') minimum_stock = 250.0;
+    else if (item.c === 'ITEM-005') minimum_stock = 200.0;
+    else if (item.c === 'ITEM-007') minimum_stock = 100.0;
+
     await prisma.item.upsert({
       where: { itemCode: item.c },
-      update: {},
-      create: { itemCode: item.c, itemName: item.n, standardRate: item.rate, valuationRate: item.val, companyName: 'Aura' },
+      update: { minimum_stock },
+      create: { itemCode: item.c, itemName: item.n, standardRate: item.rate, valuationRate: item.val, companyName: 'Aura', minimum_stock },
     });
     // Add Stock Level
+    let qtyOnHand = Math.floor(Math.random() * 500) + 50;
+    let qtyAvailable = qtyOnHand;
+    if (item.c === 'ITEM-001') {
+      qtyOnHand = 45;
+      qtyAvailable = 45;
+    } else if (item.c === 'ITEM-003') {
+      qtyOnHand = 120;
+      qtyAvailable = 120;
+    }
+
     await prisma.stockLevel.upsert({
       where: { itemCode_warehouseName: { itemCode: item.c, warehouseName: warehouse.name } },
-      update: {},
-      create: { itemCode: item.c, warehouseName: warehouse.name, qtyOnHand: Math.floor(Math.random() * 500) + 50, qtyAvailable: Math.floor(Math.random() * 500) + 50 },
+      update: { qtyOnHand, qtyAvailable },
+      create: { itemCode: item.c, warehouseName: warehouse.name, qtyOnHand, qtyAvailable },
     });
     // Add Ledger Entry
     await prisma.stockLedgerEntry.create({
-      data: { itemCode: item.c, warehouse: warehouse.name, qty: 100, voucherType: 'Initial Receipt', voucherNo: `RCPT-${item.c}`, postingDate: new Date() }
+      data: { itemCode: item.c, warehouse: warehouse.name, qty: qtyOnHand, voucherType: 'Initial Receipt', voucherNo: `RCPT-${item.c}`, postingDate: new Date() }
     });
   }
 
