@@ -295,7 +295,15 @@ const navSections = [
           { name: 'Workforce Planning', path: '/hr/leave/workforce', icon: Users },
         ]
       },
-      { name: 'Finance', path: '/finance', icon: DollarSign },
+      { 
+        name: 'Finance & Billing', 
+        icon: DollarSign,
+        subItems: [
+          { name: 'Billing Dashboard', path: '/finance/billing', icon: LayoutDashboard },
+          { name: 'Invoices', path: '/finance/billing/invoices', icon: FileText },
+          { name: 'Create Invoice', path: '/finance/billing/create', icon: Plus },
+        ]
+      },
       { name: 'Company Stock', path: '/stock', icon: Briefcase },
     ]
   },

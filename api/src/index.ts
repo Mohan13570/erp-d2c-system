@@ -92,6 +92,7 @@ import customerSupportRoutes from './routes/customer-support';
 import hrEmployeeRoutes from './routes/hr-employee';
 import hrAttendanceRoutes from './routes/hr-attendance';
 import hrLeaveRoutes from './routes/hr-leave';
+import erpBillingRoutes from './routes/erp-billing';
 
 dotenv.config();
 
@@ -200,9 +201,12 @@ app.use('/api/customer-logistics', customerLogisticsRoutes);
 app.use('/api/customer-tracking', customerTrackingRoutes);
 app.use('/api/customer-finance', customerFinanceRoutes);
 app.use('/api/customer-support', customerSupportRoutes);
-app.use('/api/hr', hrEmployeeRoutes);
-app.use('/api/hr/attendance', hrAttendanceRoutes);
-app.use('/api/hr/leave', hrLeaveRoutes);
+app.use('/api/hr-employee', hrEmployeeRoutes);
+app.use('/api/hr-attendance', hrAttendanceRoutes);
+app.use('/api/hr-leave', hrLeaveRoutes);
+
+// Core ERP Modules
+app.use('/api/erp/billing', erpBillingRoutes);
 
 // Database seed setupter);
 

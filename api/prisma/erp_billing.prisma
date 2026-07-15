@@ -1,0 +1,87 @@
+model ErpInvoice {
+  id              String             @id @default(uuid())
+  invoiceNumber   String             @unique
+  customerId      String
+  invoiceType     String             // SHIPMENT, WAREHOUSE, CUSTOMS, MANUAL, PROFORMA
+  status          String             @default("DRAFT") // DRAFT, PENDING_APPROVAL, APPROVED, SENT, OVERDUE, PAID, CANCELLED
+  
+  billingAddress  String?
+  shippingAddress String?
+  gstNumber       String?
+  
+  invoiceDate     DateTime           @default(now())
+  dueDate         DateTime
+  currency        String             @default("USD")
+  exchangeRate    Float              @default(1.0)
+  paymentTerms    String?
+  salesPerson     String?
+  
+  referenceNumber String?
+  shipmentNumber  String?
+  containerNumber String?
+  
+  subtotal        Float              @default(0)
+  discountTotal   Float              @default(0)
+  taxTotal        Float              @default(0)
+  freightTotal    Float              @default(0)
+  grandTotal      Float              @default(0)
+  amountPaid      Float              @default(0)
+  
+  items           ErpInvoiceItem[]
+  charges         ErpInvoiceCharge[]
+  taxes           ErpInvoiceTax[]
+  history         ErpInvoiceHistory[]
+  
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+}
+
+model ErpInvoiceItem {
+  id              String      @id @default(uuid())
+  invoiceId       String
+  invoice         ErpInvoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  description     String
+  quantity        Float       @default(1)
+  unit            String      @default("PCS")
+  unitPrice       Float
+  
+  discountPercent Float       @default(0)
+  discountAmount  Float       @default(0)
+  
+  hsnCode         String?
+  sacCode         String?
+  
+  amount          Float       // quantity * unitPrice - discountAmount
+}
+
+model ErpInvoiceCharge {
+  id              String      @id @default(uuid())
+  invoiceId       String
+  invoice         ErpInvoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  chargeType      String      // FREIGHT, FUEL, LOADING, CUSTOMS, INSURANCE
+  description     String
+  amount          Float
+}
+
+model ErpInvoiceTax {
+  id              String      @id @default(uuid())
+  invoiceId       String
+  invoice         ErpInvoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  taxType         String      // GST, CGST, SGST, IGST, VAT
+  taxPercent      Float
+  taxAmount       Float
+}
+
+model ErpInvoiceHistory {
+  id              String      @id @default(uuid())
+  invoiceId       String
+  invoice         ErpInvoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  action          String      // CREATED, APPROVED, SENT, PAID
+  notes           String?
+  performedBy     String
+  createdAt       DateTime    @default(now())
+}

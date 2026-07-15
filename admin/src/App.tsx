@@ -61,6 +61,13 @@ import ApplyLeave from './pages/hr/leave/ApplyLeave';
 import LeaveCalendar from './pages/hr/leave/LeaveCalendar';
 import LeaveBalance from './pages/hr/leave/LeaveBalance';
 import WorkforcePlanning from './pages/hr/leave/WorkforcePlanning';
+
+// Core ERP Finance & Billing
+import BillingDashboard from './pages/finance/billing/BillingDashboard';
+import InvoiceList from './pages/finance/billing/InvoiceList';
+import CreateInvoice from './pages/finance/billing/CreateInvoice';
+import InvoiceDetails from './pages/finance/billing/InvoiceDetails';
+
 import Projects from './pages/Projects';
 import Assets from './pages/Assets';
 import Returns from './pages/Returns';
@@ -543,6 +550,12 @@ function App() {
           <Route path="/hr/leave/calendar" element={<LeaveCalendar />} />
           <Route path="/hr/leave/balance" element={<LeaveBalance />} />
           <Route path="/hr/leave/workforce" element={<WorkforcePlanning />} />
+
+          {/* Core ERP Finance & Billing */}
+          <Route path="/finance/billing" element={<BillingDashboard />} />
+          <Route path="/finance/billing/invoices" element={<InvoiceList />} />
+          <Route path="/finance/billing/create" element={<CreateInvoice />} />
+          <Route path="/finance/billing/:id" element={<InvoiceDetails />} />
 
           {/* Logistics & TMS */}    <Route path="/customs" element={<Customs />} />
                   <Route path="/documents" element={<DocumentCenter />} />
