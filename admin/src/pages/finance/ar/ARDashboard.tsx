@@ -74,7 +74,7 @@ export default function ARDashboard() {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
                     <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#6b7280'}} />
                     <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#374151', fontWeight: 600}} tickFormatter={(val) => `$${val/1000}k`} />
-                    <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} cursor={{fill: '#f3f4f6'}} formatter={(value: number) => `$${value.toLocaleString()}`} />
+                    <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} cursor={{fill: '#f3f4f6'}} formatter={(value: any) => [`$${value.toLocaleString()}`, 'Amount']} />
                     <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={40}>
                        {agingData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />

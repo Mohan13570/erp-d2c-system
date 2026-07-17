@@ -22,7 +22,7 @@ export default function AIAssistant() {
        if (userMsg.toLowerCase().includes('track') || userMsg.toLowerCase().includes('where is')) {
           aiResponse = "I see you're asking about a shipment. Booking BKG-772910 (Shanghai -> LA) just cleared Customs at the Port of Los Angeles. It is expected to arrive at the final warehouse tomorrow by 2:00 PM.";
        } else if (userMsg.toLowerCase().includes('invoice') || userMsg.toLowerCase().includes('bill')) {
-          aiResponse = "You currently have 1 overdue invoice: INV-10042 for $4,500.00. Should I redirect you to the payment gateway?";
+          aiResponse = "You currently have 1 overdue invoice: INV-10042 for $0.00. Should I redirect you to the payment gateway?";
        }
 
        setMessages(prev => [...prev, { role: 'assistant', text: aiResponse }]);

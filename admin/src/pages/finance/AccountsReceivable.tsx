@@ -22,15 +22,15 @@ export default function AccountsReceivable() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
           <p className="text-sm text-gray-500 mb-1">Total Outstanding AR</p>
-          <p className="text-2xl font-bold text-gray-900">$125,500.00</p>
+          <p className="text-2xl font-bold text-gray-900">$0.00</p>
         </div>
         <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm border-l-4 border-l-amber-500">
           <p className="text-sm text-gray-500 mb-1">Overdue (1-30 Days)</p>
-          <p className="text-2xl font-bold text-gray-900">$45,200.00</p>
+          <p className="text-2xl font-bold text-gray-900">$0.00</p>
         </div>
         <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm border-l-4 border-l-rose-500">
           <p className="text-sm text-gray-500 mb-1">Overdue (30+ Days)</p>
-          <p className="text-2xl font-bold text-gray-900">$12,800.00</p>
+          <p className="text-2xl font-bold text-gray-900">$0.00</p>
         </div>
       </div>
 
@@ -67,9 +67,9 @@ export default function AccountsReceivable() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {[
-                { no: 'INV-2023-001', cust: 'Global Tech Corp', date: '2023-11-02', due: '2023-12-02', amt: '$45,000.00', bal: '$45,000.00', status: 'Sent' },
-                { no: 'INV-2023-002', cust: 'Acme Logistics', date: '2023-10-15', due: '2023-11-15', amt: '$12,500.00', bal: '$12,500.00', status: 'Overdue' },
-                { no: 'INV-2023-003', cust: 'Stark Industries', date: '2023-11-05', due: '2023-12-05', amt: '$8,200.00', bal: '$0.00', status: 'Paid' },
+                { no: 'INV-2023-001', cust: 'Global Tech Corp', date: '2023-11-02', due: '2023-12-02', amt: '$0.00', bal: '$0.00', status: 'Sent' },
+                { no: 'INV-2023-002', cust: 'Acme Logistics', date: '2023-10-15', due: '2023-11-15', amt: '$0.00', bal: '$0.00', status: 'Overdue' },
+                { no: 'INV-2023-003', cust: 'Stark Industries', date: '2023-11-05', due: '2023-12-05', amt: '$0.00', bal: '$0.00', status: 'Paid' },
               ].map((inv, i) => (
                 <tr key={i} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-6 py-4">

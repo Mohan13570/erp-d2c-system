@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { FileText, Printer, Mail, CheckCircle, XCircle, Send, FileSignature, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { FileText, Printer, Mail, CheckCircle, XCircle, Send, FileSignature, AlertTriangle, ShieldCheck, Plus } from 'lucide-react';
 
 export default function InvoiceDetails() {
   const { id } = useParams();
@@ -65,7 +65,7 @@ export default function InvoiceDetails() {
                <div>
                   <div className="flex items-center space-x-2 text-indigo-600 mb-4">
                      <FileText size={32} />
-                     <span className="text-2xl font-extrabold tracking-tighter">AURA LOGISTICS</span>
+                     <span className="text-2xl font-extrabold tracking-tighter">LIZOME LOGISTICS</span>
                   </div>
                   <p className="text-sm text-gray-500">123 Global Trade Center</p>
                   <p className="text-sm text-gray-500">New York, NY 10001, USA</p>
@@ -175,7 +175,7 @@ export default function InvoiceDetails() {
                <div className="text-center">
                   <div className="w-48 h-12 border-b border-gray-400 mb-2"></div>
                   <p className="text-xs font-bold text-gray-900">Authorized Signatory</p>
-                  <p className="text-[10px] text-gray-500">Aura Logistics Finance Dept.</p>
+                  <p className="text-[10px] text-gray-500">Lizome Logistics Finance Dept.</p>
                </div>
             </div>
          </div>

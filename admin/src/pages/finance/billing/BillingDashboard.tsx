@@ -15,15 +15,7 @@ export default function BillingDashboard() {
       .catch(console.error);
   }, []);
 
-  const revenueData = [
-    { name: 'Jan', revenue: 45000 },
-    { name: 'Feb', revenue: 52000 },
-    { name: 'Mar', revenue: 48000 },
-    { name: 'Apr', revenue: 61000 },
-    { name: 'May', revenue: 59000 },
-    { name: 'Jun', revenue: 75000 },
-    { name: 'Jul', revenue: Math.random() * 80000 + 40000 },
-  ];
+
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
@@ -40,15 +32,7 @@ export default function BillingDashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 relative overflow-hidden">
-            <h3 className="text-sm font-bold text-gray-500 mb-2">Total Billed Revenue</h3>
-            <div className="flex items-end space-x-2">
-               <span className="text-3xl font-extrabold text-gray-900">${(stats?.stats?.totalRevenue || 0).toLocaleString()}</span>
-            </div>
-            <div className="absolute right-6 top-6 w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600">
-               <DollarSign size={24}/>
-            </div>
-         </div>
+
          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 relative overflow-hidden">
             <h3 className="text-sm font-bold text-gray-500 mb-2">Collected Cash</h3>
             <div className="flex items-end space-x-2">
@@ -79,28 +63,8 @@ export default function BillingDashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-           <h2 className="font-bold text-gray-900 mb-6 flex items-center"><TrendingUp className="mr-2 text-indigo-600"/> Revenue Growth Trajectory</h2>
-           <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                 <AreaChart data={revenueData}>
-                    <defs>
-                       <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.3}/>
-                          <stop offset="95%" stopColor="#4f46e5" stopOpacity={0}/>
-                       </linearGradient>
-                    </defs>
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#6b7280'}} />
-                    <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#6b7280'}} tickFormatter={(value) => `$${value / 1000}k`} />
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
-                    <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                    <Area type="monotone" dataKey="revenue" stroke="#4f46e5" strokeWidth={3} fillOpacity={1} fill="url(#colorRev)" />
-                 </AreaChart>
-              </ResponsiveContainer>
-           </div>
-        </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <div className="md:col-span-3 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
            <div className="flex justify-between items-center mb-6">
               <h2 className="font-bold text-gray-900 flex items-center"><Calendar className="mr-2 text-indigo-600"/> Recent Drafts</h2>
               <button className="text-indigo-600 hover:text-indigo-800"><RefreshCw size={14}/></button>

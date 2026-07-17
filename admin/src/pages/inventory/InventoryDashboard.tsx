@@ -13,7 +13,7 @@ export default function InventoryDashboard() {
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
-          { label: 'Total Valuation', value: '$1.4M', icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-100' },
+          { label: 'Total Valuation', value: '$0.00.4M', icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-100' },
           { label: 'Low Stock Alerts', value: 12, icon: AlertCircle, color: 'text-rose-600', bg: 'bg-rose-100' },
           { label: 'Active Batches', value: 340, icon: Package, color: 'text-violet-600', bg: 'bg-violet-100' },
           { label: 'Pending Transfers', value: 8, icon: Activity, color: 'text-amber-600', bg: 'bg-amber-100' }

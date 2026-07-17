@@ -1,10 +1,10 @@
 @echo off
-title AURA ERP + D2C System
+title LIZOME ERP + D2C System
 color 0A
 
 echo.
 echo  ==============================================
-echo          AURA PLATFORM - LOCAL LAUNCHER        
+echo          LIZOME PLATFORM - LOCAL LAUNCHER        
 echo  ==============================================
 echo.
 echo  Starting API, Store, and Admin Portal...

@@ -12,7 +12,7 @@ export default function VehicleRegistration() {
     model: '',
     year: new Date().getFullYear(),
     type: 'Flatbed',
-    capacity: 20000,
+    capacity: 0,
     fuelType: 'Diesel',
     ownershipType: 'Owned'
   });

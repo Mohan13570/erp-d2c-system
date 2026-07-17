@@ -9,8 +9,6 @@ export default function TripDashboard() {
     fetch('/api/trips').then(r => r.json()).then(setTrips).catch(console.error);
   }, []);
 
-  const totalRev = trips.reduce((sum, t) => sum + (t.revenue || 0), 0);
-  const totalExp = trips.reduce((sum, t) => sum + (t.fuelCost || 0) + (t.tollExpenses || 0) + (t.otherExpenses || 0), 0);
   const activeTrips = trips.filter(t => t.status === 'Dispatched' || t.status === 'InTransit').length;
   
   return (
@@ -20,27 +18,13 @@ export default function TripDashboard() {
         <p className="text-gray-500 font-medium mt-1">Financial performance and active dispatch center.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-center">
           <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 mb-4"><Navigation size={24}/></div>
           <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Active Trips</p>
           <h2 className="text-4xl font-black text-gray-900">{activeTrips}</h2>
         </div>
-        <div className="bg-emerald-600 text-white p-6 rounded-3xl shadow-xl flex flex-col justify-center relative overflow-hidden">
-          <div className="absolute right-0 top-0 opacity-10"><DollarSign size={120} /></div>
-          <p className="text-sm font-bold text-emerald-200 uppercase tracking-wider mb-1">Total Revenue</p>
-          <h2 className="text-4xl font-black">${totalRev.toLocaleString(undefined, {minimumFractionDigits: 2})}</h2>
-        </div>
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-center">
-          <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Total Expenses</p>
-          <h2 className="text-4xl font-black text-red-500">${totalExp.toLocaleString(undefined, {minimumFractionDigits: 2})}</h2>
-        </div>
-        <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-xl flex flex-col justify-center">
-          <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">Net Profit</p>
-          <h2 className="text-4xl font-black text-emerald-400">${(totalRev - totalExp).toLocaleString(undefined, {minimumFractionDigits: 2})}</h2>
-        </div>
       </div>
-
       <div className="grid grid-cols-2 gap-8">
          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
             <div className="flex justify-between items-center mb-6">

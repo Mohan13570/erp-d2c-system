@@ -1,18 +1,18 @@
 @echo off
-title AURA - Shutdown
+title LIZOME - Shutdown
 color 0C
 
 echo.
-echo  Stopping all AURA servers...
+echo  Stopping all LIZOME servers...
 echo.
 
-taskkill /FI "WINDOWTITLE eq AURA API Server*" /T /F >nul 2>&1
-taskkill /FI "WINDOWTITLE eq AURA Customer Store*" /T /F >nul 2>&1
-taskkill /FI "WINDOWTITLE eq AURA Admin Portal*" /T /F >nul 2>&1
+taskkill /FI "WINDOWTITLE eq LIZOME API Server*" /T /F >nul 2>&1
+taskkill /FI "WINDOWTITLE eq LIZOME Customer Store*" /T /F >nul 2>&1
+taskkill /FI "WINDOWTITLE eq LIZOME Admin Portal*" /T /F >nul 2>&1
 taskkill /FI "WINDOWTITLE eq Tunnel - Store*" /T /F >nul 2>&1
 taskkill /FI "WINDOWTITLE eq Tunnel - Admin*" /T /F >nul 2>&1
 
 echo.
-echo  All AURA servers stopped.
+echo  All LIZOME servers stopped.
 echo.
 pause

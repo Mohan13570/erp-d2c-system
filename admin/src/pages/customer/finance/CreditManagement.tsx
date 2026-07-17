@@ -72,7 +72,7 @@ export default function CreditManagement() {
         
         <div className="mt-8 bg-gray-50 border border-gray-200 rounded-xl p-5">
            <h3 className="font-bold text-gray-900 flex items-center mb-2"><CheckCircle size={18} className="text-green-500 mr-2"/> Account is in Good Standing</h3>
-           <p className="text-sm text-gray-600">Your account payments have been historically on time. You are pre-approved for a credit limit extension up to $100,000. Contact your Account Manager to activate.</p>
+           <p className="text-sm text-gray-600">Your account payments have been historically on time. You are pre-approved for a credit limit extension up to $0.00. Contact your Account Manager to activate.</p>
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LayoutDashboard, Truck, Users, DollarSign, Clock, ShieldCheck, MapPin, Activity } from 'lucide-react';
 
 export default function RoadExecutiveDashboard() {
-  const [kpi, setKpi] = useState<any>({ totalTrips: 0, activeVehicles: 0, activeDrivers: 0, totalRevenue: 0, openClaims: 0 });
+  const [kpi, setKpi] = useState<any>({ totalTrips: 0, activeVehicles: 0, activeDrivers: 0, openClaims: 0 });
 
   useEffect(() => {
     fetch('/api/road/analytics/kpi').then(res => res.json()).then(setKpi).catch(console.error);
@@ -25,7 +25,7 @@ export default function RoadExecutiveDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-5 gap-4">
+      <div className="grid grid-cols-4 gap-4">
         <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between">
           <div className="flex items-center text-indigo-500 mb-2"><MapPin size={24} /></div>
           <p className="text-3xl font-black text-gray-900">{kpi.totalTrips}</p>
@@ -45,12 +45,6 @@ export default function RoadExecutiveDashboard() {
           <div className="flex items-center text-rose-500 mb-2"><ShieldCheck size={24} /></div>
           <p className="text-3xl font-black text-gray-900">{kpi.openClaims}</p>
           <p className="text-sm font-bold text-gray-400 mt-1">Open Claims</p>
-        </div>
-        <div className="bg-indigo-600 text-white p-6 rounded-3xl shadow-lg border border-indigo-500 flex flex-col justify-between relative overflow-hidden">
-          <div className="absolute right-[-20px] top-[-20px] opacity-10"><DollarSign size={100} /></div>
-          <div className="flex items-center text-indigo-200 mb-2 z-10"><DollarSign size={24} /></div>
-          <p className="text-3xl font-black text-white z-10">${kpi.totalRevenue.toLocaleString()}</p>
-          <p className="text-sm font-bold text-indigo-200 mt-1 z-10">Total Revenue YTD</p>
         </div>
       </div>
     </div>

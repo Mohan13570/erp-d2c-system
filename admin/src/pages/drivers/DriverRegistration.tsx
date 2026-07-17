@@ -16,7 +16,7 @@ export default function DriverRegistration() {
     emergencyPhone: '',
     bloodGroup: 'O+',
     payrollId: '',
-    hourlyRate: 25.0
+    hourlyRate: 0
   });
 
   const handleSubmit = async (e: React.FormEvent) => {

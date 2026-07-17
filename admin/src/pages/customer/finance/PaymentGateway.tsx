@@ -22,7 +22,7 @@ export default function PaymentGateway() {
           <CheckCircle className="text-green-600" size={40} />
         </div>
         <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Payment Successful!</h1>
-        <p className="text-gray-500 mb-8">Thank you. $12,500.00 has been credited to your account and applied to Invoice INV-10045.</p>
+        <p className="text-gray-500 mb-8">Thank you. $0.00 has been credited to your account and applied to Invoice INV-10045.</p>
         <div className="bg-gray-50 rounded-xl p-4 mb-8 text-sm text-gray-600 flex justify-between max-w-sm mx-auto">
           <span>Transaction Ref:</span>
           <span className="font-mono font-bold text-gray-900">TXN-STRIPE-882194</span>
@@ -38,7 +38,7 @@ export default function PaymentGateway() {
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="text-center mb-10">
         <h1 className="text-3xl font-extrabold text-gray-900">Secure Checkout</h1>
-        <p className="text-gray-500 mt-2">Select a payment method to settle your outstanding balance of <span className="font-bold text-gray-900">$12,500.00</span></p>
+        <p className="text-gray-500 mt-2">Select a payment method to settle your outstanding balance of <span className="font-bold text-gray-900">$0.00</span></p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -95,7 +95,7 @@ export default function PaymentGateway() {
             <div className="space-y-3 text-sm text-gray-600 mb-4">
                <div className="flex justify-between">
                  <span>Invoice INV-10045</span>
-                 <span className="font-medium text-gray-900">$12,500.00</span>
+                 <span className="font-medium text-gray-900">$0.00</span>
                </div>
                <div className="flex justify-between">
                  <span>Gateway Fee (Waived)</span>
@@ -104,7 +104,7 @@ export default function PaymentGateway() {
             </div>
             <div className="flex justify-between items-center pt-4 border-t border-gray-100 mb-6">
                <span className="font-bold text-gray-900">Total to Pay</span>
-               <span className="text-2xl font-extrabold text-indigo-600">$12,500.00</span>
+               <span className="text-2xl font-extrabold text-indigo-600">$0.00</span>
             </div>
             <button 
               onClick={handlePay}
@@ -116,7 +116,7 @@ export default function PaymentGateway() {
                   Processing...
                 </>
               ) : (
-                <>Pay $12,500.00 Securely <Lock size={16} className="ml-2"/></>
+                <>Pay $0.00 Securely <Lock size={16} className="ml-2"/></>
               )}
             </button>
           </div>

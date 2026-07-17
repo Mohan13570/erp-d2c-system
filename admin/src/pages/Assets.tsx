@@ -17,7 +17,7 @@ const categoryColor = (cat: string) => {
 export default function AssetManagement() {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [newAsset, setNewAsset] = useState({ assetName: '', assetCategory: 'IT Equipment', purchaseAmount: 0, location: '', purchaseDate: '', usefulLifeYears: 5 });
+  const [newAsset, setNewAsset] = useState({ assetName: '', assetCategory: 'IT Equipment', purchaseAmount: 0, location: '', purchaseDate: '', usefulLifeYears: 0 });
 
   const fetchData = () => {
     fetch('/api/assets/assets').then(r => r.json()).then(setAssets);

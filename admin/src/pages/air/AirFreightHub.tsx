@@ -3,7 +3,7 @@ import { Plane, Box, ShieldCheck, DollarSign, Activity, FileText, LayoutDashboar
 import { Link } from 'react-router-dom';
 
 export default function AirFreightHub() {
-  const [kpi, setKpi] = useState({ revenueMTD: 450230, profitMTD: 139796, activeShipments: 142, avgUldUtilization: 78.5 });
+  const [kpi, setKpi] = useState({ revenueMTD: 0, profitMTD: 0, activeShipments: 0, avgUldUtilization: 0 });
 
   const modules = [
     { name: 'Bookings & HAWB', path: '/air/bookings', icon: FileText, color: 'text-blue-600', bg: 'bg-blue-100', desc: 'Create bookings and generate AWBs.' },

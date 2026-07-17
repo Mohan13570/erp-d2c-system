@@ -132,7 +132,7 @@ export default function CompanyMaster() {
                   required 
                   value={formData.name} 
                   onChange={e => setFormData({...formData, name: e.target.value})}
-                  placeholder="e.g. Aura Global Inc." 
+                  placeholder="e.g. Lizome Global Inc." 
                 />
               </div>
               <div>
@@ -140,7 +140,7 @@ export default function CompanyMaster() {
                 <Input 
                   value={formData.legalName} 
                   onChange={e => setFormData({...formData, legalName: e.target.value})}
-                  placeholder="e.g. Aura Global Incorporated LLC" 
+                  placeholder="e.g. Lizome Global Incorporated LLC" 
                 />
               </div>
               <div>

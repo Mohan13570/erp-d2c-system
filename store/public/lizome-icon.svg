@@ -1,0 +1,26 @@
+<svg width="240" height="60" viewBox="0 0 240 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 3D "L" Shape / Ribbon -->
+  <!-- Left face (Light Cyan to Blue) -->
+  <path d="M10 15 L25 10 L25 45 L10 55 Z" fill="url(#gradLeft)"/>
+  
+  <!-- Right/Inner face (Dark Blue) -->
+  <path d="M25 10 L35 15 L35 40 L25 45 Z" fill="#032b73"/>
+  
+  <!-- Bottom face (Bright Blue) -->
+  <path d="M10 55 L25 45 L35 40 L20 60 Z" fill="#0066ff"/>
+  
+  <!-- Text "LIZOM" -->
+  <text x="50" y="42" font-family="'Inter', 'Segoe UI', sans-serif" font-size="28" font-weight="600" letter-spacing="4" fill="#ffffff">LIZOM</text>
+  
+  <!-- The 3 Horizontal Lines acting as 'E' (Cyan, Light Blue, Dark Blue) -->
+  <rect x="156" y="21" width="22" height="4.5" rx="2" fill="#66ccff"/>
+  <rect x="156" y="30" width="22" height="4.5" rx="2" fill="#00e6e6"/>
+  <rect x="156" y="39" width="22" height="4.5" rx="2" fill="#0044cc"/>
+
+  <defs>
+    <linearGradient id="gradLeft" x1="10" y1="15" x2="10" y2="55" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00e6e6"/>
+      <stop offset="100%" stop-color="#0044cc"/>
+    </linearGradient>
+  </defs>
+</svg>

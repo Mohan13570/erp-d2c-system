@@ -50,7 +50,7 @@ async function main() {
 
   // Company
   const company = await prisma.company.create({
-    data: { name: 'Aura Designs Ltd.', abbr: 'ADL', country: 'US', defaultCurrency: 'USD', taxId: 'TX-00123' }
+    data: { name: 'Lizome Designs Ltd.', abbr: 'ADL', country: 'US', defaultCurrency: 'USD', taxId: 'TX-00123' }
   });
 
   // Roles
@@ -61,8 +61,8 @@ async function main() {
   // Users
   await prisma.user.createMany({
     data: [
-      { email: 'admin@aura.com', passwordHash: 'hashed_pass', firstName: 'System', lastName: 'Admin', roleId: adminRole.id },
-      { email: 'finance@aura.com', passwordHash: 'hashed_pass', firstName: 'Sarah', lastName: 'Connor', roleId: financeRole.id },
+      { email: 'admin@lizome.com', passwordHash: 'hashed_pass', firstName: 'System', lastName: 'Admin', roleId: adminRole.id },
+      { email: 'finance@lizome.com', passwordHash: 'hashed_pass', firstName: 'Sarah', lastName: 'Connor', roleId: financeRole.id },
     ]
   });
 

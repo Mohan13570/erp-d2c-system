@@ -53,7 +53,7 @@ export default function ChartOfAccounts() {
               </div>
               <div className="flex items-center space-x-8 text-sm">
                 <span className="text-gray-500 w-24">Asset</span>
-                <span className="font-medium text-gray-900 w-32 text-right">$1,240,000.00</span>
+                <span className="font-medium text-gray-900 w-32 text-right">$0.00</span>
                 <button className="text-indigo-600 hover:text-indigo-700">Add Sub</button>
               </div>
             </div>
@@ -68,7 +68,7 @@ export default function ChartOfAccounts() {
                   </div>
                   <div className="flex items-center space-x-8 text-sm">
                     <span className="text-gray-500 w-24">Group</span>
-                    <span className="font-medium text-gray-900 w-32 text-right">$540,200.00</span>
+                    <span className="font-medium text-gray-900 w-32 text-right">$0.00</span>
                   </div>
                 </div>
                 
@@ -81,7 +81,7 @@ export default function ChartOfAccounts() {
                       </div>
                       <div className="flex items-center space-x-8 text-sm opacity-0 group-hover:opacity-100 transition-opacity">
                         <span className="text-gray-500 w-24">Bank</span>
-                        <span className="text-gray-900 w-32 text-right">$420,000.00</span>
+                        <span className="text-gray-900 w-32 text-right">$0.00</span>
                         <button className="text-indigo-600 hover:text-indigo-700">Edit</button>
                       </div>
                     </div>
@@ -92,7 +92,7 @@ export default function ChartOfAccounts() {
                       </div>
                       <div className="flex items-center space-x-8 text-sm opacity-0 group-hover:opacity-100 transition-opacity">
                         <span className="text-gray-500 w-24">Cash</span>
-                        <span className="text-gray-900 w-32 text-right">$2,500.00</span>
+                        <span className="text-gray-900 w-32 text-right">$0.00</span>
                         <button className="text-indigo-600 hover:text-indigo-700">Edit</button>
                       </div>
                     </div>
@@ -111,7 +111,7 @@ export default function ChartOfAccounts() {
               </div>
               <div className="flex items-center space-x-8 text-sm">
                 <span className="text-gray-500 w-24">Liability</span>
-                <span className="font-medium text-gray-900 w-32 text-right">$450,000.00</span>
+                <span className="font-medium text-gray-900 w-32 text-right">$0.00</span>
                 <button className="text-indigo-600 hover:text-indigo-700">Add Sub</button>
               </div>
             </div>
@@ -126,7 +126,7 @@ export default function ChartOfAccounts() {
               </div>
               <div className="flex items-center space-x-8 text-sm">
                 <span className="text-gray-500 w-24">Equity</span>
-                <span className="font-medium text-gray-900 w-32 text-right">$790,000.00</span>
+                <span className="font-medium text-gray-900 w-32 text-right">$0.00</span>
                 <button className="text-indigo-600 hover:text-indigo-700">Add Sub</button>
               </div>
             </div>

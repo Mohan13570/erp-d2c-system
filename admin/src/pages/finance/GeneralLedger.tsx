@@ -30,11 +30,11 @@ export default function GeneralLedger() {
         </div>
         <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
           <p className="text-sm text-gray-500 mb-1">Total Debits (Today)</p>
-          <p className="text-2xl font-bold text-gray-900">$452,100</p>
+          <p className="text-2xl font-bold text-gray-900">$0.00</p>
         </div>
         <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
           <p className="text-sm text-gray-500 mb-1">Total Credits (Today)</p>
-          <p className="text-2xl font-bold text-gray-900">$452,100</p>
+          <p className="text-2xl font-bold text-gray-900">$0.00</p>
         </div>
       </div>
 
@@ -74,9 +74,9 @@ export default function GeneralLedger() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {[
-                { no: 'JV-2023-11-001', date: '2023-11-15', desc: 'Accrued Payroll Expenses', src: 'Manual', dr: '$125,000.00', cr: '$125,000.00', status: 'Posted' },
-                { no: 'JV-2023-11-002', date: '2023-11-15', desc: 'Vendor Bill AP-4022', src: 'Accounts Payable', dr: '$14,200.00', cr: '$14,200.00', status: 'Posted' },
-                { no: 'JV-2023-11-003', date: '2023-11-16', desc: 'Prepaid Rent Adjustments', src: 'Manual', dr: '$5,000.00', cr: '$5,000.00', status: 'Draft' },
+                { no: 'JV-2023-11-001', date: '2023-11-15', desc: 'Accrued Payroll Expenses', src: 'Manual', dr: '$0.00', cr: '$0.00', status: 'Posted' },
+                { no: 'JV-2023-11-002', date: '2023-11-15', desc: 'Vendor Bill AP-4022', src: 'Accounts Payable', dr: '$0.00', cr: '$0.00', status: 'Posted' },
+                { no: 'JV-2023-11-003', date: '2023-11-16', desc: 'Prepaid Rent Adjustments', src: 'Manual', dr: '$0.00', cr: '$0.00', status: 'Draft' },
               ].map((jv, i) => (
                 <tr key={i} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-6 py-4">

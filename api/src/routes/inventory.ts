@@ -57,7 +57,7 @@ router.post('/items', async (req: Request, res: Response) => {
         itemGroup: itemGroup || 'Products',
         standardRate: Number(standardRate) || 0,
         valuationRate: Number(valuationRate) || 0,
-        companyName: 'Aura',
+        companyName: 'Lizome',
         isD2cVisible: isD2cVisible ?? true,
       }
     });
@@ -67,7 +67,7 @@ router.post('/items', async (req: Request, res: Response) => {
       await prisma.warehouse.upsert({
         where: { name: warehouseName },
         update: {},
-        create: { name: warehouseName, companyName: 'Aura' }
+        create: { name: warehouseName, companyName: 'Lizome' }
       });
 
       await prisma.stockLevel.create({

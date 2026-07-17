@@ -6,12 +6,12 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Seeding Minimal Database...');
 
-  // 1. Create Company "Aura"
+  // 1. Create Company "Lizome"
   const company = await prisma.company.upsert({
-    where: { name: 'Aura' },
+    where: { name: 'Lizome' },
     update: {},
     create: {
-      name: 'Aura',
+      name: 'Lizome',
       abbr: 'AR',
       defaultCurrency: 'USD',
       country: 'US',
@@ -35,12 +35,12 @@ async function main() {
   // 3. Create Admin User
   const adminPassword = await bcrypt.hash('admin123', 10);
   const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@aura.com' },
-    update: { passwordHash: adminPassword, firstName: 'Aura', lastName: 'Admin' },
+    where: { email: 'admin@lizome.com' },
+    update: { passwordHash: adminPassword, firstName: 'Lizome', lastName: 'Admin' },
     create: {
-      email: 'admin@aura.com',
+      email: 'admin@lizome.com',
       passwordHash: adminPassword,
-      firstName: 'Aura',
+      firstName: 'Lizome',
       lastName: 'Admin',
       roleId: adminRole.id,
     },

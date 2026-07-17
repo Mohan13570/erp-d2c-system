@@ -52,9 +52,9 @@ export default function EnterpriseBilling() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {[
-                { no: 'FB-889012', client: 'Acme Corp', src: 'Ocean Freight (SHP-001)', amt: '$12,000.00', tax: '$600.00', tot: '$12,600.00' },
-                { no: 'WB-445019', client: 'Global Tech', src: 'Warehouse Storage', amt: '$4,500.00', tax: '$225.00', tot: '$4,725.00' },
-                { no: 'CB-112093', client: 'Stark Industries', src: 'Customs Clearance', amt: '$850.00', tax: '$42.50', tot: '$892.50' },
+                { no: 'FB-889012', client: 'Acme Corp', src: 'Ocean Freight (SHP-001)', amt: '$0.00', tax: '$0.00', tot: '$0.00' },
+                { no: 'WB-445019', client: 'Global Tech', src: 'Warehouse Storage', amt: '$0.00', tax: '$0.00', tot: '$0.00' },
+                { no: 'CB-112093', client: 'Stark Industries', src: 'Customs Clearance', amt: '$0.00', tax: '$0.00', tot: '$0.00' },
               ].map((bill, i) => (
                 <tr key={i} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-6 py-4 font-semibold text-indigo-600">{bill.no}</td>

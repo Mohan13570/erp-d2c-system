@@ -41,7 +41,7 @@ export default function HRView() {
   const [newEmp, setNewEmp] = useState({ employeeName: '', designation: '', employmentType: 'Full-time', salary: 0 });
 
   const [showAttModal, setShowAttModal] = useState(false);
-  const [newAtt, setNewAtt] = useState({ employeeId: '', date: '', hoursWorked: 8 });
+  const [newAtt, setNewAtt] = useState({ employeeId: '', date: '', hoursWorked: 0 });
 
   const [showPayrollModal, setShowPayrollModal] = useState(false);
   const [newPayroll, setNewPayroll] = useState({ period: '', totalGross: 0, totalNet: 0, status: 'Processed' });
@@ -111,7 +111,7 @@ export default function HRView() {
         {[
           { id: 'employees', label: 'Employees', icon: Users },
           { id: 'attendance', label: 'Attendance', icon: Calendar },
-          { id: 'payroll', label: 'Payroll Runs', icon: Briefcase }
+          { id: 'payroll', label: 'Payroll', icon: DollarSign }
         ].map(t => (
           <button
             key={t.id}

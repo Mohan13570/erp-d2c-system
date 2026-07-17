@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Ship, Plane, Truck, Anchor, PackageCheck, AlertTriangle, TrendingUp, DollarSign } from 'lucide-react';
 
 export default function ShipmentDashboard() {
-  const [stats, setStats] = useState({ active: 142, delayed: 8, completed: 890, revenue: 1450000 });
+  const [stats, setStats] = useState({ active: 0, delayed: 0, completed: 0, revenue: 0 });
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-6">

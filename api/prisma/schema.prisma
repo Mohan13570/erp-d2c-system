@@ -334,6 +334,7 @@ model Customer {
   invitations             CustomerInvitation[]
   arInvoices              ARInvoice[]
   CustomerShipmentBooking CustomerShipmentBooking[]
+  customerBookings        CustomerBooking[]
 }
 
 model Supplier {
@@ -8032,4 +8033,369 @@ model ErpCashBookTransaction {
   recordedBy      String
   
   createdAt       DateTime           @default(now())
+}
+
+// ==========================================
+// CUSTOMER BOOKING (LOGISTICS & FREIGHT)
+// ==========================================
+
+model CustomerBooking {
+  id              String   @id @default(uuid())
+  bookingNumber   String   @unique // e.g., BKG-2023-001
+  bookingDate     DateTime @default(now())
+  bookingStatus   String   @default("Draft") // Draft, Confirmed, Cancelled, In-Transit, Delivered
+  bookingType     String   @default("Standard")
+  bookingSource   String   @default("Manual")
+  
+  // Customer Relations
+  customerId      String?
+  customer        Customer? @relation(fields: [customerId], references: [id])
+  customerRef     String?
+  internalRef     String?
+
+  // Organization
+  salesExecutive  String?
+  salesTeam       String?
+  branch          String?
+  businessUnit    String?
+  priority        String   @default("Normal")
+  
+  // Service
+  serviceType     String   @default("Ocean Freight") // Ocean Freight, Air Freight, Road Transport, Rail, Multimodal
+  tradeType       String   @default("Export") // Import, Export, Domestic, International
+  
+  // Logistics Dates
+  expectedPickup  DateTime?
+  expectedDelivery DateTime?
+
+  // Financial
+  currency        String   @default("USD")
+  paymentTerms    String?
+
+  // Additional Info
+  bookingNotes    String?
+  specialInstructions String?
+
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  createdBy       String?
+  updatedBy       String?
+
+  // Relations
+  sender          BookingSender?
+  receiver        BookingReceiver?
+  notifyParty     BookingNotifyParty?
+  billTo          BookingBillTo?
+  cargos          BookingCargo[]
+}
+
+model BookingSender {
+  id              String   @id @default(uuid())
+  bookingId       String   @unique
+  booking         CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  companyName     String
+  companyType     String?
+  industry        String?
+  taxNumber       String?
+  registrationNo  String?
+  email           String?
+  phone           String?
+  
+  // Contact
+  contactPerson   String?
+  designation     String?
+  mobileNumber    String?
+  
+  // Pickup Address
+  line1           String?
+  line2           String?
+  city            String?
+  state           String?
+  country         String?
+  postalCode      String?
+  latitude        Float?
+  longitude       Float?
+
+  // Instructions
+  pickupDate      DateTime?
+  pickupInstructions String?
+}
+
+model BookingReceiver {
+  id              String   @id @default(uuid())
+  bookingId       String   @unique
+  booking         CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  companyName     String
+  taxNumber       String?
+  email           String?
+  phone           String?
+  
+  // Contact
+  contactPerson   String?
+  mobileNumber    String?
+  
+  // Delivery Address
+  line1           String?
+  line2           String?
+  city            String?
+  state           String?
+  country         String?
+  postalCode      String?
+  latitude        Float?
+  longitude       Float?
+
+  // Instructions
+  deliveryDate    DateTime?
+  deliveryInstructions String?
+}
+
+model BookingNotifyParty {
+  id              String   @id @default(uuid())
+  bookingId       String   @unique
+  booking         CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  companyName     String
+  contactPerson   String?
+  email           String?
+  phone           String?
+  line1           String?
+  city            String?
+  country         String?
+  notificationPreference String @default("Email")
+}
+
+model BookingBillTo {
+  id              String   @id @default(uuid())
+  bookingId       String   @unique
+  booking         CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  billingCompany  String
+  financeContact  String?
+  taxNumber       String?
+  accountNumber   String?
+  paymentTerms    String?
+  creditLimit     Float?
+  invoiceEmail    String?
+  billingAddress  String?
+}
+
+model BookingCargo {
+  id              String   @id @default(uuid())
+  bookingId       String
+  booking         CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  commodity       String?
+  description     String?
+  hsCode          String?
+  unNumber        String?
+  
+  packageType     String?
+  numberOfPackages Int @default(1)
+  
+  grossWeight     Float @default(0)
+  netWeight       Float @default(0)
+  chargeableWeight Float @default(0)
+  volumeCBM       Float @default(0)
+  
+  length          Float?
+  width           Float?
+  height          Float?
+  
+  isTemperatureControlled Boolean @default(false)
+  isDangerousGoods Boolean @default(false)
+  isFragile       Boolean @default(false)
+  
+  insuranceRequired Boolean @default(false)
+  declaredValue   Float?
+  
+  marksAndNumbers String?
+  containerType   String?
+  containerSize   String?
+  containerQuantity Int @default(0)
+}
+
+// ==========================================
+// PACKAGE & FREIGHT CALCULATION ENGINE
+// ==========================================
+
+model RateCard {
+  id              String   @id @default(uuid())
+  code            String   @unique
+  name            String
+  serviceType     String   // Ocean, Air, Road
+  origin          String?
+  destination     String?
+  currency        String   @default("USD")
+  validFrom       DateTime
+  validTo         DateTime
+  status          String   @default("Active")
+  
+  items           RateCardItem[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model RateCardItem {
+  id              String   @id @default(uuid())
+  rateCardId      String
+  rateCard        RateCard @relation(fields: [rateCardId], references: [id], onDelete: Cascade)
+  
+  chargeCode      String   // FREIGHT, FSC, THC, DOC
+  chargeName      String
+  calculationType String   // PER_KG, PER_CBM, FLAT, PER_SHIPMENT, PERCENTAGE
+  unitRate        Float
+  minimumCharge   Float?
+  maximumCharge   Float?
+  
+  // Tiering
+  tierMinUnit     Float?
+  tierMaxUnit     Float?
+}
+
+model PkgPackage {
+  id              String   @id @default(uuid())
+  bookingId       String   // Connects to CustomerBooking or BookingCargo
+  packageRef      String   @unique
+  
+  packageType     String   // Pallet, Box, Carton, Drum
+  quantity        Int      @default(1)
+  description     String?
+  
+  dimensions      PkgDimension?
+  weight          PkgWeight?
+  calculation     PkgCalculation?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model PkgDimension {
+  id              String   @id @default(uuid())
+  packageId       String   @unique
+  package         PkgPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  
+  length          Float
+  width           Float
+  height          Float
+  unit            String   @default("CM") // CM, IN
+}
+
+model PkgWeight {
+  id              String   @id @default(uuid())
+  packageId       String   @unique
+  package         PkgPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  
+  actualWeight    Float
+  unit            String   @default("KG") // KG, LBS
+}
+
+model PkgCalculation {
+  id              String   @id @default(uuid())
+  packageId       String   @unique
+  package         PkgPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  
+  volumeCBM       Float
+  volumeCFT       Float
+  volumetricWeight Float
+  chargeableWeight Float
+  
+  volumetricDivisor Float  @default(6000)
+}
+
+model PricingRule {
+  id              String   @id @default(uuid())
+  ruleCode        String   @unique
+  ruleName        String
+  priority        Int      @default(1)
+  condition       String?  
+  action          String?  
+  status          String   @default("Active")
+}
+
+model FuelSurcharge {
+  id              String   @id @default(uuid())
+  carrierCode     String
+  serviceType     String
+  percentage      Float
+  effectiveFrom   DateTime
+  effectiveTo     DateTime?
+  status          String   @default("Active")
+}
+
+model InsuranceRule {
+  id              String   @id @default(uuid())
+  commodityType   String
+  ratePercentage  Float
+  minimumPremium  Float
+  status          String   @default("Active")
+}
+
+model TaxRule {
+  id              String   @id @default(uuid())
+  countryCode     String
+  taxName         String
+  taxPercentage   Float
+  appliesTo       String   // FREIGHT, ALL
+  status          String   @default("Active")
+}
+
+model DiscountRule {
+  id              String   @id @default(uuid())
+  customerGroupId String?
+  customerId      String?
+  discountPercent Float
+  maxDiscountAmount Float?
+  validUntil      DateTime?
+}
+
+model BusinessRule {
+  id              String   @id @default(uuid())
+  ruleType        String   // VALIDATION, ROUTING, CALCULATION
+  ruleCode        String   @unique
+  parameters      String   
+  isActive        Boolean  @default(true)
+}
+
+model ShipmentCharge {
+  id              String   @id @default(uuid())
+  bookingId       String   
+  
+  totalFreight    Float    @default(0)
+  totalSurcharges Float    @default(0)
+  totalTaxes      Float    @default(0)
+  totalDiscount   Float    @default(0)
+  grandTotal      Float    @default(0)
+  currency        String   @default("USD")
+  
+  breakdowns      ChargeBreakdown[]
+  
+  createdAt       DateTime @default(now())
+}
+
+model ChargeBreakdown {
+  id              String   @id @default(uuid())
+  shipmentChargeId String
+  shipmentCharge  ShipmentCharge @relation(fields: [shipmentChargeId], references: [id], onDelete: Cascade)
+  
+  chargeCode      String
+  chargeName      String
+  amount          Float
+  currency        String   @default("USD")
+  isTaxable       Boolean  @default(true)
+}
+
+model CalculationHistory {
+  id              String   @id @default(uuid())
+  bookingId       String
+  calculatedBy    String   // User ID or SYSTEM
+  inputSnapshot   String   
+  appliedRates    String   
+  finalAmount     Float
+  currency        String
+  
+  calculatedAt    DateTime @default(now())
 }

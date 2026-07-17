@@ -24,7 +24,7 @@ export default function RoadBillingDashboard() {
             <span className="text-xs font-bold text-gray-400 uppercase">This Month</span>
           </div>
           <p className="text-sm font-bold text-gray-400">Total Revenue</p>
-          <p className="text-3xl font-black text-gray-900">$245,890</p>
+          <p className="text-3xl font-black text-gray-900">$0.00</p>
         </div>
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <div className="flex justify-between items-start mb-4">
@@ -32,7 +32,7 @@ export default function RoadBillingDashboard() {
             <span className="text-xs font-bold text-gray-400 uppercase">This Month</span>
           </div>
           <p className="text-sm font-bold text-gray-400">Total Expenses (Tolls, Fuel)</p>
-          <p className="text-3xl font-black text-gray-900">$182,400</p>
+          <p className="text-3xl font-black text-gray-900">$0.00</p>
         </div>
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <div className="flex justify-between items-start mb-4">
@@ -48,7 +48,7 @@ export default function RoadBillingDashboard() {
             <span className="text-xs font-bold text-gray-400 uppercase">Pending</span>
           </div>
           <p className="text-sm font-bold text-gray-400">Accounts Receivable</p>
-          <p className="text-3xl font-black text-amber-600">$45,200</p>
+          <p className="text-3xl font-black text-amber-600">$0.00</p>
         </div>
       </div>
 

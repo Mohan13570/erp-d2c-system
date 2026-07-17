@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
     const assetData = req.body;
     // Generate a unique QR Code URL for the asset
     const uniqueHash = crypto.randomBytes(8).toString('hex');
-    assetData.qrCode = `https://aura-erp.com/asset/${uniqueHash}`;
+    assetData.qrCode = `https://lizome-erp.com/asset/${uniqueHash}`;
 
     const newAsset = await prisma.containerAsset.create({
       data: assetData,

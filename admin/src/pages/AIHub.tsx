@@ -13,7 +13,7 @@ export default function AIHub() {
       .then(r => r.json())
       .then((logs: any[]) => {
         if (!logs || logs.length === 0) {
-          setMessages([{ role: 'ai', text: 'Hello! I am Aura, your local AI assistant. I can forecast demand, analyze shipments, and optimize routes. How can I help?' }]);
+          setMessages([{ role: 'ai', text: 'Hello! I am Lizome, your local AI assistant. I can forecast demand, analyze shipments, and optimize routes. How can I help?' }]);
           return;
         }
         // Logs are returned desc (newest first). Reverse to oldest first.
@@ -64,7 +64,7 @@ export default function AIHub() {
         <div className="w-1/3 flex flex-col space-y-4">
            <div className="bg-gradient-to-br from-indigo-600 to-purple-700 p-6 rounded-3xl text-white shadow-lg">
              <BrainCircuit size={32} className="mb-4 text-indigo-200"/>
-             <h3 className="font-bold text-lg mb-1">Aura Engine Active</h3>
+             <h3 className="font-bold text-lg mb-1">Lizome Engine Active</h3>
              <p className="text-indigo-100 text-sm opacity-80">Processing live data from 18 modules for immediate insights.</p>
            </div>
            <div className="bg-white border border-gray-100 p-6 rounded-3xl flex-1 overflow-y-auto">
@@ -106,7 +106,7 @@ export default function AIHub() {
               value={input} 
               onChange={e => setInput(e.target.value)} 
               onKeyPress={e => e.key === 'Enter' && sendQuery()}
-              placeholder="Ask Aura anything about your operations..." 
+              placeholder="Ask Lizome anything about your operations..." 
               className="flex-1 p-4 bg-gray-50 border-transparent focus:bg-white focus:border-indigo-300 rounded-2xl transition-all"
             />
             <button onClick={sendQuery} disabled={loading} className="bg-indigo-600 text-white p-4 rounded-2xl hover:bg-indigo-700 disabled:opacity-50 transition-colors shadow-md">

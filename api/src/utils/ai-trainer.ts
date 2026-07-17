@@ -10,7 +10,7 @@ export function deepTrain(manager: any) {
 
   // 1. GREETINGS MATRIX
   const greetWords = ['hi', 'hello', 'hey', 'greetings', 'good morning', 'good afternoon', 'sup', 'yo'];
-  const greetFollowups = ['', ' there', ' aura', ' system', ' assistant', ' AI', ' computer'];
+  const greetFollowups = ['', ' there', ' lizome', ' system', ' assistant', ' AI', ' computer'];
   greetWords.forEach(w => greetFollowups.forEach(f => add(`${w}${f}`, 'greetings.hello')));
 
   const howAreYou = ['how are you', 'how is it going', 'how are things', 'what is up', 'are you doing well'];
@@ -84,7 +84,7 @@ export function deepTrain(manager: any) {
   });
 
   // 5. SYSTEM MATRIX
-  const sysStarts = ['is the system', 'are we', 'is aura', 'check if modules are', 'tell me if system is', 'what is the system'];
+  const sysStarts = ['is the system', 'are we', 'is lizome', 'check if modules are', 'tell me if system is', 'what is the system'];
   const sysEnds = ['online', 'healthy', 'status', 'up', 'working', 'crashing', 'down', 'live'];
   sysStarts.forEach(s => sysEnds.forEach(e => add(`${s} ${e}`, 'system.health')));
 

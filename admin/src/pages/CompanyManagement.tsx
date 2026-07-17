@@ -209,7 +209,7 @@ export default function CompanyManagement() {
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-1">Company Name</label>
-                    <input required type="text" className="w-full border border-gray-300 rounded-xl px-3 py-2" placeholder="e.g. Aura"
+                    <input required type="text" className="w-full border border-gray-300 rounded-xl px-3 py-2" placeholder="e.g. Lizome"
                       onChange={e => setFormData({...formData, companyName: e.target.value})} />
                   </div>
                 </>

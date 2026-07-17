@@ -104,7 +104,7 @@ export default function EmployeeAccess() {
       <div className="flex justify-between items-center bg-white/60 backdrop-blur-xl p-6 rounded-3xl border border-white/40 shadow-sm">
         <div>
           <h1 className="text-3xl font-black text-gray-900 tracking-tight">Employee Directory</h1>
-          <p className="text-gray-500 font-medium mt-1">Manage Aura employees and their system access roles.</p>
+          <p className="text-gray-500 font-medium mt-1">Manage Lizome employees and their system access roles.</p>
         </div>
         <button onClick={() => setShowModal(true)} className="bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/40 transition-all">
           + New Employee
@@ -171,7 +171,7 @@ export default function EmployeeAccess() {
                       className="text-sm font-semibold text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 outline-none"
                       value={emp.roleId || ''}
                       onChange={(e) => handleUpdateRole(emp.id, e.target.value)}
-                      disabled={emp.email === 'admin@aura.com'}
+                      disabled={emp.email === 'admin@lizome.com'}
                     >
                       <option value="">No Role</option>
                       {roles.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
@@ -180,9 +180,9 @@ export default function EmployeeAccess() {
                   <td className="px-6 py-4">
                     <button 
                       onClick={() => handleDeleteEmp(emp.id)}
-                      disabled={emp.email === 'admin@aura.com'}
-                      className={`p-2 rounded-lg transition-colors ${emp.email === 'admin@aura.com' ? 'text-gray-300' : 'text-rose-500 hover:bg-rose-50'}`}
-                      title={emp.email === 'admin@aura.com' ? "Cannot delete the primary admin" : "Delete Employee"}
+                      disabled={emp.email === 'admin@lizome.com'}
+                      className={`p-2 rounded-lg transition-colors ${emp.email === 'admin@lizome.com' ? 'text-gray-300' : 'text-rose-500 hover:bg-rose-50'}`}
+                      title={emp.email === 'admin@lizome.com' ? "Cannot delete the primary admin" : "Delete Employee"}
                     >
                       <Trash2 size={18} />
                     </button>

@@ -43,7 +43,7 @@ export default function SignupPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
           <h1 className="text-3xl font-black text-gray-900 tracking-tight mb-2">Create your account</h1>
-          <p className="text-gray-500">Join AURA and start shopping</p>
+          <p className="text-gray-500">Join LIZOME and start shopping</p>
         </div>
 
         <div className="bg-white rounded-3xl shadow-lg shadow-gray-200/60 border border-gray-100 p-8">

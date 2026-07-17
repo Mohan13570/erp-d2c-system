@@ -49,7 +49,7 @@ export default function VendorProcurementDashboard() {
             <DollarSign className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">$142,500.00</div>
+            <div className="text-2xl font-bold text-green-600">$0.00</div>
             <p className="text-xs text-muted-foreground">Based on accepted POs</p>
           </CardContent>
         </Card>

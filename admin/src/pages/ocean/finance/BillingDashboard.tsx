@@ -42,7 +42,7 @@ export default function BillingDashboard() {
               </div>
            </div>
            <div className="text-sm font-medium text-gray-500">Accounts Receivable (AR)</div>
-           <div className="text-2xl font-bold text-gray-900 mt-1">$450,200.00</div>
+           <div className="text-2xl font-bold text-gray-900 mt-1">$0.00</div>
         </div>
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
            <div className="flex justify-between items-start mb-2">
@@ -51,7 +51,7 @@ export default function BillingDashboard() {
               </div>
            </div>
            <div className="text-sm font-medium text-gray-500">Accounts Payable (AP)</div>
-           <div className="text-2xl font-bold text-gray-900 mt-1">$210,850.00</div>
+           <div className="text-2xl font-bold text-gray-900 mt-1">$0.00</div>
         </div>
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
            <div className="flex justify-between items-start mb-2">

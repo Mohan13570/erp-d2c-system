@@ -31,8 +31,8 @@ export default function FinanceDashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
-          { label: 'Outstanding Balance', value: '$18,450.00', icon: DollarSign, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-          { label: 'Available Credit', value: '$31,550.00', icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+          { label: 'Outstanding Balance', value: '$0.00', icon: DollarSign, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+          { label: 'Available Credit', value: '$0.00', icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
           { label: 'Unpaid Invoices', value: '4', icon: FileText, color: 'text-blue-600', bg: 'bg-blue-50' },
           { label: 'Overdue Warning', value: '1', icon: AlertTriangle, color: 'text-red-600', bg: 'bg-red-50' },
         ].map((stat, idx) => (
@@ -79,7 +79,7 @@ export default function FinanceDashboard() {
                      <p className="text-xs text-red-700 mt-1">Overdue by 5 days</p>
                   </div>
                   <div className="text-right">
-                     <p className="text-sm font-bold text-red-900">$4,500.00</p>
+                     <p className="text-sm font-bold text-red-900">$0.00</p>
                      <button className="text-xs font-semibold text-white bg-red-600 px-3 py-1 rounded-md mt-1 hover:bg-red-700">Pay Now</button>
                   </div>
                </div>
@@ -89,7 +89,7 @@ export default function FinanceDashboard() {
                      <p className="text-xs text-gray-500 mt-1">Due in 12 days</p>
                   </div>
                   <div className="text-right">
-                     <p className="text-sm font-bold text-gray-900">$12,500.00</p>
+                     <p className="text-sm font-bold text-gray-900">$0.00</p>
                      <Link to="/customer/finance/payments" className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 mt-1 block">View Invoice</Link>
                   </div>
                </div>

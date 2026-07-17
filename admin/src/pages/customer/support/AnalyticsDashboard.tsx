@@ -42,7 +42,7 @@ export default function AnalyticsDashboard() {
         <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
           <p className="text-sm font-medium text-gray-500">Total Spend (YTD)</p>
           <div className="mt-2 flex items-baseline">
-             <p className="text-3xl font-extrabold text-gray-900">$2.45M</p>
+             <p className="text-3xl font-extrabold text-gray-900">$0.00M</p>
              <p className="ml-2 text-sm font-bold text-red-600">+12%</p>
           </div>
         </div>

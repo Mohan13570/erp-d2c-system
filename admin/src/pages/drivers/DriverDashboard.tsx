@@ -3,7 +3,7 @@ import { Users, AlertTriangle, ShieldCheck, Activity, FileText, CheckCircle2 } f
 import { Link } from 'react-router-dom';
 
 export default function DriverDashboard() {
-  const stats = { active: 312, onLeave: 14, expiredDocs: 3, suspended: 2 };
+  const stats = { active: 0, onLeave: 0, expiredDocs: 0, suspended: 0 };
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-6">
@@ -61,7 +61,7 @@ export default function DriverDashboard() {
                    <tr>
                       <td className="py-4 font-bold text-gray-900">Michael Smith</td>
                       <td className="py-4 text-red-600 font-bold">Overspeeding</td>
-                      <td className="py-4 text-red-600 font-bold">-$50.00</td>
+                      <td className="py-4 text-red-600 font-bold">-$0.00</td>
                       <td className="py-4 text-gray-500">Yesterday</td>
                    </tr>
                 </tbody>

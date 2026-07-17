@@ -10,8 +10,8 @@ export default function Manufacturing() {
   const [tab, setTab] = useState<'bom' | 'wo'>('wo');
   const [showWOModal, setShowWOModal] = useState(false);
   const [showBOMModal, setShowBOMModal] = useState(false);
-  const [newWO, setNewWO] = useState({ bomId: '', plannedQty: 1, plannedStart: '', plannedEnd: '' });
-  const [newBOM, setNewBOM] = useState({ itemCode: '', quantity: 1 });
+  const [newWO, setNewWO] = useState({ bomId: '', plannedQty: 0, plannedStart: '', plannedEnd: '' });
+  const [newBOM, setNewBOM] = useState({ itemCode: '', quantity: 0 });
   const [bomItems, setBomItems] = useState<{itemCode: string, qty: number, uom: string}[]>([]);
   const [inventory, setInventory] = useState<any[]>([]);
 

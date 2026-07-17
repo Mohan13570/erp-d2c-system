@@ -45,26 +45,26 @@ export default function InvoiceDetail() {
                  <tr>
                     <td className="py-4 text-gray-800">Ocean Freight (Shanghai to LA) - 1x40HC Container</td>
                     <td className="py-4 text-center text-gray-600">1</td>
-                    <td className="py-4 text-right text-gray-600">$8,500.00</td>
-                    <td className="py-4 text-right font-medium text-gray-900">$8,500.00</td>
+                    <td className="py-4 text-right text-gray-600">$0.00</td>
+                    <td className="py-4 text-right font-medium text-gray-900">$0.00</td>
                  </tr>
                  <tr>
                     <td className="py-4 text-gray-800">Terminal Handling Charges (THC) - Origin & Destination</td>
                     <td className="py-4 text-center text-gray-600">1</td>
-                    <td className="py-4 text-right text-gray-600">$1,200.00</td>
-                    <td className="py-4 text-right font-medium text-gray-900">$1,200.00</td>
+                    <td className="py-4 text-right text-gray-600">$0.00</td>
+                    <td className="py-4 text-right font-medium text-gray-900">$0.00</td>
                  </tr>
                  <tr>
                     <td className="py-4 text-gray-800">Customs Clearance Services</td>
                     <td className="py-4 text-center text-gray-600">1</td>
-                    <td className="py-4 text-right text-gray-600">$350.00</td>
-                    <td className="py-4 text-right font-medium text-gray-900">$350.00</td>
+                    <td className="py-4 text-right text-gray-600">$0.00</td>
+                    <td className="py-4 text-right font-medium text-gray-900">$0.00</td>
                  </tr>
                  <tr>
                     <td className="py-4 text-gray-800">Marine Cargo Insurance (Premium)</td>
                     <td className="py-4 text-center text-gray-600">1</td>
-                    <td className="py-4 text-right text-gray-600">$543.22</td>
-                    <td className="py-4 text-right font-medium text-gray-900">$543.22</td>
+                    <td className="py-4 text-right text-gray-600">$0.00</td>
+                    <td className="py-4 text-right font-medium text-gray-900">$0.00</td>
                  </tr>
               </tbody>
            </table>
@@ -73,15 +73,15 @@ export default function InvoiceDetail() {
               <div className="w-64 space-y-3 text-sm">
                  <div className="flex justify-between text-gray-600">
                     <span>Subtotal</span>
-                    <span>$10,593.22</span>
+                    <span>$0.00</span>
                  </div>
                  <div className="flex justify-between text-gray-600">
                     <span>Tax (18%)</span>
-                    <span>$1,906.78</span>
+                    <span>$0.00</span>
                  </div>
                  <div className="flex justify-between font-bold text-lg text-gray-900 pt-3 border-t border-gray-200">
                     <span>Total Due</span>
-                    <span>$12,500.00</span>
+                    <span>$0.00</span>
                  </div>
               </div>
            </div>
@@ -91,7 +91,7 @@ export default function InvoiceDetail() {
            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
               <h3 className="font-bold text-gray-900 mb-4">Payment Actions</h3>
               <Link to="/customer/finance/payments" className="w-full flex items-center justify-center px-4 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition shadow-sm mb-3">
-                 <CreditCard size={18} className="mr-2" /> Pay $12,500.00
+                 <CreditCard size={18} className="mr-2" /> Pay $0.00
               </Link>
               <button className="w-full flex items-center justify-center px-4 py-3 border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition">
                  <Download size={18} className="mr-2" /> Download PDF

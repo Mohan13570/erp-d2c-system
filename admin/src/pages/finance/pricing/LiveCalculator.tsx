@@ -8,9 +8,9 @@ export default function LiveCalculator() {
     originCode: 'JFK',
     destinationCode: 'LHR',
     transportMode: 'AIR',
-    weightKg: 5000,
-    volumeCbm: 15,
-    containerCount: 1,
+    weightKg: 0,
+    volumeCbm: 0,
+    containerCount: 0,
     equipmentType: 'TEU'
   });
 

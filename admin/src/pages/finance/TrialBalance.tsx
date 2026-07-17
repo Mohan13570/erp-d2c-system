@@ -49,17 +49,17 @@ export default function TrialBalance() {
             </thead>
             <tbody className="divide-y divide-gray-100 text-sm">
               {[
-                { name: '1110 - Bank of America Checking', dr: '$420,000.00', cr: '-' },
-                { name: '1120 - Petty Cash', dr: '$2,500.00', cr: '-' },
-                { name: '1200 - Accounts Receivable', dr: '$125,500.00', cr: '-' },
-                { name: '1300 - Inventory Assets', dr: '$45,000.00', cr: '-' },
-                { name: '2100 - Accounts Payable', dr: '-', cr: '$84,300.00' },
-                { name: '2200 - Accrued Payroll', dr: '-', cr: '$45,000.00' },
-                { name: '3100 - Common Stock', dr: '-', cr: '$100,000.00' },
-                { name: '3200 - Retained Earnings', dr: '-', cr: '$353,700.00' },
-                { name: '4100 - Sales Revenue', dr: '-', cr: '$150,000.00' },
-                { name: '5100 - Cost of Goods Sold', dr: '$60,000.00', cr: '-' },
-                { name: '6100 - Payroll Expenses', dr: '$80,000.00', cr: '-' },
+                { name: '1110 - Bank of America Checking', dr: '$0.00', cr: '-' },
+                { name: '1120 - Petty Cash', dr: '$0.00', cr: '-' },
+                { name: '1200 - Accounts Receivable', dr: '$0.00', cr: '-' },
+                { name: '1300 - Inventory Assets', dr: '$0.00', cr: '-' },
+                { name: '2100 - Accounts Payable', dr: '-', cr: '$0.00' },
+                { name: '2200 - Accrued Payroll', dr: '-', cr: '$0.00' },
+                { name: '3100 - Common Stock', dr: '-', cr: '$0.00' },
+                { name: '3200 - Retained Earnings', dr: '-', cr: '$0.00' },
+                { name: '4100 - Sales Revenue', dr: '-', cr: '$0.00' },
+                { name: '5100 - Cost of Goods Sold', dr: '$0.00', cr: '-' },
+                { name: '6100 - Payroll Expenses', dr: '$0.00', cr: '-' },
               ].map((acc, i) => (
                 <tr key={i} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-6 py-3 font-medium text-gray-700">{acc.name}</td>
@@ -69,8 +69,8 @@ export default function TrialBalance() {
               ))}
               <tr className="bg-gray-50 font-bold text-gray-900 border-t-2 border-gray-200">
                 <td className="px-6 py-4 uppercase">Total</td>
-                <td className="px-6 py-4 text-right">$733,000.00</td>
-                <td className="px-6 py-4 text-right">$733,000.00</td>
+                <td className="px-6 py-4 text-right">$0.00</td>
+                <td className="px-6 py-4 text-right">$0.00</td>
               </tr>
             </tbody>
           </table>

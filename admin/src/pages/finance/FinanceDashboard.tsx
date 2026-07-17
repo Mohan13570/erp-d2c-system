@@ -28,7 +28,7 @@ export default function FinanceDashboard() {
             </div>
             <h3 className="font-semibold text-gray-900">Cash & Bank</h3>
           </div>
-          <p className="text-3xl font-bold text-gray-900 relative z-10">$540,200.00</p>
+          <p className="text-3xl font-bold text-gray-900 relative z-10">$0.00</p>
           <div className="flex items-center mt-2 text-sm">
             <ArrowUpRight className="w-4 h-4 text-emerald-500 mr-1" />
             <span className="text-emerald-600 font-medium">+2.5%</span>
@@ -44,7 +44,7 @@ export default function FinanceDashboard() {
             </div>
             <h3 className="font-semibold text-gray-900">Receivables (AR)</h3>
           </div>
-          <p className="text-3xl font-bold text-gray-900 relative z-10">$125,500.00</p>
+          <p className="text-3xl font-bold text-gray-900 relative z-10">$0.00</p>
           <div className="flex items-center mt-2 text-sm">
             <ArrowDownRight className="w-4 h-4 text-rose-500 mr-1" />
             <span className="text-rose-600 font-medium">-1.2%</span>
@@ -60,7 +60,7 @@ export default function FinanceDashboard() {
             </div>
             <h3 className="font-semibold text-gray-900">Payables (AP)</h3>
           </div>
-          <p className="text-3xl font-bold text-gray-900 relative z-10">$84,300.00</p>
+          <p className="text-3xl font-bold text-gray-900 relative z-10">$0.00</p>
           <div className="flex items-center mt-2 text-sm">
             <ArrowUpRight className="w-4 h-4 text-emerald-500 mr-1" />
             <span className="text-emerald-600 font-medium">+4.1%</span>
@@ -76,7 +76,7 @@ export default function FinanceDashboard() {
             </div>
             <h3 className="font-semibold text-gray-900">Net Profit Margin</h3>
           </div>
-          <p className="text-3xl font-bold text-gray-900 relative z-10">24.8%</p>
+          <p className="text-3xl font-bold text-gray-900 relative z-10">0.0%</p>
           <div className="flex items-center mt-2 text-sm">
             <ArrowUpRight className="w-4 h-4 text-emerald-500 mr-1" />
             <span className="text-emerald-600 font-medium">+1.4%</span>
@@ -95,7 +95,7 @@ export default function FinanceDashboard() {
             </select>
           </div>
           <div className="h-64 flex items-end space-x-2">
-            {[40, 70, 45, 90, 65, 80, 55, 95].map((h, i) => (
+            {[0, 0, 0, 0, 0, 0, 0, 0].map((h, i) => (
               <div key={i} className="flex-1 flex flex-col justify-end group">
                 <div className="w-full bg-indigo-100 rounded-t-sm group-hover:bg-indigo-200 transition-colors relative" style={{ height: h + '%' }}>
                   <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">
@@ -113,11 +113,7 @@ export default function FinanceDashboard() {
             <button className="text-sm text-indigo-600 hover:text-indigo-700 font-medium">View All</button>
           </div>
           <div className="space-y-4">
-            {[
-              { type: 'Payment Run', ref: 'PR-2023-11', amount: 45000, req: 'Sarah J.' },
-              { type: 'Vendor Bill', ref: 'INV-88902', amount: 12500, req: 'Mike T.' },
-              { type: 'Journal Entry', ref: 'JV-10442', amount: 8900, req: 'Finance Dept' }
-            ].map((item, i) => (
+            {[].map((item: any, i) => (
               <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-gray-50 hover:bg-gray-50 transition-colors">
                 <div className="flex items-center space-x-4">
                   <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center">

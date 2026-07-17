@@ -13,10 +13,10 @@ export default function ExecutiveDashboard() {
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
-          { label: 'Space Utilization', value: '82%', icon: BarChart3, color: 'text-blue-600', bg: 'bg-blue-100' },
-          { label: 'Picking Accuracy', value: '99.4%', icon: Target, color: 'text-green-600', bg: 'bg-green-100' },
-          { label: 'Labour Productivity', value: '+14%', icon: Users, color: 'text-violet-600', bg: 'bg-violet-100' },
-          { label: 'Inventory Turnover', value: '4.2x', icon: TrendingUp, color: 'text-amber-600', bg: 'bg-amber-100' }
+          { label: 'Space Utilization', value: '0%', icon: BarChart3, color: 'text-blue-600', bg: 'bg-blue-100' },
+          { label: 'Picking Accuracy', value: '0%', icon: Target, color: 'text-green-600', bg: 'bg-green-100' },
+          { label: 'Labour Productivity', value: '0%', icon: Users, color: 'text-violet-600', bg: 'bg-violet-100' },
+          { label: 'Inventory Turnover', value: '0x', icon: TrendingUp, color: 'text-amber-600', bg: 'bg-amber-100' }
         ].map((stat, i) => (
           <div key={i} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center space-x-4">
             <div className={`p-4 rounded-xl ${stat.bg} ${stat.color}`}>

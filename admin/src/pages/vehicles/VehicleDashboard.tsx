@@ -3,7 +3,7 @@ import { Truck, AlertTriangle, ShieldCheck, Wrench, Settings2, FileText, CheckCi
 import { Link } from 'react-router-dom';
 
 export default function VehicleDashboard() {
-  const stats = { active: 142, maintenance: 12, expiredDocs: 5, retired: 8 };
+  const stats = { active: 0, maintenance: 0, expiredDocs: 0, retired: 0 };
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-6">

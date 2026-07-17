@@ -96,6 +96,8 @@ import erpBillingRoutes from './routes/erp-billing';
 import erpPricingRoutes from './routes/erp-pricing';
 import erpArRoutes from './routes/erp-ar';
 import erpPaymentsRoutes from './routes/erp-payments';
+import logisticsBookingRoutes from './routes/logistics/booking';
+import { packageCalcRouter } from './routes/logistics/calculation';
 
 dotenv.config();
 
@@ -124,7 +126,7 @@ import logger from './utils/logger';
 const swaggerOptions = {
   swaggerDefinition: {
     openapi: '3.0.0',
-    info: { title: 'Aura ERP API', version: '2.0.0', description: 'Enterprise Resource Planning API' },
+    info: { title: 'Lizome ERP API', version: '2.0.0', description: 'Enterprise Resource Planning API' },
     servers: [{ url: 'http://localhost:5000' }],
     components: {
       securitySchemes: {
@@ -260,6 +262,8 @@ app.use('/api/maintenance-ops', maintenanceOpsRouter);
 app.use('/api/container-ops', containerOpsRouter);
 app.use('/api/container-tracking', containerTrackingRouter);
 app.use('/api/container-finance', containerFinanceRouter);
+app.use('/api/logistics/booking', logisticsBookingRoutes);
+app.use('/api/logistics/package', packageCalcRouter);
 
 // Pass io to GPS routes for broadcasting
 app.use('/api/gps', gpsRoutes);

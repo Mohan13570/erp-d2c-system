@@ -29,7 +29,7 @@ router.post('/checkout', async (req: Request, res: Response) => {
     // 2. Validate Stock Availability before placing order
     for (const item of items) {
       const stock = await prisma.stockLevel.findFirst({
-        where: { itemCode: item.itemCode, warehouseName: 'Aura Main Warehouse' }
+        where: { itemCode: item.itemCode, warehouseName: 'Lizome Main Warehouse' }
       });
 
       if (!stock || stock.qtyAvailable < item.qty) {
@@ -42,7 +42,7 @@ router.post('/checkout', async (req: Request, res: Response) => {
       const order = await tx.salesOrder.create({
         data: {
           d2cCustomerId: d2cCustomer!.id,
-          companyName: 'Aura',
+          companyName: 'Lizome',
           status: 'Confirmed',
           grandTotal: grandTotal,
           channel: 'D2C',
@@ -60,7 +60,7 @@ router.post('/checkout', async (req: Request, res: Response) => {
       // Deduct stock for each item
       for (const item of items) {
         await tx.stockLevel.updateMany({
-          where: { itemCode: item.itemCode, warehouseName: 'Aura Main Warehouse' },
+          where: { itemCode: item.itemCode, warehouseName: 'Lizome Main Warehouse' },
           data: {
             qtyOnHand: { decrement: item.qty },
             qtyAvailable: { decrement: item.qty }
@@ -71,7 +71,7 @@ router.post('/checkout', async (req: Request, res: Response) => {
         await tx.stockLedgerEntry.create({
           data: {
             itemCode: item.itemCode,
-            warehouse: 'Aura Main Warehouse',
+            warehouse: 'Lizome Main Warehouse',
             qty: -item.qty, // Negative for deduction
             voucherType: 'Sales Order',
             voucherNo: order.id

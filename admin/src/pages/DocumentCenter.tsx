@@ -21,7 +21,7 @@ export default function DocumentCenter() {
       const res = await fetch('/api/documents', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({...formData, fileUrl: `https://s3.aura.erp/docs/${Math.floor(Math.random()*1000)}.pdf`})
+        body: JSON.stringify({...formData, fileUrl: `https://s3.lizome.erp/docs/${Math.floor(Math.random()*1000)}.pdf`})
       });
       if (res.ok) { setShowModal(false); fetchData(); }
     } catch (e) { console.error(e); }

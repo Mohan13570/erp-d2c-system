@@ -38,7 +38,7 @@ router.post('/query', async (req, res) => {
     // Deep Routing Engine
     switch (intent) {
       case 'greetings.hello':
-        responseText = "Hello! I am Aura. I am fully trained and listening. How can I assist you with the ERP today?";
+        responseText = "Hello! I am Lizome. I am fully trained and listening. How can I assist you with the ERP today?";
         module = "Assistant";
         break;
       case 'greetings.howareyou':
@@ -46,7 +46,7 @@ router.post('/query', async (req, res) => {
         module = "Assistant";
         break;
       case 'greetings.whoareyou':
-        responseText = "I am Aura, your deeply-trained, locally-hosted NLP AI Assistant. I have real-time access to all your ERP data.";
+        responseText = "I am Lizome, your deeply-trained, locally-hosted NLP AI Assistant. I have real-time access to all your ERP data.";
         module = "Assistant";
         break;
       case 'greetings.joke':
@@ -130,7 +130,7 @@ router.post('/query', async (req, res) => {
         // Fallback Keyword Matching in case NLP confidence is low
         const queryLower = query.toLowerCase();
         if (queryLower.includes('hi') || queryLower.includes('hello')) {
-           responseText = "Hello! I am Aura. How can I help you?";
+           responseText = "Hello! I am Lizome. How can I help you?";
            module = "Assistant";
         }
         break;
@@ -168,7 +168,7 @@ router.post('/ocr', async (req, res) => {
       documentType: documentType || 'Bill of Lading',
       extractedFields: {
         shipper: "Global Logistics Inc.",
-        consignee: "Aura Enterprises Ltd.",
+        consignee: "Lizome Enterprises Ltd.",
         totalWeight: 14500,
         hsCode: "8471.30.00",
         declaredValue: 45000.00,

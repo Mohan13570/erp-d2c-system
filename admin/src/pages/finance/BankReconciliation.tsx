@@ -22,15 +22,15 @@ export default function BankReconciliation() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
           <p className="text-sm text-gray-500 mb-1">System Balance</p>
-          <p className="text-2xl font-bold text-gray-900">$420,000.00</p>
+          <p className="text-2xl font-bold text-gray-900">$0.00</p>
         </div>
         <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
           <p className="text-sm text-gray-500 mb-1">Statement Balance</p>
-          <p className="text-2xl font-bold text-gray-900">$420,150.00</p>
+          <p className="text-2xl font-bold text-gray-900">$0.00</p>
         </div>
         <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm border-l-4 border-l-rose-500">
           <p className="text-sm text-gray-500 mb-1">Difference</p>
-          <p className="text-2xl font-bold text-rose-600">-$150.00</p>
+          <p className="text-2xl font-bold text-rose-600">-$0.00</p>
           <p className="text-xs text-rose-500 mt-1">Unreconciled Bank Charges</p>
         </div>
       </div>
@@ -49,7 +49,7 @@ export default function BankReconciliation() {
                   <p className="text-xs text-gray-500">14 Nov 2023</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-emerald-600">+$45,000.00</p>
+                  <p className="text-sm font-bold text-emerald-600">+$0.00</p>
                   <span className="inline-flex items-center text-xs text-emerald-700 mt-1"><CheckCircle className="w-3 h-3 mr-1" /> Matched</span>
                 </div>
               </li>
@@ -59,7 +59,7 @@ export default function BankReconciliation() {
                   <p className="text-xs text-gray-500">15 Nov 2023</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-rose-600">-$150.00</p>
+                  <p className="text-sm font-bold text-rose-600">-$0.00</p>
                   <span className="inline-flex items-center text-xs text-rose-700 mt-1"><AlertTriangle className="w-3 h-3 mr-1" /> Unmatched</span>
                 </div>
               </li>
@@ -80,11 +80,11 @@ export default function BankReconciliation() {
                   <p className="text-xs text-gray-500">Global Tech Corp</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-emerald-600">+$45,000.00</p>
+                  <p className="text-sm font-bold text-emerald-600">+$0.00</p>
                 </div>
               </li>
               <li className="p-4 flex justify-between items-center text-center justify-center">
-                <p className="text-sm text-gray-500">No matching transaction found in system for -$150.00</p>
+                <p className="text-sm text-gray-500">No matching transaction found in system for -$0.00</p>
               </li>
             </ul>
           </div>

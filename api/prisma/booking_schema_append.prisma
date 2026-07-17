@@ -1,0 +1,182 @@
+
+// ==========================================
+// CUSTOMER BOOKING (LOGISTICS & FREIGHT)
+// ==========================================
+
+model CustomerBooking {
+  id              String   @id @default(uuid())
+  bookingNumber   String   @unique // e.g., BKG-2023-001
+  bookingDate     DateTime @default(now())
+  bookingStatus   String   @default("Draft") // Draft, Confirmed, Cancelled, In-Transit, Delivered
+  bookingType     String   @default("Standard")
+  bookingSource   String   @default("Manual")
+  
+  // Customer Relations
+  customerId      String?
+  customer        Customer? @relation(fields: [customerId], references: [id])
+  customerRef     String?
+  internalRef     String?
+
+  // Organization
+  salesExecutive  String?
+  salesTeam       String?
+  branch          String?
+  businessUnit    String?
+  priority        String   @default("Normal")
+  
+  // Service
+  serviceType     String   @default("Ocean Freight") // Ocean Freight, Air Freight, Road Transport, Rail, Multimodal
+  tradeType       String   @default("Export") // Import, Export, Domestic, International
+  
+  // Logistics Dates
+  expectedPickup  DateTime?
+  expectedDelivery DateTime?
+
+  // Financial
+  currency        String   @default("USD")
+  paymentTerms    String?
+
+  // Additional Info
+  bookingNotes    String?
+  specialInstructions String?
+
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  createdBy       String?
+  updatedBy       String?
+
+  // Relations
+  sender          BookingSender?
+  receiver        BookingReceiver?
+  notifyParty     BookingNotifyParty?
+  billTo          BookingBillTo?
+  cargos          BookingCargo[]
+}
+
+model BookingSender {
+  id              String   @id @default(uuid())
+  bookingId       String   @unique
+  booking         CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  companyName     String
+  companyType     String?
+  industry        String?
+  taxNumber       String?
+  registrationNo  String?
+  email           String?
+  phone           String?
+  
+  // Contact
+  contactPerson   String?
+  designation     String?
+  mobileNumber    String?
+  
+  // Pickup Address
+  line1           String?
+  line2           String?
+  city            String?
+  state           String?
+  country         String?
+  postalCode      String?
+  latitude        Float?
+  longitude       Float?
+
+  // Instructions
+  pickupDate      DateTime?
+  pickupInstructions String?
+}
+
+model BookingReceiver {
+  id              String   @id @default(uuid())
+  bookingId       String   @unique
+  booking         CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  companyName     String
+  taxNumber       String?
+  email           String?
+  phone           String?
+  
+  // Contact
+  contactPerson   String?
+  mobileNumber    String?
+  
+  // Delivery Address
+  line1           String?
+  line2           String?
+  city            String?
+  state           String?
+  country         String?
+  postalCode      String?
+  latitude        Float?
+  longitude       Float?
+
+  // Instructions
+  deliveryDate    DateTime?
+  deliveryInstructions String?
+}
+
+model BookingNotifyParty {
+  id              String   @id @default(uuid())
+  bookingId       String   @unique
+  booking         CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  companyName     String
+  contactPerson   String?
+  email           String?
+  phone           String?
+  line1           String?
+  city            String?
+  country         String?
+  notificationPreference String @default("Email")
+}
+
+model BookingBillTo {
+  id              String   @id @default(uuid())
+  bookingId       String   @unique
+  booking         CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  billingCompany  String
+  financeContact  String?
+  taxNumber       String?
+  accountNumber   String?
+  paymentTerms    String?
+  creditLimit     Float?
+  invoiceEmail    String?
+  billingAddress  String?
+}
+
+model BookingCargo {
+  id              String   @id @default(uuid())
+  bookingId       String
+  booking         CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  commodity       String?
+  description     String?
+  hsCode          String?
+  unNumber        String?
+  
+  packageType     String?
+  numberOfPackages Int @default(1)
+  
+  grossWeight     Float @default(0)
+  netWeight       Float @default(0)
+  chargeableWeight Float @default(0)
+  volumeCBM       Float @default(0)
+  
+  length          Float?
+  width           Float?
+  height          Float?
+  
+  isTemperatureControlled Boolean @default(false)
+  isDangerousGoods Boolean @default(false)
+  isFragile       Boolean @default(false)
+  
+  insuranceRequired Boolean @default(false)
+  declaredValue   Float?
+  
+  marksAndNumbers String?
+  containerType   String?
+  containerSize   String?
+  containerQuantity Int @default(0)
+}

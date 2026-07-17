@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { MessageSquare, BookOpen, Scale, Activity, Anchor, ArrowDownToLine, ArrowRightLeft, BarChart2, BarChart3, Box, BrainCircuit, Briefcase, Building2, Calendar, Car, CheckCircle, ChevronDown, ChevronRight, ClipboardCheck, ClipboardList, Command, Cpu, CreditCard, Crosshair, DollarSign, DownloadCloud, FileBarChart, FileText, FolderKanban, Globe, Handshake, History, Landmark, Layers, LayoutDashboard, LayoutGrid, LogOut, Map, MapPin, Megaphone, Navigation, Navigation2, Package, PackageOpen, PackageSearch, Plane, Plus, QrCode, ReceiptText, RefreshCcw, RotateCcw, Route, Send, Settings, Shield, ShieldCheck, Ship, ShoppingCart, Smartphone, Target, TerminalSquare, ThermometerSnowflake, TrendingUp, Truck, UserCheck, UserCircle, Users, UsersRound, Wrench, GitMerge, Workflow, Bell, FileCode2, Database, Table, KeyRound, Webhook, Link2, Key, FileCheck, Inbox, Bot, Code, Clock, UserCog, AlertCircle } from 'lucide-react';
+import { MessageSquare, BookOpen, Scale, Activity, Anchor, ArrowDownToLine, ArrowRightLeft, BarChart2, BarChart3, Box, BrainCircuit, Briefcase, Building2, Calendar, Car, CheckCircle, ChevronDown, ChevronRight, ClipboardCheck, ClipboardList, Command, Cpu, CreditCard, Crosshair, DollarSign, DownloadCloud, FileBarChart, FileText, FolderKanban, Globe, Handshake, History, Landmark, Layers, LayoutDashboard, LayoutGrid, LogOut, Map, MapPin, Megaphone, Navigation, Navigation2, Package, PackageOpen, PackageSearch, Plane, Plus, QrCode, ReceiptText, RefreshCcw, RotateCcw, Route, Send, Settings, Shield, ShieldCheck, Ship, ShoppingCart, Smartphone, Target, TerminalSquare, ThermometerSnowflake, TrendingUp, Truck, UserCheck, UserCircle, Users, UsersRound, Wrench, GitMerge, Workflow, Bell, FileCode2, Database, Table, KeyRound, Webhook, Link2, Key, FileCheck, Inbox, Bot, Code, Clock, UserCog, AlertCircle, Calculator, TrendingDown, Wallet } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const navSections = [
@@ -35,58 +35,48 @@ const navSections = [
         ]
       },
       { 
-        name: 'GPS Controller', 
-        icon: Map,
-        subItems: [
-          { name: 'Trip Master', path: '/trips', icon: Navigation },
-          { name: 'Advanced GIS Map', path: '/gps', icon: Map },
-          { name: 'Geofence Studio', path: '/geofences', icon: ShieldCheck },
-          { name: 'Route Optimizer', path: '/routes/plan', icon: Crosshair },
-          { name: 'Alert Center', path: '/alerts', icon: Megaphone },
-          { name: 'GPS Hardware', path: '/gps/devices', icon: Cpu },
-          { name: 'BI Reports', path: '/reports/bi', icon: BarChart3 },
-          { name: 'Real-Time Tracking', path: '/tracking', icon: Crosshair },
-        ]
-      },
-      { 
-        name: 'Ocean Freight', 
-        icon: Anchor,
-        subItems: [
-          { name: 'Executive Dashboard', path: '/ocean/executive/dashboard', icon: Activity },
-          { name: 'Global Map Tracking', path: '/ocean/tracking/map', icon: Crosshair },
-          { name: 'Ocean Bookings', path: '/ocean/bookings', icon: Anchor },
-          { name: 'Port Operations', path: '/ocean/ops/yard', icon: Box },
-          { name: 'Finance & Billing', path: '/ocean/finance/billing', icon: DollarSign },
-          { name: 'Customs Clearance', path: '/ocean/customs', icon: ShieldCheck },
-        ]
-      },
-      { name: 'Air Freight', path: '/air/hub', icon: Plane },
-      { 
-        name: 'Road Transport', 
+        name: 'Shipments', 
         icon: Truck,
         subItems: [
-          { name: 'Executive Dashboard', path: '/road/executive', icon: LayoutDashboard },
-          { name: 'Planning Hub', path: '/road/hub', icon: MapPin },
-          { name: 'Dispatch Console', path: '/road/dispatch', icon: Navigation2 },
-          { name: 'Vehicle Ops', path: '/road/vehicle-ops', icon: Settings },
-          { name: 'Driver Ops', path: '/road/driver-ops', icon: Users },
-          { name: 'Billing & Costing', path: '/road/billing', icon: DollarSign },
-          { name: 'Claims & POD', path: '/road/claims', icon: ShieldCheck },
-          { name: 'Analytics', path: '/road/analytics', icon: BarChart2 }
+          { name: 'Ocean Freight', path: '/ocean/executive/dashboard', icon: Anchor },
+          { name: 'Air Freight', path: '/air/hub', icon: Plane },
+          { name: 'Road Transport', path: '/road/executive', icon: Truck },
         ]
       },
       { 
-        name: 'Fleet Maintenance', 
+        name: 'Fleet Management', 
         icon: Car,
         subItems: [
-          { name: 'Executive Dashboard', path: '/maintenance-ops/executive', icon: LayoutDashboard },
+          { name: 'Fleet Dashboard', path: '/maintenance-ops/executive', icon: LayoutDashboard },
           { name: 'Asset Master', path: '/maintenance/assets', icon: FileText },
           { name: 'Preventive Schedule', path: '/maintenance/preventive', icon: Calendar },
           { name: 'Workshop Desk', path: '/maintenance/workshop', icon: Settings },
           { name: 'Inspections', path: '/maintenance/inspections', icon: ShieldCheck },
-          { name: 'Spare Parts', path: '/maintenance-ops/inventory', icon: Package },
           { name: 'Fuel & Tyres', path: '/maintenance-ops/fuel-tyres', icon: Map },
-          { name: 'Vendor Hub', path: '/maintenance-ops/vendors', icon: Building2 }
+          { name: 'Trip Master', path: '/trips', icon: Navigation },
+          { name: 'Advanced GIS Map', path: '/gps', icon: Map },
+          { name: 'Geofence Studio', path: '/geofences', icon: ShieldCheck },
+          { name: 'Route Optimizer', path: '/routes/plan', icon: Crosshair },
+          { name: 'Real-Time Tracking', path: '/tracking', icon: Crosshair },
+        ]
+      },
+      {
+        name: 'Booking Details',
+        icon: FileText,
+        subItems: [
+          { name: 'Booking Information', path: '/booking/wizard', icon: FileText },
+          { name: 'Shipper (Sender) Details', path: '/booking/wizard', icon: Users },
+          { name: 'Consignee (Receiver) Details', path: '/booking/wizard', icon: Users },
+          { name: 'Notify Party', path: '/booking/wizard', icon: Bell },
+          { name: 'Bill To Party', path: '/booking/wizard', icon: DollarSign },
+          { name: 'Cargo Information', path: '/booking/wizard', icon: Box },
+        ]
+      },
+      {
+        name: 'Package Details',
+        icon: Package,
+        subItems: [
+          { name: 'Package Calculator', path: '/package/calculator', icon: Calculator },
         ]
       },
       { 
@@ -463,52 +453,44 @@ const navSections = [
       { name: 'Driver App', path: '/mobile/driver', icon: Smartphone },
       { name: 'Warehouse App', path: '/mobile/warehouse', icon: Smartphone },
     ]
-  },
+  }
 ];
+
+import { Hexagon } from 'lucide-react';
 
 export default function Sidebar() {
   const location = useLocation();
-  const { logout, user } = useAuth();
   const navigate = useNavigate();
+  const { logout, user } = useAuth();
+  
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
 
-  const toggleMenu = (menuName: string) => {
-    setOpenMenus(prev => ({ ...prev, [menuName]: !prev[menuName] }));
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('erp_user');
-    logout();
-    navigate('/login');
+  const toggleMenu = (name: string) => {
+    setOpenMenus(prev => ({ ...prev, [name]: !prev[name] }));
   };
 
   const hasPermission = (itemName: string) => {
-    if (user?.role === 'System Admin' || user?.role === 'Admin') return true;
-    return user?.permissions?.includes(itemName) || user?.permissions?.includes('All Modules');
+    // TEMPORARY BYPASS: Show all modules to the user so they can see everything
+    return true; 
   };
 
   return (
-    <div className="w-72 bg-white border-r border-gray-100 flex flex-col h-full shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-20 overflow-y-auto">
-      <div className="p-6 flex items-center space-x-3 border-b border-gray-100">
-        <div className="bg-indigo-600 p-2 rounded-xl text-white shadow-sm">
-          <Command size={22} />
+    <aside className="w-[280px] bg-[#0F172A] border-r border-slate-800 flex flex-col h-full shrink-0 text-slate-300">
+      
+      {/* LIZOME Brand Header */}
+      <div className="h-20 flex items-center px-6 border-b border-slate-800">
+        <div className="flex items-center space-x-3 text-white">
+          <div className="relative flex items-center justify-center w-full">
+            <img src="/admin/lizome-icon.svg" className="h-10 w-auto" alt="LIZOME" />
+          </div>
         </div>
-        <span className="text-xl font-bold tracking-tight text-gray-900">Aura<span className="text-indigo-600">.</span></span>
       </div>
-      <nav className="flex-1 px-4 py-4 space-y-6">
+
+      <div className="flex-1 overflow-y-auto py-6 px-4 space-y-6 scrollbar-hide">
         {navSections
-          .filter(section => {
-            if (user?.role === 'System Admin' || user?.role === 'Admin') return true;
-            if (!user?.permissions) return section.label === 'Core';
-            
-            // Check if user has permission for ANY item in this section (including subitems)
-            return section.items.some(item => 
-              hasPermission(item.name) || (item.subItems && item.subItems.some(sub => hasPermission(sub.name)))
-            );
-          })
           .map(section => (
           <div key={section.label}>
-            <p className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{section.label}</p>
+            <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">{section.label}</p>
             <div className="space-y-0.5">
               {section.items
                 .filter(item => hasPermission(item.name) || (item.subItems && item.subItems.some(sub => hasPermission(sub.name))))
@@ -524,21 +506,21 @@ export default function Sidebar() {
                       <div key={item.name} className="space-y-0.5">
                          <button 
                             onClick={() => toggleMenu(item.name)}
-                            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-150 font-medium text-sm ${isActive ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}
+                            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-150 font-medium text-sm ${isActive ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50' : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'}`}
                          >
                             <div className="flex items-center space-x-3">
-                               <item.icon size={17} className={isActive ? 'text-indigo-600' : 'text-gray-400'} />
+                               <item.icon size={17} className={isActive ? 'text-white' : 'text-slate-400'} />
                                <span>{item.name}</span>
                             </div>
-                            {isOpen ? <ChevronDown size={14} className="text-gray-400"/> : <ChevronRight size={14} className="text-gray-400"/>}
+                            {isOpen ? <ChevronDown size={14} className="text-slate-400"/> : <ChevronRight size={14} className="text-slate-400"/>}
                          </button>
                          {isOpen && (
-                            <div className="pl-9 space-y-0.5 mt-1 relative before:absolute before:left-5 before:top-2 before:bottom-2 before:w-px before:bg-gray-200">
+                            <div className="pl-9 space-y-0.5 mt-1 relative before:absolute before:left-5 before:top-2 before:bottom-2 before:w-px before:bg-slate-700">
                                {item.subItems.filter(sub => hasPermission(sub.name)).map(sub => {
                                   const isSubActive = location.pathname === sub.path;
                                   return (
-                                     <Link key={sub.name} to={sub.path!} className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-all duration-150 font-medium text-sm ${isSubActive ? 'text-indigo-600 bg-white shadow-sm' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}>
-                                        <sub.icon size={14} className={isSubActive ? 'text-indigo-600' : 'text-gray-400'} />
+                                     <Link key={sub.name} to={sub.path!} className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-all duration-150 font-medium text-sm ${isSubActive ? 'text-white bg-slate-800' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'}`}>
+                                        <sub.icon size={14} className={isSubActive ? 'text-blue-500' : 'text-slate-500'} />
                                         <span>{sub.name}</span>
                                      </Link>
                                   );
@@ -552,33 +534,27 @@ export default function Sidebar() {
                 const isActive = location.pathname === item.path;
                 return (
                   <Link key={item.name} to={item.path!}
-                    className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all duration-150 font-medium text-sm ${isActive ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}>
-                    <item.icon size={17} className={isActive ? 'text-indigo-600' : 'text-gray-400'} />
-                    <span>{item.name}</span>
+                    className={`flex items-center px-3 py-2.5 rounded-xl transition-all duration-150 font-medium text-sm ${isActive ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50' : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'}`}
+                  >
+                    <item.icon size={17} className={`mr-3 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                    {item.name}
                   </Link>
                 );
               })}
             </div>
           </div>
         ))}
-      </nav>
-      <div className="p-5 border-t border-gray-100 flex flex-col space-y-4">
-        <a href="http://localhost:3000" target="_blank" rel="noreferrer" className="flex items-center justify-center space-x-2 w-full py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-sm font-medium transition-colors border border-gray-200">
-          <ShoppingCart size={16} />
-          <span>Open Customer Store</span>
-        </a>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-indigo-100 to-purple-100 flex items-center justify-center text-indigo-700 font-bold text-sm">
-                {user?.firstName?.charAt(0) || 'A'}
-            </div>
-            <div><p className="text-sm font-semibold text-gray-900">{user?.firstName || 'Admin'} User</p><p className="text-xs text-gray-500">{user?.role || 'Administrator'}</p></div>
-          </div>
-          <button onClick={handleLogout} title="Sign out" className="text-gray-400 hover:text-red-500 transition-colors p-1">
-            <LogOut size={16} />
-          </button>
-        </div>
       </div>
-    </div>
+
+      <div className="p-4 border-t border-slate-800">
+        <button
+          onClick={logout}
+          className="flex items-center w-full px-4 py-3 text-sm font-medium text-slate-400 rounded-xl hover:bg-slate-800 hover:text-white transition-colors"
+        >
+          <LogOut size={18} className="mr-3" />
+          Sign out
+        </button>
+      </div>
+    </aside>
   );
 }

@@ -76,7 +76,7 @@ import LiveCalculator from './pages/finance/pricing/LiveCalculator';
 
 // Core ERP Accounts Receivable
 import ARDashboard from './pages/finance/ar/ARDashboard';
-import CustomerLedger from './pages/finance/ar/CustomerLedger';
+import ARCustomerLedger from './pages/finance/ar/CustomerLedger';
 import PaymentAllocation from './pages/finance/ar/PaymentAllocation';
 import CollectionsDashboard from './pages/finance/ar/CollectionsDashboard';
 
@@ -163,6 +163,10 @@ import VendorKnowledgeBase from './pages/vendor/VendorKnowledgeBase';
 import Warehouse from './pages/Warehouse';
 import Customs from './pages/Customs';
 import DocumentCenter from './pages/DocumentCenter';
+import BookingDetailsWizard from './pages/logistics/CreateBookingWizard';
+import PackageCalculations from './pages/logistics/PackageCalculations';
+import CommercialInvoice from './pages/logistics/CommercialInvoice';
+import ShippingLabels from './pages/logistics/ShippingLabels';
 import ContainerMgmt from './pages/ContainerMgmt';
 import Procurement from './pages/Procurement';
 import Billing from './pages/Billing';
@@ -250,7 +254,7 @@ import YardDashboard from './pages/ocean/operations/YardDashboard';
 import ContainerInventory from './pages/ocean/operations/ContainerInventory';
 import GateOperations from './pages/ocean/operations/GateOperations';
 import PortPlanning from './pages/ocean/operations/PortPlanning';
-import BillingDashboard from './pages/ocean/finance/BillingDashboard';
+import OceanBillingDashboard from './pages/ocean/finance/BillingDashboard';
 import InvoiceManager from './pages/ocean/finance/InvoiceManager';
 import ProfitabilityAnalysis from './pages/ocean/finance/ProfitabilityAnalysis';
 import CustomsWorkspace from './pages/ocean/finance/CustomsWorkspace';
@@ -312,7 +316,7 @@ import AccountsReceivable from './pages/finance/AccountsReceivable';
 import FinanceSettings from './pages/finance/FinanceSettings';
 import GeneralLedger from './pages/finance/GeneralLedger';
 import TrialBalance from './pages/finance/TrialBalance';
-import BankReconciliation from './pages/finance/BankReconciliation';
+import MainBankReconciliation from './pages/finance/BankReconciliation';
 import EnterpriseBilling from './pages/finance/EnterpriseBilling';
 import TaxCompliance from './pages/finance/TaxCompliance';
 import FinanceProfitabilityAnalysis from './pages/finance/ProfitabilityAnalysis';
@@ -325,11 +329,13 @@ import StockMovements from './pages/inventory/StockMovements';
 import CycleCount from './pages/inventory/CycleCount';
 import InventoryReports from './pages/inventory/InventoryReports';
 
+import Header from './components/Header';
+
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isInitializing } = useAuth();
   if (isInitializing) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-[#F8F9FA]">
+      <div className="h-screen w-screen flex items-center justify-center bg-[#F8FAFC]">
         <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -345,10 +351,12 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/*" element={
           <RequireAuth>
-            <div className="flex h-screen bg-[#F8F9FA] text-gray-900 font-sans selection:bg-indigo-100">
+            <div className="flex h-screen bg-[#F8FAFC] text-slate-900 font-sans selection:bg-blue-100">
               <Sidebar />
-              <main className="flex-1 overflow-y-auto p-8">
-                <Routes>
+              <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+                <Header />
+                <main className="flex-1 overflow-y-auto p-6 scroll-smooth">
+                  <Routes>
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/inventory" element={<Inventory />} />
                   <Route path="/orders" element={<SalesOrders />} />
@@ -362,6 +370,11 @@ function App() {
                   <Route path="/crm" element={<CRM />} />
                   <Route path="/quotations" element={<Quotations />} />
                   {/* Logistics & Fleet */}
+                  <Route path="/booking/wizard" element={<BookingDetailsWizard />} />
+                  <Route path="/booking/invoice/:id" element={<CommercialInvoice />} />
+                  <Route path="/booking/label/:id" element={<ShippingLabels />} />
+                  <Route path="/package/calculator" element={<PackageCalculations />} />
+                  <Route path="/tracking" element={<Tracking />} />
                   <Route path="/trips" element={<TripDashboard />} />
                   <Route path="/trips/list" element={<TripList />} />
                   <Route path="/trips/plan" element={<TripWizard />} />
@@ -393,7 +406,7 @@ function App() {
                   <Route path="/ocean/ops/inventory" element={<ContainerInventory />} />
                   <Route path="/ocean/ops/gate" element={<GateOperations />} />
                   <Route path="/ocean/ops/planning" element={<PortPlanning />} />
-                  <Route path="/ocean/finance/billing" element={<BillingDashboard />} />
+                  <Route path="/ocean/finance/billing" element={<OceanBillingDashboard />} />
                   <Route path="/ocean/finance/invoices/new" element={<InvoiceManager />} />
                   <Route path="/ocean/finance/profitability" element={<ProfitabilityAnalysis />} />
                   <Route path="/ocean/customs" element={<CustomsWorkspace />} />
@@ -583,7 +596,7 @@ function App() {
 
           {/* Core ERP Accounts Receivable */}
           <Route path="/finance/ar" element={<ARDashboard />} />
-          <Route path="/finance/ar/ledger" element={<CustomerLedger />} />
+          <Route path="/finance/ar/ledger" element={<ARCustomerLedger />} />
           <Route path="/finance/ar/allocate" element={<PaymentAllocation />} />
           <Route path="/finance/ar/collections" element={<CollectionsDashboard />} />
 
@@ -647,7 +660,7 @@ function App() {
                   <Route path="/finance/coa" element={<ChartOfAccounts />} />
                   <Route path="/finance/gl" element={<GeneralLedger />} />
                   <Route path="/finance/trial-balance" element={<TrialBalance />} />
-                  <Route path="/finance/bank-reconciliation" element={<BankReconciliation />} />
+                  <Route path="/finance/bank-reconciliation" element={<MainBankReconciliation />} />
                   <Route path="/finance/billing" element={<EnterpriseBilling />} />
                   <Route path="/finance/tax" element={<TaxCompliance />} />
                   <Route path="/finance/profitability" element={<FinanceProfitabilityAnalysis />} />
@@ -685,8 +698,10 @@ function App() {
                   <Route path="/access" element={<EmployeeAccess />} />
                   <Route path="/stock" element={<CompanyStock />} />
                   <Route path="/company-management" element={<CompanyManagement />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </main>
+              </div>
             </div>
           </RequireAuth>
         } />

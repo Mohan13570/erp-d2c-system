@@ -27,14 +27,16 @@ router.post('/login', async (req, res) => {
     });
 
     if (!user || user.passwordHash !== passwordHash) {
-      await prisma.loginHistory.create({
-        data: {
-          userId: user?.id || 'unknown',
-          status: 'Failed',
-          failureReason: 'Invalid Credentials',
-          ipAddress: req.ip
-        }
-      });
+      if (user) {
+        await prisma.loginHistory.create({
+          data: {
+            userId: user.id,
+            status: 'Failed',
+            failureReason: 'Invalid Credentials',
+            ipAddress: req.ip
+          }
+        });
+      }
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
@@ -74,7 +76,8 @@ router.post('/login', async (req, res) => {
 
     res.json({ token, user: { id: user.id, email: user.email, roles: user.userRoles.map(ur => ur.role.name) } });
   } catch (error) {
-    res.status(400).json({ error: 'Invalid payload' });
+    console.error("LOGIN ERROR:", error);
+    res.status(400).json({ error: 'Invalid payload or server error' });
   }
 });
 

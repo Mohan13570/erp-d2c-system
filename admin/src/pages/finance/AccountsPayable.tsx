@@ -55,9 +55,9 @@ export default function AccountsPayable() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {[
-                { no: 'BILL-001', vendor: 'Maersk Logistics', date: '2023-11-01', due: '2023-11-15', amt: '$12,450.00', match: '3-Way Matched', status: 'Pending' },
-                { no: 'BILL-002', vendor: 'DHL Express', date: '2023-11-05', due: '2023-11-20', amt: '$4,200.00', match: 'Discrepancy', status: 'Hold' },
-                { no: 'BILL-003', vendor: 'Cisco Systems', date: '2023-10-25', due: '2023-11-10', amt: '$89,000.00', match: '3-Way Matched', status: 'Paid' },
+                { no: 'BILL-001', vendor: 'Maersk Logistics', date: '2023-11-01', due: '2023-11-15', amt: '$0.00', match: '3-Way Matched', status: 'Pending' },
+                { no: 'BILL-002', vendor: 'DHL Express', date: '2023-11-05', due: '2023-11-20', amt: '$0.00', match: 'Discrepancy', status: 'Hold' },
+                { no: 'BILL-003', vendor: 'Cisco Systems', date: '2023-10-25', due: '2023-11-10', amt: '$0.00', match: '3-Way Matched', status: 'Paid' },
               ].map((bill, i) => (
                 <tr key={i} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-6 py-4">

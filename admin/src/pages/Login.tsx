@@ -60,10 +60,10 @@ export default function Login() {
     } else {
       setLoginType(type);
       if (type === 'Admin') {
-        setEmail('admin@aura.com');
+        setEmail('admin@lizome.com');
         setPassword('admin123');
       } else {
-        setEmail('employee@aura.com');
+        setEmail('employee@lizome.com');
         setPassword('employee123');
       }
     }
@@ -85,11 +85,11 @@ export default function Login() {
         {!loginType ? (
           <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
             <div className="text-center mb-12">
-              <div className="w-20 h-20 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-indigo-500/50 mx-auto mb-8 animate-pulse">
-                <span className="text-4xl font-black text-white tracking-tighter">A</span>
+              <div className="w-full flex items-center justify-center mx-auto mb-8 animate-pulse">
+                <img src="/admin/lizome-icon.svg" className="h-16 w-auto" alt="LIZOME" />
               </div>
               <h2 className="text-5xl font-black tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-                Aura Platform
+                Lizome Platform
               </h2>
               <p className="text-lg text-gray-400 font-medium">Select your portal to continue</p>
             </div>
@@ -175,7 +175,7 @@ export default function Login() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="block w-full pl-12 px-4 py-4 bg-black/20 border border-white/10 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-white placeholder-gray-500 transition-all outline-none"
-                      placeholder="name@aura.com"
+                      placeholder="name@lizome.com"
                       required
                     />
                   </div>

@@ -13,7 +13,7 @@ export default function Inventory() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [newItem, setNewItem] = useState({ itemCode: '', itemName: '', standardRate: 0, valuationRate: 0, initialStock: 0, warehouseName: 'Aura Main Warehouse', imageBase64: '' });
+  const [newItem, setNewItem] = useState({ itemCode: '', itemName: '', standardRate: 0, valuationRate: 0, initialStock: 0, warehouseName: 'Lizome Main Warehouse', imageBase64: '' });
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -50,7 +50,7 @@ export default function Inventory() {
       });
       if (res.ok) {
         setShowModal(false);
-        setNewItem({ itemCode: '', itemName: '', standardRate: 0, valuationRate: 0, initialStock: 0, warehouseName: 'Aura Main Warehouse', imageBase64: '' });
+        setNewItem({ itemCode: '', itemName: '', standardRate: 0, valuationRate: 0, initialStock: 0, warehouseName: 'Lizome Main Warehouse', imageBase64: '' });
         fetchData();
       } else {
         alert('Failed to create item');
@@ -167,9 +167,9 @@ export default function Inventory() {
       {/* Premium Tab Navigation */}
       <div className="bg-gray-100/80 backdrop-blur-md p-1.5 rounded-2xl w-fit flex space-x-1 border border-white/50 shadow-inner">
         {[
-          { id: 'catalog', icon: Package, label: 'Item Catalog' },
-          { id: 'levels', icon: Layers, label: 'Stock Levels' },
-          { id: 'ledger', icon: FileText, label: 'Stock Ledger' }
+          { id: 'catalog', label: 'Item Catalog', icon: FileText },
+          { id: 'levels', label: 'Stock Levels', icon: Layers },
+          { id: 'ledger', label: 'Stock Ledger', icon: FileText }
         ].map(t => (
           <button key={t.id} onClick={() => setTab(t.id as any)}
             className={`flex items-center px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${tab === t.id ? 'bg-white text-indigo-700 shadow-sm scale-100' : 'text-gray-500 hover:text-gray-800 scale-95 hover:scale-100'}`}>

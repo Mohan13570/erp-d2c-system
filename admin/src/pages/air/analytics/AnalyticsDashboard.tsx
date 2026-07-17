@@ -72,14 +72,14 @@ export default function AnalyticsDashboard() {
                <td className="py-4 text-sky-600">DXB &rarr; JFK</td>
                <td className="py-4">Emirates SkyCargo</td>
                <td className="py-4 text-right text-gray-600">45,200</td>
-               <td className="py-4 text-right text-gray-900">$180,500</td>
+               <td className="py-4 text-right text-gray-900">$0.00</td>
                <td className="py-4 text-right text-emerald-600">32.4%</td>
              </tr>
              <tr className="border-b border-gray-50">
                <td className="py-4 text-sky-600">HKG &rarr; FRA</td>
                <td className="py-4">Lufthansa Cargo</td>
                <td className="py-4 text-right text-gray-600">38,900</td>
-               <td className="py-4 text-right text-gray-900">$150,200</td>
+               <td className="py-4 text-right text-gray-900">$0.00</td>
                <td className="py-4 text-right text-emerald-600">28.1%</td>
              </tr>
            </tbody>

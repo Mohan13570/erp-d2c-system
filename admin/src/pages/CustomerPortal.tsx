@@ -8,7 +8,7 @@ export default function CustomerPortal() {
   const [data, setData] = useState<any[]>([]);
   const [chatOpen, setChatOpen] = useState(false);
   const [messages, setMessages] = useState<{role: 'user'|'bot', content: string}[]>([
-    { role: 'bot', content: 'Hello! I am Aura, your AI Assistant. How can I help you today?' }
+    { role: 'bot', content: 'Hello! I am Lizome, your AI Assistant. How can I help you today?' }
   ]);
   const [input, setInput] = useState('');
   const [aiTyping, setAiTyping] = useState(false);
@@ -115,7 +115,7 @@ export default function CustomerPortal() {
           <div className="flex items-center gap-2">
             <Bot size={24} />
             <div>
-              <h3 className="font-bold">Aura AI Support</h3>
+              <h3 className="font-bold">Lizome AI Support</h3>
               <p className="text-xs text-indigo-100">Always online</p>
             </div>
           </div>

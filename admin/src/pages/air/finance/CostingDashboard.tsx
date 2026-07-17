@@ -22,7 +22,7 @@ export default function CostingDashboard() {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm font-bold text-gray-500">Gross Revenue (MTD)</p>
-              <h3 className="text-3xl font-black text-gray-900 mt-1">$450,230</h3>
+              <h3 className="text-3xl font-black text-gray-900 mt-1">$0.00</h3>
             </div>
             <div className="p-3 bg-emerald-100 rounded-xl text-emerald-600"><TrendingUp size={24} /></div>
           </div>
@@ -33,7 +33,7 @@ export default function CostingDashboard() {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm font-bold text-gray-500">Total Costs (MTD)</p>
-              <h3 className="text-3xl font-black text-gray-900 mt-1">$310,400</h3>
+              <h3 className="text-3xl font-black text-gray-900 mt-1">$0.00</h3>
             </div>
             <div className="p-3 bg-red-100 rounded-xl text-red-600"><TrendingDown size={24} /></div>
           </div>
@@ -55,7 +55,7 @@ export default function CostingDashboard() {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm font-bold text-gray-500">Pending AR</p>
-              <h3 className="text-3xl font-black text-gray-900 mt-1">$84,500</h3>
+              <h3 className="text-3xl font-black text-gray-900 mt-1">$0.00</h3>
             </div>
             <div className="p-3 bg-amber-100 rounded-xl text-amber-600"><Receipt size={24} /></div>
           </div>
@@ -80,8 +80,8 @@ export default function CostingDashboard() {
                {['AB-10293', 'AB-55821', 'AB-99201'].map((id, i) => (
                  <tr key={i} className="border-t border-gray-50">
                    <td className="py-3 text-sky-600">{id}</td>
-                   <td className="py-3 text-right text-gray-900">$5,400.00</td>
-                   <td className="py-3 text-right text-red-500">$3,200.00</td>
+                   <td className="py-3 text-right text-gray-900">$0.00</td>
+                   <td className="py-3 text-right text-red-500">$0.00</td>
                    <td className="py-3 text-right text-emerald-600">40.7%</td>
                    <td className="py-3 text-center">
                      <Link to={`/air/finance/profitability/${id}`} className="px-3 py-1 bg-gray-100 rounded-full hover:bg-gray-200">View P&L</Link>
@@ -104,7 +104,7 @@ export default function CostingDashboard() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-black text-gray-900">$12,450.00</div>
+                  <div className="font-black text-gray-900">$0.00</div>
                   <button className="text-xs font-bold text-sky-600 hover:underline">Pay Now</button>
                 </div>
               </div>

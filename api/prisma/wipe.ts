@@ -17,7 +17,7 @@ async function main() {
   
   // Delete mock employees and customers (keep admin)
   await prisma.user.deleteMany({
-    where: { email: { not: 'admin@aura.com' } }
+    where: { email: { not: 'admin@lizome.com' } }
   });
   await prisma.d2CCustomer.deleteMany({});
 

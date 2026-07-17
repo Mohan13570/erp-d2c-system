@@ -4,7 +4,7 @@ import LiveMap from './LiveMap';
 
 export default function GPSDashboard() {
   const [activeTab, setActiveTab] = useState('live_map');
-  const stats = { total: 120, moving: 85, idle: 30, offline: 5, alerts: 12 };
+  const stats = { total: 0, moving: 0, idle: 0, offline: 0, alerts: 0 };
 
   return (
     <div className="p-8 max-w-[1400px] mx-auto h-[calc(100vh-4rem)] flex flex-col relative">
