@@ -64,9 +64,11 @@ export default function AIHub() {
             {messages.map((m, i) => (
               <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 {m.role === 'ai' && <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mr-3 mt-1 shrink-0"><Bot size={16} className="text-indigo-600"/></div>}
-                <div className={`p-4 rounded-2xl max-w-[80%] ${m.role === 'user' ? 'bg-indigo-600 text-white rounded-tr-sm shadow-md' : 'bg-white border border-gray-100 text-gray-800 rounded-tl-sm shadow-sm'}`}>
+                <div className={`p-5 rounded-2xl max-w-[80%] ${m.role === 'user' ? 'bg-indigo-600 text-white rounded-tr-sm shadow-md' : 'bg-white border border-gray-100 text-gray-800 rounded-tl-sm shadow-sm'}`}>
                   {m.module && <span className="text-[10px] uppercase font-bold tracking-widest text-indigo-400 block mb-1">{m.module} Module</span>}
-                  <p className="text-sm leading-relaxed">{m.text}</p>
+                  <div className="text-sm leading-7 whitespace-pre-wrap break-words text-gray-700">
+                   {m.text}
+                  </div>
                 </div>
               </div>
             ))}

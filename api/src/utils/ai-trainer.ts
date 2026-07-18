@@ -30,16 +30,45 @@ manager.addDocument('en', 'show stock levels', 'warehouse.inventory');
 manager.addDocument('en', 'current warehouse stock', 'warehouse.inventory');
 manager.addDocument('en', 'list delayed shipments', 'shipments.delayed');
 manager.addDocument('en', 'which shipments are delayed', 'shipments.delayed');
+// ---------- Reports ----------
+manager.addDocument('en', 'sales report', 'reports.sales');
+manager.addDocument('en', 'inventory report', 'reports.inventory');
+manager.addDocument('en', 'order report', 'reports.orders');
+manager.addDocument('en', 'customer report', 'reports.customers');
+manager.addDocument('en', 'revenue summary', 'reports.revenue');
 
   // ---------- Air Freight ----------
+  // List all air freight bookings
   manager.addDocument('en', 'show air freight bookings', 'airFreight.list');
   manager.addDocument('en', 'list all air freight', 'airFreight.list');
   manager.addDocument('en', 'air freight bookings', 'airFreight.list');
+  // Show air shipments
+  manager.addDocument('en', 'show air shipments', 'airFreight.showShipments');
+  manager.addDocument('en', 'list air shipments', 'airFreight.showShipments');
+  // Show airway bills
+  manager.addDocument('en', 'show airway bills', 'airFreight.showWaybills');
+  manager.addDocument('en', 'list airway bills', 'airFreight.showWaybills');
+  // Show delayed flights
+  manager.addDocument('en', 'show delayed flights', 'airFreight.delayedFlights');
+  manager.addDocument('en', 'list delayed flights', 'airFreight.delayedFlights');
+  // Air freight summary
+  manager.addDocument('en', 'air freight summary', 'airFreight.summary');
+  manager.addDocument('en', 'give me an air freight summary', 'airFreight.summary');
 
   // ---------- Ocean Freight ----------
   manager.addDocument('en', 'list ocean freight shipments', 'oceanFreight.list');
   manager.addDocument('en', 'show ocean freight bookings', 'oceanFreight.list');
   manager.addDocument('en', 'how many ocean freight shipments are pending', 'oceanFreight.list');
+  // ---------- Container Management ----------
+  manager.addDocument('en', 'show all containers', 'container.showAll');
+  manager.addDocument('en', 'list all containers', 'container.showAll');
+  manager.addDocument('en', 'container status', 'container.status');
+  manager.addDocument('en', 'show empty containers', 'container.empty');
+  manager.addDocument('en', 'list empty containers', 'container.empty');
+  manager.addDocument('en', 'show loaded containers', 'container.loaded');
+  manager.addDocument('en', 'list loaded containers', 'container.loaded');
+  manager.addDocument('en', 'show containers in transit', 'container.inTransit');
+  manager.addDocument('en', 'list containers in transit', 'container.inTransit');
 
   // ---------- Warehouse ----------
   manager.addDocument('en', 'what is the current warehouse stock', 'warehouse.stock');
