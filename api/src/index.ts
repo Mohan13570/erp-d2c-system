@@ -98,6 +98,8 @@ import erpArRoutes from './routes/erp-ar';
 import erpPaymentsRoutes from './routes/erp-payments';
 import logisticsBookingRoutes from './routes/logistics/booking';
 import { packageCalcRouter } from './routes/logistics/calculation';
+import portalAuthRouter from './routes/portal.auth';
+import portalBookingRouter from './routes/portal.booking';
 
 dotenv.config();
 
@@ -264,6 +266,8 @@ app.use('/api/container-tracking', containerTrackingRouter);
 app.use('/api/container-finance', containerFinanceRouter);
 app.use('/api/logistics/booking', logisticsBookingRoutes);
 app.use('/api/logistics/package', packageCalcRouter);
+app.use('/api/portal/auth', portalAuthRouter);
+app.use('/api/portal/bookings', portalBookingRouter);
 
 // Pass io to GPS routes for broadcasting
 app.use('/api/gps', gpsRoutes);
