@@ -1017,20 +1017,6 @@ export default function CreateBookingWizard() {
                     <div className="text-[11px] text-slate-500 font-medium mt-0.5">Extract data from PO</div>
                   </div>
                 </button>
-                <button type="button" onClick={() => alert('Connecting to Email...')} className="w-full flex items-center gap-4 text-left group">
-                  <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center text-purple-600 group-hover:bg-purple-100 transition-colors"><MessageCircle className="w-5 h-5" /></div>
-                  <div>
-                    <div className="text-[13px] font-bold text-slate-900">Import from Email</div>
-                    <div className="text-[11px] text-slate-500 font-medium mt-0.5">Create booking from email</div>
-                  </div>
-                </button>
-                <button type="button" onClick={() => alert('Connecting to WhatsApp...')} className="w-full flex items-center gap-4 text-left group">
-                  <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-100 transition-colors"><CheckCircle className="w-5 h-5" /></div>
-                  <div>
-                    <div className="text-[13px] font-bold text-slate-900">WhatsApp to Booking</div>
-                    <div className="text-[11px] text-slate-500 font-medium mt-0.5">Create from WhatsApp</div>
-                  </div>
-                </button>
                 <button type="button" onClick={() => alert('Fetching previous records...')} className="w-full flex items-center gap-4 text-left group">
                   <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center text-orange-600 group-hover:bg-orange-100 transition-colors"><RotateCcw className="w-5 h-5" /></div>
                   <div>
