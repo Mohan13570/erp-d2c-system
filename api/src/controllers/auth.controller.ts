@@ -3,8 +3,8 @@ import { z } from 'zod';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
-import { asyncHandler } from '../middlewares/asyncHandler';
-import { AuthRequest } from '../middlewares/auth.middleware';
+import { asyncHandler } from '../middleware/asyncHandler';
+import { AuthRequest } from '../middleware/auth.middleware';
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key-change-me';
