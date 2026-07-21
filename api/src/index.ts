@@ -52,6 +52,7 @@ import shipmentRoutes from './routes/shipments';
 import cargoRouter from './routes/cargo';
 import allocationsRouter from './routes/allocations';
 import operationsRouter from './routes/operations';
+import fleetRoutes from './routes/fleet';
 import companyManagementRoutes from './routes/company-management';
 import quotationRoutes from './routes/quotations';
 import gpsRoutes from './routes/gps';
