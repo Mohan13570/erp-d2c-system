@@ -1012,13 +1012,62 @@ model Shipment {
   tempControlled    Boolean @default(false)
   remarks           String?
 
+  bookingNumber       String?
+  origin              String?
+  destination         String?
+  assignedDriver      String?
+  assignedVehicle     String?
+  operationsExecutive String?
+  shipmentType        String?
+  revenue             Float   @default(0.0)
+  profit              Float   @default(0.0)
+
+  activities ShipmentActivity[]
+
+  referenceNumber      String?
+  serviceType          String?
+  operation            String?
+  branch               String?
+  businessUnit         String?
+  salesExecutive       String?
+  approver             String?
+  route                String?
+  currentLocation      String?
+  totalPackages        Int?
+  totalPieces          Int?
+  grossWeight          Float?
+  netWeight            Float?
+  chargeableWeight     Float?
+  cbm                  Float?
+  cft                  Float?
+  totalVolume          Float?
+  declaredValue        Float?
+  specialCargo         Boolean @default(false)
+  currentWorkflowStage String?
+
+  parties     ShipmentParty[]
+  notes       ShipmentNotes[]
+  assignments ShipmentAssignment[]
+
   // Relations
-  cargo     ShipmentCargo[]
-  locations ShipmentLocation[]
-  carrier   ShipmentCarrier?
-  charges   ShipmentCharges?
-  documents ShipmentDocument[]
-  timeline  ShipmentTimelineEvent[]
+  cargo             ShipmentCargo[]
+  locations         ShipmentLocation[]
+  carrier           ShipmentCarrier?
+  charges           ShipmentCharges?
+  documents         ShipmentDocument[]
+  timeline          ShipmentTimelineEvent[]
+  ContainerPlanning ContainerPlanning?
+
+  resourceValidation  ShipmentResourceValidation?
+  vehicleAssignment   VehicleAssignment?
+  driverAssignment    DriverAssignment?
+  warehouseAssignment ShipmentWarehouseAssignment?
+  containerAssignment ContainerAssignment?
+  routeAssignment     RouteAssignment?
+  dispatchPlan        DispatchPlan?
+
+  pickupRequest    PickupRequest?
+  deliverySchedule DeliverySchedule?
 }
 
 model ShipmentCargo {
@@ -1035,6 +1084,41 @@ model ShipmentCargo {
   packagesCount    Int?
   packageType      String?
   hazmatClass      String?
+
+  cargoName            String?
+  commodityCategory    String?
+  unNumber             String?
+  cargoNature          String?
+  cargoType            String?
+  countryOfOrigin      String?
+  countryOfDestination String?
+  declaredValue        Float?
+  currency             String?
+  insuranceRequired    Boolean @default(false)
+  insuranceValue       Float?
+  incoterms            String?
+
+  // Special Handling
+  dangerousGoods        Boolean @default(false)
+  dgClass               String?
+  imoClass              String?
+  temperatureControlled Boolean @default(false)
+  tempRangeMin          Float?
+  tempRangeMax          Float?
+  fragile               Boolean @default(false)
+  stackable             Boolean @default(true)
+  hazardous             Boolean @default(false)
+  perishable            Boolean @default(false)
+  oversizedCargo        Boolean @default(false)
+  heavyLift             Boolean @default(false)
+  highValueCargo        Boolean @default(false)
+  lithiumBattery        Boolean @default(false)
+  liveAnimals           Boolean @default(false)
+  medicalGoods          Boolean @default(false)
+  foodGrade             Boolean @default(false)
+  specialInstructions   String?
+
+  packages ShipmentPackage[]
 }
 
 model ShipmentLocation {
@@ -7947,92 +8031,92 @@ model ArDispute {
 }
 
 model ErpBankAccount {
-  id              String             @id @default(uuid())
-  bankName        String
-  accountNumber   String             @unique
-  routingNumber   String?
-  swiftCode       String?
-  currency        String             @default("USD")
-  
-  currentBalance  Float              @default(0)
-  
-  status          String             @default("ACTIVE") // ACTIVE, FROZEN, CLOSED
-  
-  payments        ErpPaymentReceipt[]
-  statements      ErpBankStatementItem[]
-  
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
+  id            String  @id @default(uuid())
+  bankName      String
+  accountNumber String  @unique
+  routingNumber String?
+  swiftCode     String?
+  currency      String  @default("USD")
+
+  currentBalance Float @default(0)
+
+  status String @default("ACTIVE") // ACTIVE, FROZEN, CLOSED
+
+  payments   ErpPaymentReceipt[]
+  statements ErpBankStatementItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ErpPaymentReceipt {
-  id              String             @id @default(uuid())
-  receiptNumber   String             @unique // e.g. REC-2026-001
-  customerId      String
-  
-  paymentMethod   String             // WIRE, CHEQUE, CASH, CREDIT_CARD, STRIPE
-  referenceNumber String?            // Bank transaction ref or cheque number
+  id            String @id @default(uuid())
+  receiptNumber String @unique // e.g. REC-2026-001
+  customerId    String
+
+  paymentMethod   String // WIRE, CHEQUE, CASH, CREDIT_CARD, STRIPE
+  referenceNumber String? // Bank transaction ref or cheque number
   amount          Float
-  currency        String             @default("USD")
-  
-  status          String             @default("UNRECONCILED") // UNRECONCILED, RECONCILED, BOUNCED, REFUNDED
-  receivedDate    DateTime           @default(now())
-  
-  bankAccountId   String?
-  bankAccount     ErpBankAccount?    @relation(fields: [bankAccountId], references: [id])
-  
-  reconciliation  ErpBankReconciliation?
-  
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
+  currency        String  @default("USD")
+
+  status       String   @default("UNRECONCILED") // UNRECONCILED, RECONCILED, BOUNCED, REFUNDED
+  receivedDate DateTime @default(now())
+
+  bankAccountId String?
+  bankAccount   ErpBankAccount? @relation(fields: [bankAccountId], references: [id])
+
+  reconciliation ErpBankReconciliation?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ErpBankStatementItem {
-  id              String             @id @default(uuid())
-  bankAccountId   String
-  bankAccount     ErpBankAccount     @relation(fields: [bankAccountId], references: [id], onDelete: Cascade)
-  
+  id            String         @id @default(uuid())
+  bankAccountId String
+  bankAccount   ErpBankAccount @relation(fields: [bankAccountId], references: [id], onDelete: Cascade)
+
   transactionDate DateTime
   description     String
   reference       String?
-  
-  amount          Float              // Positive = Deposit, Negative = Withdrawal
-  closingBalance  Float?
-  
-  isReconciled    Boolean            @default(false)
-  reconciliation  ErpBankReconciliation?
-  
-  createdAt       DateTime           @default(now())
+
+  amount         Float // Positive = Deposit, Negative = Withdrawal
+  closingBalance Float?
+
+  isReconciled   Boolean                @default(false)
+  reconciliation ErpBankReconciliation?
+
+  createdAt DateTime @default(now())
 }
 
 model ErpBankReconciliation {
-  id              String             @id @default(uuid())
-  
-  statementItemId String             @unique
+  id String @id @default(uuid())
+
+  statementItemId String               @unique
   statementItem   ErpBankStatementItem @relation(fields: [statementItemId], references: [id], onDelete: Cascade)
-  
-  receiptId       String?            @unique
-  receipt         ErpPaymentReceipt? @relation(fields: [receiptId], references: [id])
-  
+
+  receiptId String?            @unique
+  receipt   ErpPaymentReceipt? @relation(fields: [receiptId], references: [id])
+
   // Could also link to an AP Payment to Vendor if it was an outgoing withdrawal
   // outgoingPaymentId String? 
-  
-  matchedBy       String             // SYSTEM, or User ID
-  matchedAt       DateTime           @default(now())
-  varianceAmount  Float              @default(0) // Usually 0 if perfectly matched
+
+  matchedBy      String // SYSTEM, or User ID
+  matchedAt      DateTime @default(now())
+  varianceAmount Float    @default(0) // Usually 0 if perfectly matched
 }
 
 model ErpCashBookTransaction {
-  id              String             @id @default(uuid())
-  transactionDate DateTime           @default(now())
-  type            String             // CASH_IN, CASH_OUT
-  category        String             // PETTY_CASH, ADVANCE, MISC
-  
-  amount          Float
-  description     String
-  recordedBy      String
-  
-  createdAt       DateTime           @default(now())
+  id              String   @id @default(uuid())
+  transactionDate DateTime @default(now())
+  type            String // CASH_IN, CASH_OUT
+  category        String // PETTY_CASH, ADVANCE, MISC
+
+  amount      Float
+  description String
+  recordedBy  String
+
+  createdAt DateTime @default(now())
 }
 
 // ==========================================
@@ -8040,181 +8124,181 @@ model ErpCashBookTransaction {
 // ==========================================
 
 model CustomerBooking {
-  id              String   @id @default(uuid())
-  bookingNumber   String   @unique // e.g., BKG-2023-001
-  bookingDate     DateTime @default(now())
-  bookingStatus   String   @default("Draft") // Draft, Confirmed, Cancelled, In-Transit, Delivered
-  bookingType     String   @default("Standard")
-  bookingSource   String   @default("Manual")
-  
+  id            String   @id @default(uuid())
+  bookingNumber String   @unique // e.g., BKG-2023-001
+  bookingDate   DateTime @default(now())
+  bookingStatus String   @default("Draft") // Draft, Confirmed, Cancelled, In-Transit, Delivered
+  bookingType   String   @default("Standard")
+  bookingSource String   @default("Manual")
+
   // Customer Relations
-  customerId      String?
-  customer        Customer? @relation(fields: [customerId], references: [id])
-  customerRef     String?
-  internalRef     String?
+  customerId  String?
+  customer    Customer? @relation(fields: [customerId], references: [id])
+  customerRef String?
+  internalRef String?
 
   // Organization
-  salesExecutive  String?
-  salesTeam       String?
-  branch          String?
-  businessUnit    String?
-  priority        String   @default("Normal")
-  
+  salesExecutive String?
+  salesTeam      String?
+  branch         String?
+  businessUnit   String?
+  priority       String  @default("Normal")
+
   // Service
-  serviceType     String   @default("Ocean Freight") // Ocean Freight, Air Freight, Road Transport, Rail, Multimodal
-  tradeType       String   @default("Export") // Import, Export, Domestic, International
-  
+  serviceType String @default("Ocean Freight") // Ocean Freight, Air Freight, Road Transport, Rail, Multimodal
+  tradeType   String @default("Export") // Import, Export, Domestic, International
+
   // Logistics Dates
-  expectedPickup  DateTime?
+  expectedPickup   DateTime?
   expectedDelivery DateTime?
 
   // Financial
-  currency        String   @default("USD")
-  paymentTerms    String?
+  currency     String  @default("USD")
+  paymentTerms String?
 
   // Additional Info
-  bookingNotes    String?
+  bookingNotes        String?
   specialInstructions String?
 
   // Timestamps
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  createdBy       String?
-  updatedBy       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
 
   // Relations
-  sender          BookingSender?
-  receiver        BookingReceiver?
-  notifyParty     BookingNotifyParty?
-  billTo          BookingBillTo?
-  cargos          BookingCargo[]
+  sender      BookingSender?
+  receiver    BookingReceiver?
+  notifyParty BookingNotifyParty?
+  billTo      BookingBillTo?
+  cargos      BookingCargo[]
 }
 
 model BookingSender {
-  id              String   @id @default(uuid())
-  bookingId       String   @unique
-  booking         CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  
-  companyName     String
-  companyType     String?
-  industry        String?
-  taxNumber       String?
-  registrationNo  String?
-  email           String?
-  phone           String?
-  
+  id        String          @id @default(uuid())
+  bookingId String          @unique
+  booking   CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  companyName    String
+  companyType    String?
+  industry       String?
+  taxNumber      String?
+  registrationNo String?
+  email          String?
+  phone          String?
+
   // Contact
-  contactPerson   String?
-  designation     String?
-  mobileNumber    String?
-  
+  contactPerson String?
+  designation   String?
+  mobileNumber  String?
+
   // Pickup Address
-  line1           String?
-  line2           String?
-  city            String?
-  state           String?
-  country         String?
-  postalCode      String?
-  latitude        Float?
-  longitude       Float?
+  line1      String?
+  line2      String?
+  city       String?
+  state      String?
+  country    String?
+  postalCode String?
+  latitude   Float?
+  longitude  Float?
 
   // Instructions
-  pickupDate      DateTime?
+  pickupDate         DateTime?
   pickupInstructions String?
 }
 
 model BookingReceiver {
-  id              String   @id @default(uuid())
-  bookingId       String   @unique
-  booking         CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  
-  companyName     String
-  taxNumber       String?
-  email           String?
-  phone           String?
-  
+  id        String          @id @default(uuid())
+  bookingId String          @unique
+  booking   CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  companyName String
+  taxNumber   String?
+  email       String?
+  phone       String?
+
   // Contact
-  contactPerson   String?
-  mobileNumber    String?
-  
+  contactPerson String?
+  mobileNumber  String?
+
   // Delivery Address
-  line1           String?
-  line2           String?
-  city            String?
-  state           String?
-  country         String?
-  postalCode      String?
-  latitude        Float?
-  longitude       Float?
+  line1      String?
+  line2      String?
+  city       String?
+  state      String?
+  country    String?
+  postalCode String?
+  latitude   Float?
+  longitude  Float?
 
   // Instructions
-  deliveryDate    DateTime?
+  deliveryDate         DateTime?
   deliveryInstructions String?
 }
 
 model BookingNotifyParty {
-  id              String   @id @default(uuid())
-  bookingId       String   @unique
-  booking         CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  
-  companyName     String
-  contactPerson   String?
-  email           String?
-  phone           String?
-  line1           String?
-  city            String?
-  country         String?
-  notificationPreference String @default("Email")
+  id        String          @id @default(uuid())
+  bookingId String          @unique
+  booking   CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  companyName            String
+  contactPerson          String?
+  email                  String?
+  phone                  String?
+  line1                  String?
+  city                   String?
+  country                String?
+  notificationPreference String  @default("Email")
 }
 
 model BookingBillTo {
-  id              String   @id @default(uuid())
-  bookingId       String   @unique
-  booking         CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  
-  billingCompany  String
-  financeContact  String?
-  taxNumber       String?
-  accountNumber   String?
-  paymentTerms    String?
-  creditLimit     Float?
-  invoiceEmail    String?
-  billingAddress  String?
+  id        String          @id @default(uuid())
+  bookingId String          @unique
+  booking   CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  billingCompany String
+  financeContact String?
+  taxNumber      String?
+  accountNumber  String?
+  paymentTerms   String?
+  creditLimit    Float?
+  invoiceEmail   String?
+  billingAddress String?
 }
 
 model BookingCargo {
-  id              String   @id @default(uuid())
-  bookingId       String
-  booking         CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  
-  commodity       String?
-  description     String?
-  hsCode          String?
-  unNumber        String?
-  
-  packageType     String?
-  numberOfPackages Int @default(1)
-  
-  grossWeight     Float @default(0)
-  netWeight       Float @default(0)
+  id        String          @id @default(uuid())
+  bookingId String
+  booking   CustomerBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  commodity   String?
+  description String?
+  hsCode      String?
+  unNumber    String?
+
+  packageType      String?
+  numberOfPackages Int     @default(1)
+
+  grossWeight      Float @default(0)
+  netWeight        Float @default(0)
   chargeableWeight Float @default(0)
-  volumeCBM       Float @default(0)
-  
-  length          Float?
-  width           Float?
-  height          Float?
-  
+  volumeCBM        Float @default(0)
+
+  length Float?
+  width  Float?
+  height Float?
+
   isTemperatureControlled Boolean @default(false)
-  isDangerousGoods Boolean @default(false)
-  isFragile       Boolean @default(false)
-  
+  isDangerousGoods        Boolean @default(false)
+  isFragile               Boolean @default(false)
+
   insuranceRequired Boolean @default(false)
-  declaredValue   Float?
-  
-  marksAndNumbers String?
-  containerType   String?
-  containerSize   String?
-  containerQuantity Int @default(0)
+  declaredValue     Float?
+
+  marksAndNumbers   String?
+  containerType     String?
+  containerSize     String?
+  containerQuantity Int     @default(0)
 }
 
 // ==========================================
@@ -8222,180 +8306,608 @@ model BookingCargo {
 // ==========================================
 
 model RateCard {
-  id              String   @id @default(uuid())
-  code            String   @unique
-  name            String
-  serviceType     String   // Ocean, Air, Road
-  origin          String?
-  destination     String?
-  currency        String   @default("USD")
-  validFrom       DateTime
-  validTo         DateTime
-  status          String   @default("Active")
-  
-  items           RateCardItem[]
-  
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  serviceType String // Ocean, Air, Road
+  origin      String?
+  destination String?
+  currency    String   @default("USD")
+  validFrom   DateTime
+  validTo     DateTime
+  status      String   @default("Active")
+
+  items RateCardItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model RateCardItem {
-  id              String   @id @default(uuid())
-  rateCardId      String
-  rateCard        RateCard @relation(fields: [rateCardId], references: [id], onDelete: Cascade)
-  
-  chargeCode      String   // FREIGHT, FSC, THC, DOC
+  id         String   @id @default(uuid())
+  rateCardId String
+  rateCard   RateCard @relation(fields: [rateCardId], references: [id], onDelete: Cascade)
+
+  chargeCode      String // FREIGHT, FSC, THC, DOC
   chargeName      String
-  calculationType String   // PER_KG, PER_CBM, FLAT, PER_SHIPMENT, PERCENTAGE
+  calculationType String // PER_KG, PER_CBM, FLAT, PER_SHIPMENT, PERCENTAGE
   unitRate        Float
   minimumCharge   Float?
   maximumCharge   Float?
-  
+
   // Tiering
-  tierMinUnit     Float?
-  tierMaxUnit     Float?
+  tierMinUnit Float?
+  tierMaxUnit Float?
 }
 
 model PkgPackage {
-  id              String   @id @default(uuid())
-  bookingId       String   // Connects to CustomerBooking or BookingCargo
-  packageRef      String   @unique
-  
-  packageType     String   // Pallet, Box, Carton, Drum
-  quantity        Int      @default(1)
-  description     String?
-  
-  dimensions      PkgDimension?
-  weight          PkgWeight?
-  calculation     PkgCalculation?
-  
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id         String @id @default(uuid())
+  bookingId  String // Connects to CustomerBooking or BookingCargo
+  packageRef String @unique
+
+  packageType String // Pallet, Box, Carton, Drum
+  quantity    Int     @default(1)
+  description String?
+
+  dimensions  PkgDimension?
+  weight      PkgWeight?
+  calculation PkgCalculation?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model PkgDimension {
-  id              String   @id @default(uuid())
-  packageId       String   @unique
-  package         PkgPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
-  
-  length          Float
-  width           Float
-  height          Float
-  unit            String   @default("CM") // CM, IN
+  id        String     @id @default(uuid())
+  packageId String     @unique
+  package   PkgPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  length Float
+  width  Float
+  height Float
+  unit   String @default("CM") // CM, IN
 }
 
 model PkgWeight {
-  id              String   @id @default(uuid())
-  packageId       String   @unique
-  package         PkgPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
-  
-  actualWeight    Float
-  unit            String   @default("KG") // KG, LBS
+  id        String     @id @default(uuid())
+  packageId String     @unique
+  package   PkgPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  actualWeight Float
+  unit         String @default("KG") // KG, LBS
 }
 
 model PkgCalculation {
-  id              String   @id @default(uuid())
-  packageId       String   @unique
-  package         PkgPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
-  
-  volumeCBM       Float
-  volumeCFT       Float
+  id        String     @id @default(uuid())
+  packageId String     @unique
+  package   PkgPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  volumeCBM        Float
+  volumeCFT        Float
   volumetricWeight Float
   chargeableWeight Float
-  
-  volumetricDivisor Float  @default(6000)
+
+  volumetricDivisor Float @default(6000)
 }
 
 model PricingRule {
-  id              String   @id @default(uuid())
-  ruleCode        String   @unique
-  ruleName        String
-  priority        Int      @default(1)
-  condition       String?  
-  action          String?  
-  status          String   @default("Active")
+  id        String  @id @default(uuid())
+  ruleCode  String  @unique
+  ruleName  String
+  priority  Int     @default(1)
+  condition String?
+  action    String?
+  status    String  @default("Active")
 }
 
 model FuelSurcharge {
-  id              String   @id @default(uuid())
-  carrierCode     String
-  serviceType     String
-  percentage      Float
-  effectiveFrom   DateTime
-  effectiveTo     DateTime?
-  status          String   @default("Active")
+  id            String    @id @default(uuid())
+  carrierCode   String
+  serviceType   String
+  percentage    Float
+  effectiveFrom DateTime
+  effectiveTo   DateTime?
+  status        String    @default("Active")
 }
 
 model InsuranceRule {
-  id              String   @id @default(uuid())
-  commodityType   String
-  ratePercentage  Float
-  minimumPremium  Float
-  status          String   @default("Active")
+  id             String @id @default(uuid())
+  commodityType  String
+  ratePercentage Float
+  minimumPremium Float
+  status         String @default("Active")
 }
 
 model TaxRule {
-  id              String   @id @default(uuid())
-  countryCode     String
-  taxName         String
-  taxPercentage   Float
-  appliesTo       String   // FREIGHT, ALL
-  status          String   @default("Active")
+  id            String @id @default(uuid())
+  countryCode   String
+  taxName       String
+  taxPercentage Float
+  appliesTo     String // FREIGHT, ALL
+  status        String @default("Active")
 }
 
 model DiscountRule {
-  id              String   @id @default(uuid())
-  customerGroupId String?
-  customerId      String?
-  discountPercent Float
+  id                String    @id @default(uuid())
+  customerGroupId   String?
+  customerId        String?
+  discountPercent   Float
   maxDiscountAmount Float?
-  validUntil      DateTime?
+  validUntil        DateTime?
 }
 
 model BusinessRule {
-  id              String   @id @default(uuid())
-  ruleType        String   // VALIDATION, ROUTING, CALCULATION
-  ruleCode        String   @unique
-  parameters      String   
-  isActive        Boolean  @default(true)
+  id         String  @id @default(uuid())
+  ruleType   String // VALIDATION, ROUTING, CALCULATION
+  ruleCode   String  @unique
+  parameters String
+  isActive   Boolean @default(true)
 }
 
 model ShipmentCharge {
-  id              String   @id @default(uuid())
-  bookingId       String   
-  
-  totalFreight    Float    @default(0)
-  totalSurcharges Float    @default(0)
-  totalTaxes      Float    @default(0)
-  totalDiscount   Float    @default(0)
-  grandTotal      Float    @default(0)
-  currency        String   @default("USD")
-  
-  breakdowns      ChargeBreakdown[]
-  
-  createdAt       DateTime @default(now())
+  id        String @id @default(uuid())
+  bookingId String
+
+  totalFreight    Float  @default(0)
+  totalSurcharges Float  @default(0)
+  totalTaxes      Float  @default(0)
+  totalDiscount   Float  @default(0)
+  grandTotal      Float  @default(0)
+  currency        String @default("USD")
+
+  breakdowns ChargeBreakdown[]
+
+  createdAt DateTime @default(now())
 }
 
 model ChargeBreakdown {
-  id              String   @id @default(uuid())
+  id               String         @id @default(uuid())
   shipmentChargeId String
-  shipmentCharge  ShipmentCharge @relation(fields: [shipmentChargeId], references: [id], onDelete: Cascade)
-  
-  chargeCode      String
-  chargeName      String
-  amount          Float
-  currency        String   @default("USD")
-  isTaxable       Boolean  @default(true)
+  shipmentCharge   ShipmentCharge @relation(fields: [shipmentChargeId], references: [id], onDelete: Cascade)
+
+  chargeCode String
+  chargeName String
+  amount     Float
+  currency   String  @default("USD")
+  isTaxable  Boolean @default(true)
 }
 
 model CalculationHistory {
+  id            String @id @default(uuid())
+  bookingId     String
+  calculatedBy  String // User ID or SYSTEM
+  inputSnapshot String
+  appliedRates  String
+  finalAmount   Float
+  currency      String
+
+  calculatedAt DateTime @default(now())
+}
+
+// ==========================================
+// SHIPMENT MANAGEMENT (PHASE 1)
+// ==========================================
+
+model ShipmentStatus {
+  id          String   @id @default(uuid())
+  code        String   @unique // e.g., PENDING_PICKUP
+  label       String // e.g., Pending Pickup
+  description String?
+  colorHex    String? // e.g., #3B82F6
+  isTerminal  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model ShipmentSummary {
+  id             String   @id @default(uuid())
+  date           DateTime @unique @default(now())
+  totalShipments Int      @default(0)
+  todayShipments Int      @default(0)
+  pendingPickup  Int      @default(0)
+  pickedUp       Int      @default(0)
+  warehouse      Int      @default(0)
+  inTransit      Int      @default(0)
+  customs        Int      @default(0)
+  outForDelivery Int      @default(0)
+  delivered      Int      @default(0)
+  completed      Int      @default(0)
+  cancelled      Int      @default(0)
+  delayed        Int      @default(0)
+  revenue        Float    @default(0.0)
+  profit         Float    @default(0.0)
+  updatedAt      DateTime @updatedAt
+}
+
+model ShipmentDashboard {
+  id             String   @id @default(uuid())
+  userId         String   @unique
+  customLayout   String? // JSON configuration for KPI cards
+  defaultFilters String? // JSON default filters
+  updatedAt      DateTime @updatedAt
+}
+
+model ShipmentActivity {
+  id           String   @id @default(uuid())
+  shipmentId   String
+  shipmentRef  Shipment @relation(fields: [shipmentId], references: [id])
+  activityType String // e.g., STATUS_CHANGE, DISPATCH, DRIVER_ASSIGNED
+  description  String
+  performedBy  String?
+  oldValue     String?
+  newValue     String?
+  createdAt    DateTime @default(now())
+}
+
+// ==========================================
+// SHIPMENT MANAGEMENT (PHASE 2)
+// ==========================================
+
+model ShipmentParty {
+  id                 String   @id @default(uuid())
+  shipmentId         String
+  shipment           Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  partyType          String // SHIPPER, CONSIGNEE, NOTIFY_PARTY, BILL_TO
+  company            String
+  contactPerson      String?
+  department         String?
+  email              String?
+  phone              String?
+  mobile             String?
+  country            String?
+  city               String?
+  address            String?
+  location           String? // Pickup or Delivery Location
+  instructions       String?
+  notificationMethod String?
+  paymentTerms       String?
+  currency           String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model ShipmentNotes {
+  id         String   @id @default(uuid())
+  shipmentId String
+  shipment   Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  noteType   String // CUSTOMER, OPERATIONS, FINANCE, INTERNAL
+  content    String
+  author     String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model ShipmentAssignment {
+  id             String   @id @default(uuid())
+  shipmentId     String
+  shipment       Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  assignmentType String // DRIVER, VEHICLE, CONTAINER, WAREHOUSE
+  assignedEntity String // Entity ID or Name
+  assignedBy     String?
+  assignedAt     DateTime @default(now())
+  status         String   @default("ACTIVE") // ACTIVE, RELEASED
+}
+
+// ==========================================
+// PACKAGE MANAGEMENT (PHASE 3)
+// ==========================================
+
+model ShipmentPackage {
+  id              String        @id @default(uuid())
+  cargoId         String
+  cargo           ShipmentCargo @relation(fields: [cargoId], references: [id], onDelete: Cascade)
+  packageNumber   String        @unique
+  packageType     String
+  description     String?
+  marksAndNumbers String?
+  quantity        Int           @default(1)
+
+  // Dimensions
+  length        Float?
+  width         Float?
+  height        Float?
+  dimensionUnit String @default("cm") // cm, mm, m, in, ft
+
+  // Weights & Volumes (Calculated/Stored)
+  grossWeight      Float?
+  netWeight        Float?
+  actualWeight     Float?
+  weightUnit       String @default("kg") // kg, lbs
+  volume           Float?
+  cbm              Float?
+  cft              Float?
+  volumetricWeight Float?
+  chargeableWeight Float?
+
+  declaredValue  Float?
+  insuranceValue Float?
+  remarks        String?
+
+  photos      PackagePhoto[]
+  inspections PackageQualityInspection[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PackagePhoto {
+  id          String          @id @default(uuid())
+  packageId   String
+  packageRef  ShipmentPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  photoUrl    String
+  photoType   String // PACKAGE, DAMAGE, LOADING
+  description String?
+  uploadedBy  String?
+  createdAt   DateTime        @default(now())
+}
+
+model PackageQualityInspection {
+  id                 String          @id @default(uuid())
+  packageId          String
+  packageRef         ShipmentPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  inspectionRequired Boolean         @default(false)
+  inspectionStatus   String          @default("PENDING")
+  inspectionDate     DateTime?
+  inspector          String?
+  damageFound        Boolean         @default(false)
+  damageDescription  String?
+  packageCondition   String?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+}
+
+model ContainerPlanning {
+  id                String   @id @default(uuid())
+  shipmentId        String   @unique
+  shipment          Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  containerType     String
+  containerSize     String
+  maximumWeight     Float
+  currentWeight     Float    @default(0.0)
+  remainingCapacity Float
+  loadPercentage    Float    @default(0.0)
+  containerStatus   String   @default("PLANNED")
+  updatedAt         DateTime @updatedAt
+}
+
+// ==========================================
+// RESOURCE ALLOCATION & DISPATCH (PHASE 4)
+// ==========================================
+
+model ShipmentResourceValidation {
+  id               String    @id @default(uuid())
+  shipmentId       String    @unique
+  shipment         Shipment  @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  isVehicleValid   Boolean   @default(false)
+  isDriverValid    Boolean   @default(false)
+  isWarehouseValid Boolean   @default(false)
+  isContainerValid Boolean   @default(false)
+  isRouteValid     Boolean   @default(false)
+  isTeamValid      Boolean   @default(false)
+  overallStatus    String    @default("PENDING") // PENDING, VALIDATED, FAILED
+  lastValidatedAt  DateTime?
+  updatedAt        DateTime  @updatedAt
+}
+
+model VehicleAssignment {
   id              String   @id @default(uuid())
-  bookingId       String
-  calculatedBy    String   // User ID or SYSTEM
-  inputSnapshot   String   
-  appliedRates    String   
-  finalAmount     Float
-  currency        String
-  
-  calculatedAt    DateTime @default(now())
+  shipmentId      String   @unique
+  shipment        Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  vehicleId       String?
+  vehicleNumber   String?
+  vehicleType     String?
+  registrationNo  String?
+  capacityWeight  Float?
+  capacityVolume  Float?
+  currentLocation String?
+  fuelStatus      String?
+  availability    String   @default("AVAILABLE")
+  vehicleOwner    String?
+  vehicleContact  String?
+  remarks         String?
+  assignedAt      DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model DriverAssignment {
+  id               String    @id @default(uuid())
+  shipmentId       String    @unique
+  shipment         Shipment  @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  driverId         String?
+  driverName       String?
+  licenseNumber    String?
+  licenseExpiry    DateTime?
+  mobileNumber     String?
+  experienceYears  Int?
+  currentStatus    String    @default("AVAILABLE")
+  currentLocation  String?
+  emergencyContact String?
+  alternateDriver  String?
+  remarks          String?
+  assignedAt       DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model ShipmentWarehouseAssignment {
+  id                 String   @id @default(uuid())
+  shipmentId         String   @unique
+  shipment           Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  originWarehouse    String?
+  destWarehouse      String?
+  crossDock          String?
+  transitWarehouse   String?
+  warehouseZone      String?
+  warehouseManager   String?
+  warehouseContact   String?
+  loadingBay         String?
+  instructions       String?
+  capacityCBM        Float?
+  currentUtilization Float?
+  availableSpaceCBM  Float?
+  assignedAt         DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model ContainerAssignment {
+  id                String   @id @default(uuid())
+  shipmentId        String   @unique
+  shipment          Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  containerNumber   String?
+  containerType     String?
+  containerSize     String?
+  sealNumber        String?
+  containerOwner    String?
+  containerStatus   String   @default("EMPTY")
+  containerWeight   Float?
+  capacityWeight    Float?
+  availableCapacity Float?
+  assignedAt        DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model RouteAssignment {
+  id                String   @id @default(uuid())
+  shipmentId        String   @unique
+  shipment          Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  routeName         String?
+  originNode        String?
+  destNode          String?
+  distanceKm        Float?
+  estTransitTimeHrs Float?
+  preferredRoute    String?
+  alternateRoute    String?
+  tollRoute         Boolean  @default(false)
+  avoidRoute        String?
+  trafficPriority   String?
+  assignedAt        DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model DispatchPlan {
+  id                String    @id @default(uuid())
+  shipmentId        String    @unique
+  shipment          Shipment  @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  dispatchDate      DateTime?
+  dispatchTime      String?
+  loadingStartTime  DateTime?
+  loadingEndTime    DateTime?
+  departureTime     DateTime?
+  expectedArrival   DateTime?
+  estimatedDelivery DateTime?
+  priority          String    @default("NORMAL")
+  instructions      String?
+  status            String    @default("DRAFT")
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+// ==========================================
+// PICKUP & DELIVERY (PHASE 5)
+// ==========================================
+
+model PickupRequest {
+  id             String    @id @default(uuid())
+  shipmentId     String    @unique
+  shipment       Shipment  @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  pickupStatus   String    @default("REQUESTED")
+  pickupDate     DateTime?
+  pickupTime     String?
+  pickupTimeSlot String?
+  pickupLocation String?
+  pickupAddress  String?
+  contactPerson  String?
+  mobile         String?
+  email          String?
+  instructions   String?
+  priority       String    @default("NORMAL")
+
+  // Loading Operations
+  loadingBay       String?
+  loadingStartTime DateTime?
+  loadingEndTime   DateTime?
+  loadingDuration  String?
+  loadedBy         String?
+  vehicleCheck     Boolean   @default(false)
+  containerCheck   Boolean   @default(false)
+  packageCount     Int?
+  sealNumber       String?
+
+  // Checklist (Stored as JSON for flexibility or strict booleans)
+  checklistData String? // JSON stringified checklist
+
+  documents PickupDocument[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PickupDocument {
+  id              String        @id @default(uuid())
+  pickupRequestId String
+  pickupRequest   PickupRequest @relation(fields: [pickupRequestId], references: [id], onDelete: Cascade)
+  documentType    String // COMMERCIAL_INVOICE, PACKING_LIST, DELIVERY_ORDER, GATE_PASS
+  documentUrl     String
+  version         Int           @default(1)
+  uploadedBy      String?
+  createdAt       DateTime      @default(now())
+}
+
+model DeliverySchedule {
+  id              String    @id @default(uuid())
+  shipmentId      String    @unique
+  shipment        Shipment  @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  deliveryStatus  String    @default("PENDING")
+  deliveryDate    DateTime?
+  deliveryTime    String?
+  deliverySlot    String?
+  deliveryAddress String?
+  contactPerson   String?
+  mobile          String?
+  email           String?
+  instructions    String?
+  priority        String    @default("NORMAL")
+
+  checklistData String? // JSON stringified delivery checklist
+
+  proofOfDelivery ProofOfDelivery?
+  exceptions      DeliveryException[]
+  photos          DeliveryPhoto[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProofOfDelivery {
+  id                 String           @id @default(uuid())
+  deliveryScheduleId String           @unique
+  deliverySchedule   DeliverySchedule @relation(fields: [deliveryScheduleId], references: [id], onDelete: Cascade)
+  receiverSignature  String? // Base64 or URL
+  driverSignature    String? // Base64 or URL
+  gpsLocation        String?
+  deliveryTimestamp  DateTime?
+  receiverName       String?
+  receiverId         String?
+  deliveryNotes      String?
+  barcodeScanned     Boolean          @default(false)
+  createdAt          DateTime         @default(now())
+}
+
+model DeliveryException {
+  id                 String           @id @default(uuid())
+  deliveryScheduleId String
+  deliverySchedule   DeliverySchedule @relation(fields: [deliveryScheduleId], references: [id], onDelete: Cascade)
+  exceptionType      String // WRONG_ADDRESS, DAMAGED, REFUSED, DELAYED
+  notes              String?
+  correctiveAction   String?
+  resolved           Boolean          @default(false)
+  createdAt          DateTime         @default(now())
+}
+
+model DeliveryPhoto {
+  id                 String           @id @default(uuid())
+  deliveryScheduleId String
+  deliverySchedule   DeliverySchedule @relation(fields: [deliveryScheduleId], references: [id], onDelete: Cascade)
+  photoUrl           String
+  photoType          String // PROOF, DAMAGE, LOCATION
+  uploadedBy         String?
+  createdAt          DateTime         @default(now())
 }

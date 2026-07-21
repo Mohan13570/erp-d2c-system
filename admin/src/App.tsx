@@ -101,6 +101,9 @@ import ShipmentDashboard from './pages/shipments/ShipmentDashboard';
 import ShipmentList from './pages/shipments/ShipmentList';
 import CreateShipmentWizard from './pages/shipments/CreateShipmentWizard';
 import ShipmentDetail from './pages/shipments/ShipmentDetail';
+import CargoManagement from './pages/shipments/CargoManagement';
+import ResourceAllocation from './pages/shipments/ResourceAllocation';
+import OperationsManagement from './pages/shipments/OperationsManagement';
 import CompanyManagement from './pages/CompanyManagement';
 import Quotations from './pages/Quotations';
 import OceanFreight from './pages/OceanFreight';
@@ -426,6 +429,9 @@ function App() {
                   <Route path="/shipments/list" element={<ShipmentList />} />
                   <Route path="/shipments/create" element={<CreateShipmentWizard />} />
                   <Route path="/shipments/:id" element={<ShipmentDetail />} />
+                  <Route path="/shipments/:id/cargo" element={<CargoManagement />} />
+                  <Route path="/shipments/:id/allocation" element={<ResourceAllocation />} />
+                  <Route path="/shipments/:id/operations" element={<OperationsManagement />} />
                   <Route path="/fleet" element={<Fleet />} />
                   <Route path="/ocean-freight" element={<OceanFreight />} />
                   <Route path="/air-freight" element={<Navigate to="/air/hub" replace />} />

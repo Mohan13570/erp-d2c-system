@@ -49,7 +49,9 @@ import trackingRouter from './routes/tracking';
 import portalsRouter from './routes/portals';
 import biReportsRouter from './routes/bi-reports';
 import shipmentRoutes from './routes/shipments';
-import fleetRoutes from './routes/fleet';
+import cargoRouter from './routes/cargo';
+import allocationsRouter from './routes/allocations';
+import operationsRouter from './routes/operations';
 import companyManagementRoutes from './routes/company-management';
 import quotationRoutes from './routes/quotations';
 import gpsRoutes from './routes/gps';
@@ -233,7 +235,10 @@ app.use('/api/warehouse', warehouseRouter); // Mount WMS
 // AI API
 app.use('/api/bi', biReportsRouter);
 app.use('/api/ai', aiRouter);
-app.use('/api/shipments', shipmentRoutes);
+app.use('/api/v1/shipments', shipmentRoutes);
+app.use('/api/v1', cargoRouter);
+app.use('/api/v1', allocationsRouter);
+app.use('/api/v1', operationsRouter);
 app.use('/api/fleet', fleetRoutes);
 app.use('/api/company-management', companyManagementRoutes);
 app.use('/api/quotations', quotationRoutes);

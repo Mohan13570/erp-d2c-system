@@ -18,7 +18,7 @@ export default function CreateShipmentWizard() {
 
   const handleSubmit = async () => {
     try {
-      const res = await fetch('/api/shipments/wizard', {
+      const res = await fetch('/api/v1/shipments/wizard', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
