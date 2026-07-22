@@ -25,7 +25,7 @@ router.get('/shipments/:shipmentId/labels/qr', async (req, res) => {
     }
 
     // URL to the public tracking portal
-    const trackingUrl = \`http://localhost:5173/tracking?ref=\${shipment.trackingNumber}\`;
+    const trackingUrl = 'http://localhost:5173/tracking?ref=' + shipment.trackingNumber;
     
     // Generate QR code as Base64 Image
     const qrCodeDataUri = await QRCode.toDataURL(trackingUrl, {
