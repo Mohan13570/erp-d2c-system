@@ -59,6 +59,14 @@ manager.addDocument('en', 'revenue summary', 'reports.revenue');
   manager.addDocument('en', 'list ocean freight shipments', 'oceanFreight.list');
   manager.addDocument('en', 'show ocean freight bookings', 'oceanFreight.list');
   manager.addDocument('en', 'how many ocean freight shipments are pending', 'oceanFreight.list');
+  // Ocean AI
+  manager.addDocument('en', 'show delayed ocean shipments', 'ocean.delayed');
+  manager.addDocument('en', 'which shipments are arriving late', 'ocean.delayed');
+  manager.addDocument('en', 'predict vessel arrival delays', 'ocean.vesselDelays');
+  manager.addDocument('en', 'summarize today ocean freight operations', 'ocean.summary');
+  manager.addDocument('en', 'which containers need attention', 'ocean.containers');
+  manager.addDocument('en', 'find high cost shipments', 'ocean.highCost');
+  manager.addDocument('en', 'suggest freight cost optimization', 'ocean.costOptimization');
   // ---------- Container Management ----------
   manager.addDocument('en', 'show all containers', 'container.showAll');
   manager.addDocument('en', 'list all containers', 'container.showAll');

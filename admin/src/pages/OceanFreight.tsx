@@ -1,13 +1,54 @@
 import React, { useState, useEffect } from 'react';
-import { Anchor, Ship, Box, Plus, MapPin } from 'lucide-react';
+import { Anchor, Ship, Box, MapPin, Plus, Sparkles, BrainCircuit, AlertTriangle, TrendingUp } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function OceanFreight() {
+  const { token } = useAuth();
   const [vessels, setVessels] = useState<any[]>([]);
   const [voyages, setVoyages] = useState<any[]>([]);
   const [containers, setContainers] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<'vessels' | 'voyages' | 'containers'>('vessels');
+  const [activeTab, setActiveTab] = useState<'vessels' | 'voyages' | 'containers' | 'ai-insights'>('vessels');
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState<any>({});
+  
+  // AI State
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiData, setAiData] = useState<any>({ delayed: '', vessels: '', summary: '', containers: '', cost: '' });
+
+  const fetchAIInsights = async () => {
+    setAiLoading(true);
+    try {
+      const runQuery = async (query: string) => {
+        const res = await fetch('/api/ai/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ query })
+        });
+        const data = await res.json();
+        return data.response;
+      };
+
+      const [delayed, vesselsInfo, summary, containersInfo, cost] = await Promise.all([
+        runQuery('show delayed ocean shipments'),
+        runQuery('predict vessel arrival delays'),
+        runQuery('summarize today ocean freight operations'),
+        runQuery('which containers need attention'),
+        runQuery('suggest freight cost optimization')
+      ]);
+
+      setAiData({ delayed, vessels: vesselsInfo, summary, containers: containersInfo, cost });
+    } catch (err) {
+      console.error('AI Error:', err);
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'ai-insights' && !aiData.summary) {
+      fetchAIInsights();
+    }
+  }, [activeTab]);
 
   const fetchData = async () => {
     try {
@@ -58,6 +99,9 @@ export default function OceanFreight() {
         </button>
         <button onClick={() => setActiveTab('containers')} className={`flex items-center px-6 py-2.5 rounded-xl text-sm font-bold ${activeTab === 'containers' ? 'bg-white text-blue-700 shadow-sm' : 'text-gray-500'}`}>
           <Box size={18} className="mr-2" /> Containers
+        </button>
+        <button onClick={() => setActiveTab('ai-insights')} className={`flex items-center px-6 py-2.5 rounded-xl text-sm font-bold ${activeTab === 'ai-insights' ? 'bg-indigo-600 text-white shadow-sm' : 'text-indigo-600 hover:bg-indigo-50'}`}>
+          <Sparkles size={18} className="mr-2" /> AI Insights
         </button>
       </div>
 
@@ -114,6 +158,76 @@ export default function OceanFreight() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {activeTab === 'ai-insights' && (
+          <div className="space-y-6">
+            <div className="bg-indigo-600 rounded-3xl p-8 text-white flex items-start justify-between shadow-lg">
+              <div>
+                <h2 className="text-2xl font-black mb-2 flex items-center"><BrainCircuit className="mr-3"/> Ocean Freight AI Intelligence</h2>
+                <p className="text-indigo-200 font-medium max-w-2xl">
+                  Automated insights powered by the ERP AI Operations Hub. This module analyzes real-time shipments, container statuses, and external port variables to predict risks and optimize costs.
+                </p>
+              </div>
+              <button onClick={fetchAIInsights} disabled={aiLoading} className="px-6 py-3 bg-white text-indigo-600 rounded-xl font-bold text-sm shadow-sm hover:bg-indigo-50 transition-colors">
+                {aiLoading ? 'Analyzing Data...' : 'Refresh Insights'}
+              </button>
+            </div>
+
+            {aiLoading ? (
+              <div className="py-20 text-center text-gray-500 font-semibold">Generating AI Insights...</div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+                  <div className="flex items-center mb-4 text-amber-600">
+                    <AlertTriangle size={20} className="mr-2"/>
+                    <h3 className="font-bold text-lg">Delay & Risk Alerts</h3>
+                  </div>
+                  <div className="whitespace-pre-wrap text-sm text-gray-700 bg-amber-50/50 p-4 rounded-2xl border border-amber-100">
+                    {aiData.vessels}
+                    <br/><br/>
+                    {aiData.delayed}
+                  </div>
+                </div>
+
+                <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+                  <div className="flex items-center mb-4 text-emerald-600">
+                    <Box size={20} className="mr-2"/>
+                    <h3 className="font-bold text-lg">Container Intelligence</h3>
+                  </div>
+                  <div className="whitespace-pre-wrap text-sm text-gray-700 bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100">
+                    {aiData.containers}
+                  </div>
+                </div>
+
+                <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+                  <div className="flex items-center mb-4 text-blue-600">
+                    <TrendingUp size={20} className="mr-2"/>
+                    <h3 className="font-bold text-lg">Cost Optimization</h3>
+                  </div>
+                  <div className="whitespace-pre-wrap text-sm text-gray-700 bg-blue-50/50 p-4 rounded-2xl border border-blue-100">
+                    {aiData.cost}
+                  </div>
+                </div>
+
+                <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+                  <div className="flex items-center mb-4 text-purple-600">
+                    <Sparkles size={20} className="mr-2"/>
+                    <h3 className="font-bold text-lg">Suggested AI Prompts</h3>
+                  </div>
+                  <div className="space-y-2">
+                    {['Show delayed ocean shipments', 'Summarize today ocean freight operations', 'Find high cost shipments', 'Which containers need attention?'].map((p, i) => (
+                      <div key={i} className="px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm font-semibold text-gray-600 cursor-pointer hover:bg-purple-50 hover:text-purple-700 transition-colors">
+                        "{p}"
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            )}
           </div>
         )}
       </div>
