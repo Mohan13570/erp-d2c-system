@@ -106,6 +106,11 @@ import ResourceAllocation from './pages/shipments/ResourceAllocation';
 import OperationsManagement from './pages/shipments/OperationsManagement';
 import ShipmentTimeline from './pages/shipments/ShipmentTimeline';
 import TrackingDashboard from './pages/shipments/TrackingDashboard';
+import RouteProgress from './pages/shipments/RouteProgress';
+import TrackingMap from './pages/shipments/TrackingMap';
+import ShipmentLabels from './pages/shipments/ShipmentLabels';
+import TrackingAnalytics from './pages/shipments/TrackingAnalytics';
+import ShipmentTrackingHub from './pages/shipments/ShipmentTrackingHub';
 import CompanyManagement from './pages/CompanyManagement';
 import Quotations from './pages/Quotations';
 import OceanFreight from './pages/OceanFreight';
@@ -144,6 +149,8 @@ import LogsViewer from './pages/admin/LogsViewer';
 // Enterprise Integration & AI
 import IntegrationDashboard from './pages/integration/IntegrationDashboard';
 import APIGateway from './pages/integration/APIGateway';
+import ResetPassword from './pages/ResetPassword';
+import PublicTracking from './pages/PublicTracking';
 import AIDashboard from './pages/ai/AIDashboard';
 import PromptLibrary from './pages/ai/PromptLibrary';
 
@@ -217,8 +224,8 @@ import CostingDashboard from './pages/air/finance/CostingDashboard';
 import ShipmentProfitability from './pages/air/finance/ShipmentProfitability';
 import CustomsClearanceDesk from './pages/air/customs/CustomsClearanceDesk';
 import AirFreightHub from './pages/air/AirFreightHub';
-import TrackingDashboard from './pages/air/tracking/TrackingDashboard';
-import AnalyticsDashboard from './pages/air/analytics/AnalyticsDashboard';
+import AirTrackingDashboard from './pages/air/tracking/TrackingDashboard';
+import AirAnalyticsDashboard from './pages/air/analytics/AnalyticsDashboard';
 import RoadTransportHub from './pages/road/RoadTransportHub';
 import RoadBookingWizard from './pages/road/RoadBookingWizard';
 import TripPlanner from './pages/road/TripPlanner';
@@ -266,7 +273,7 @@ import CustomsWorkspace from './pages/ocean/finance/CustomsWorkspace';
 import ExecutiveDashboard from './pages/ocean/executive/ExecutiveDashboard';
 import PerformanceAnalytics from './pages/ocean/executive/PerformanceAnalytics';
 import OceanLiveTrackingMap from './pages/ocean/tracking/LiveTrackingMap';
-import ShipmentTimeline from './pages/ocean/tracking/ShipmentTimeline';
+import OceanShipmentTimeline from './pages/ocean/tracking/ShipmentTimeline';
 
 // Procurement Module
 import ProcurementHub from './pages/procurement/ProcurementHub';
@@ -349,35 +356,205 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function AdminLayout() {
+  return (
+    <div className="flex h-screen bg-[#F8FAFC] text-slate-900 font-sans selection:bg-blue-100">
+      <Sidebar />
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <Header />
+        <main className="flex-1 overflow-y-auto p-6 scroll-smooth">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/orders" element={<SalesOrders />} />
+            <Route path="/hr" element={<HR />} />
+            <Route path="/finance" element={<Finance />} />
+            <Route path="/supply-chain" element={<SupplyChain />} />
+            <Route path="/manufacturing" element={<Manufacturing />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/assets" element={<Assets />} />
+            <Route path="/returns" element={<Returns />} />
+            <Route path="/crm" element={<CRM />} />
+            <Route path="/quotations" element={<Quotations />} />
+            {/* Logistics & Fleet */}
+            <Route path="/booking/wizard" element={<BookingDetailsWizard />} />
+            <Route path="/booking/invoice/:id" element={<CommercialInvoice />} />
+            <Route path="/booking/label/:id" element={<ShippingLabels />} />
+            <Route path="/package/calculator" element={<PackageCalculations />} />
+            <Route path="/tracking" element={<Tracking />} />
+            <Route path="/trips" element={<TripDashboard />} />
+            <Route path="/trips/list" element={<TripList />} />
+            <Route path="/trips/plan" element={<TripWizard />} />
+            <Route path="/trips/:id" element={<TripDetail />} />
+            <Route path="/gps" element={<AdvancedLiveMap />} />
+            <Route path="/gps/devices" element={<GPSDeviceList />} />
+            <Route path="/gps/devices/:id" element={<GPSDeviceDetail />} />
+            <Route path="/geofences" element={<GeofenceMapEditor />} />
+            <Route path="/routes/plan" element={<RoutePlanner />} />
+            <Route path="/alerts" element={<AlertDashboard />} />
+            <Route path="/reports/bi" element={<BIReports />} />
+            <Route path="/ocean/bookings" element={<BookingDashboard />} />
+            <Route path="/air/bookings" element={<AirBookingDashboard />} />
+            <Route path="/air/bookings/create" element={<CreateAirBookingWizard />} />
+            <Route path="/air/bookings/:id" element={<AirShipmentDetail />} />
+            <Route path="/air/operations/acceptance" element={<CargoAcceptanceDock />} />
+            <Route path="/air/operations/uld" element={<ULDBuildup />} />
+            <Route path="/air/operations/load-plan" element={<AircraftLoadPlan />} />
+            <Route path="/air/operations/ramp" element={<RampOperations />} />
+            <Route path="/air/finance" element={<CostingDashboard />} />
+            <Route path="/air/finance/profitability/:id" element={<ShipmentProfitability />} />
+            <Route path="/air/customs" element={<CustomsClearanceDesk />} />
+            <Route path="/air/hub" element={<AirFreightHub />} />
+            <Route path="/air/tracking" element={<AirTrackingDashboard />} />
+            <Route path="/air/analytics" element={<AirAnalyticsDashboard />} />
+            <Route path="/ocean/bookings/new" element={<CreateBookingWizard />} />
+            <Route path="/ocean/bookings/:id" element={<BookingWorkspace />} />
+            <Route path="/ocean/ops/yard" element={<YardDashboard />} />
+            <Route path="/ocean/ops/inventory" element={<ContainerInventory />} />
+            <Route path="/ocean/ops/gate" element={<GateOperations />} />
+            <Route path="/ocean/ops/planning" element={<PortPlanning />} />
+            <Route path="/ocean/finance/billing" element={<OceanBillingDashboard />} />
+            <Route path="/ocean/finance/invoices/new" element={<InvoiceManager />} />
+            <Route path="/ocean/finance/profitability" element={<ProfitabilityAnalysis />} />
+            <Route path="/ocean/customs" element={<CustomsWorkspace />} />
+            <Route path="/ocean/executive/dashboard" element={<ExecutiveDashboard />} />
+            <Route path="/ocean/executive/performance" element={<PerformanceAnalytics />} />
+            <Route path="/ocean/tracking/map" element={<OceanLiveTrackingMap />} />
+            <Route path="/ocean/tracking/timeline" element={<OceanShipmentTimeline />} />
+            <Route path="/vehicles" element={<VehicleDashboard />} />
+            <Route path="/vehicles/list" element={<VehicleList />} />
+            <Route path="/vehicles/register" element={<VehicleRegistration />} />
+            <Route path="/vehicles/:id" element={<VehicleDetail />} />
+            <Route path="/drivers" element={<DriverDashboard />} />
+            <Route path="/drivers/list" element={<DriverList />} />
+            <Route path="/drivers/register" element={<DriverRegistration />} />
+            <Route path="/drivers/:id" element={<DriverProfile />} />
+            <Route path="/shipments" element={<ShipmentDashboard />} />
+            <Route path="/shipments/list" element={<ShipmentList />} />
+            <Route path="/shipments/create" element={<CreateShipmentWizard />} />
+            <Route path="/shipments/:id" element={<ShipmentDetail />} />
+            <Route path="/shipments/:id/cargo" element={<CargoManagement />} />
+            <Route path="/shipments/:id/allocation" element={<ResourceAllocation />} />
+            <Route path="/shipments/:id/operations" element={<OperationsManagement />} />
+            <Route path="/shipments/:id/timeline" element={<ShipmentTimeline />} />
+            <Route path="/shipments/:id/tracking" element={<TrackingDashboard />} />
+            <Route path="/shipments/:id/route" element={<RouteProgress />} />
+            <Route path="/shipments/:id/map" element={<TrackingMap />} />
+            <Route path="/shipments/:id/labels" element={<ShipmentLabels />} />
+            <Route path="/fleet" element={<Fleet />} />
+            <Route path="/ocean-freight" element={<OceanFreight />} />
+            <Route path="/air-freight" element={<Navigate to="/air/hub" replace />} />
+            <Route path="/road-transport" element={<Navigate to="/road/hub" replace />} />
+            <Route path="/road/hub" element={<RoadTransportHub />} />
+            <Route path="/road/bookings/new" element={<RoadBookingWizard />} />
+            <Route path="/road/planning" element={<TripPlanner />} />
+            <Route path="/road/dispatch" element={<DispatchConsole />} />
+            <Route path="/road/execution/:id" element={<TripExecutionWorkspace />} />
+            <Route path="/road/vehicle-ops" element={<VehicleOpsDashboard />} />
+            <Route path="/road/driver-ops" element={<DriverOpsDashboard />} />
+            <Route path="/road/billing" element={<RoadBillingDashboard />} />
+            <Route path="/road/claims" element={<RoadClaimsDesk />} />
+            <Route path="/road/analytics" element={<RoadAnalytics />} />
+            <Route path="/road/executive" element={<RoadExecutiveDashboard />} />
+            <Route path="/maintenance/assets" element={<FleetAssetManager />} />
+            <Route path="/maintenance/preventive" element={<PreventiveMaintenanceCalendar />} />
+            <Route path="/maintenance/workshop" element={<WorkshopDashboard />} />
+            <Route path="/maintenance/inspections" element={<InspectionDesk />} />
+            <Route path="/maintenance-ops/executive" element={<MaintenanceExecutiveDashboard />} />
+            <Route path="/maintenance-ops/inventory" element={<PartsInventory />} />
+            <Route path="/maintenance-ops/fuel-tyres" element={<FuelAndTyreDesk />} />
+            <Route path="/maintenance-ops/vendors" element={<ComplianceAndVendorHub />} />
+            <Route path="/containers/executive" element={<ContainerExecutiveDashboard />} />
+            <Route path="/containers/master" element={<ContainerMasterDesk />} />
+            <Route path="/containers/lifecycle" element={<ContainerLifecycleTracker />} />
+            <Route path="/containers/allocations" element={<ContainerAllocationHub />} />
+            <Route path="/container-ops/yard" element={<YardManagementConsole />} />
+            <Route path="/container-ops/desk" element={<ContainerOperationsDesk />} />
+            <Route path="/container-ops/cargo" element={<CargoAndPortTerminal />} />
+            <Route path="/container-ops/history" element={<ContainerMovementHistory />} />
+            <Route path="/container-tracking/map" element={<LiveTrackingMap />} />
+            <Route path="/container-tracking/reefer" element={<ReeferTelemetryDashboard />} />
+            <Route path="/container-tracking/compliance" element={<HealthAndComplianceHub />} />
+            <Route path="/container-tracking/repair" element={<RepairWorkshop />} />
+            <Route path="/container-finance/dashboard" element={<ContainerFinanceExecutiveDashboard />} />
+            <Route path="/container-finance/billing" element={<ContainerBillingHub />} />
+            <Route path="/container-finance/analytics" element={<ContainerAnalyticsDesk />} />
+            <Route path="/container-finance/reports" element={<ContainerReportsEngine />} />
+            <Route path="company/master" element={<CompanyMaster />} />
+            <Route path="company/organization-chart" element={<OrganizationChart />} />
+            <Route path="users/dashboard" element={<UserDashboard />} />
+            <Route path="users/employee/:id" element={<EmployeeProfile />} />
+            <Route path="security/dashboard" element={<SecurityDashboard />} />
+            <Route path="security/roles" element={<RoleManagement />} />
+            <Route path="workflow/dashboard" element={<WorkflowDashboard />} />
+            <Route path="workflow/builder" element={<WorkflowBuilder />} />
+            <Route path="workflow/inbox" element={<ApprovalInbox />} />
+            <Route path="notifications/dashboard" element={<NotificationDashboard />} />
+            <Route path="notifications/templates" element={<TemplateBuilder />} />
+            <Route path="notifications/announcements" element={<Announcements />} />
+            <Route path="mdm/dashboard" element={<MDMDashboard />} />
+            <Route path="mdm/:entity" element={<MasterDataGrid />} />
+            <Route path="admin/dashboard" element={<SystemDashboard />} />
+            <Route path="admin/logs" element={<LogsViewer />} />
+            <Route path="integration/dashboard" element={<IntegrationDashboard />} />
+            <Route path="integration/gateway" element={<APIGateway />} />
+            <Route path="ai/dashboard" element={<AIDashboard />} />
+            <Route path="ai/prompts" element={<PromptLibrary />} />
+            <Route path="vendor/list" element={<VendorList />} />
+            <Route path="vendor/registration" element={<VendorRegistrationWizard />} />
+            <Route path="vendor/portal" element={<VendorDashboard />} />
+            <Route path="vendor/procurement" element={<VendorProcurementDashboard />} />
+            <Route path="vendor/rfqs" element={<VendorRFQList />} />
+            <Route path="vendor/pos" element={<VendorPOView />} />
+            <Route path="vendor/logistics" element={<VendorLogisticsDashboard />} />
+            <Route path="vendor/asns" element={<VendorASNList />} />
+            <Route path="vendor/docks" element={<VendorDockBooking />} />
+            <Route path="vendor/finance" element={<VendorFinanceDashboard />} />
+            <Route path="vendor/invoices" element={<VendorInvoiceList />} />
+            <Route path="vendor/ledger" element={<VendorLedgerView />} />
+            <Route path="vendor/support" element={<VendorSupportCenter />} />
+            <Route path="vendor/chat" element={<VendorChat />} />
+            <Route path="vendor/performance" element={<VendorPerformance />} />
+            <Route path="vendor/knowledge-base" element={<VendorKnowledgeBase />} />
+            <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+            <Route path="/customer/directory" element={<CustomerList />} />
+            <Route path="/customer/:id" element={<CustomerProfileView />} />
+            <Route path="/customer/register" element={<CustomerRegistrationWizard />} />
+            <Route path="/customer/logistics" element={<CustomerLogisticsDashboard />} />
+            <Route path="/customer/logistics/booking/new" element={<CustomerBookingWizard />} />
+            <Route path="/customer/logistics/rfqs" element={<CustomerRFQDashboard />} />
+            <Route path="/customer/logistics/quotations/compare/:id" element={<CustomerQuotationComparison />} />
+            <Route path="/customer/tracking" element={<CustomerTrackingDashboard />} />
+            <Route path="/customer/tracking/map" element={<CustomerLiveMap />} />
+            <Route path="/customer/tracking/timeline/:id" element={<CustomerShipmentTimeline />} />
+            <Route path="/customer/tracking/warehouse" element={<CustomerWarehouseVisibility />} />
+            <Route path="/customer/finance" element={<CustomerFinanceDashboard />} />
+            <Route path="/customer/finance/invoices" element={<CustomerInvoiceList />} />
+            <Route path="/customer/finance/invoices/:id" element={<CustomerInvoiceDetail />} />
+            <Route path="/customer/finance/payments" element={<CustomerPaymentGateway />} />
+            <Route path="/customer/finance/ledger" element={<CustomerLedger />} />
+            <Route path="/customer/finance/credit" element={<CustomerCreditManagement />} />
+            <Route path="/customer/support" element={<CustomerSupportDashboard />} />
+            <Route path="/customer/analytics" element={<CustomerAnalyticsDashboard />} />
+            <Route path="/customer/ai" element={<CustomerAIAssistant />} />
+            <Route path="/customer/developer" element={<CustomerDeveloperPortal />} />
+            <Route path="/customer/settings" element={<CustomerSettingsProfile />} />
+          </Routes>
+        </main>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   return (
     <Router basename="/admin">
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/tracking" element={<PublicTracking />} />
         <Route path="/*" element={
           <RequireAuth>
-            <div className="flex h-screen bg-[#F8FAFC] text-slate-900 font-sans selection:bg-blue-100">
-              <Sidebar />
-              <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-                <Header />
-                <main className="flex-1 overflow-y-auto p-6 scroll-smooth">
-                  <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/inventory" element={<Inventory />} />
-                  <Route path="/orders" element={<SalesOrders />} />
-                  <Route path="/hr" element={<HR />} />
-                  <Route path="/finance" element={<Finance />} />
-                  <Route path="/supply-chain" element={<SupplyChain />} />
-                  <Route path="/manufacturing" element={<Manufacturing />} />
-                  <Route path="/projects" element={<Projects />} />
-                  <Route path="/assets" element={<Assets />} />
-                  <Route path="/returns" element={<Returns />} />
-                  <Route path="/crm" element={<CRM />} />
-                  <Route path="/quotations" element={<Quotations />} />
-                  {/* Logistics & Fleet */}
-                  <Route path="/booking/wizard" element={<BookingDetailsWizard />} />
-                  <Route path="/booking/invoice/:id" element={<CommercialInvoice />} />
-                  <Route path="/booking/label/:id" element={<ShippingLabels />} />
                   <Route path="/package/calculator" element={<PackageCalculations />} />
                   <Route path="/tracking" element={<Tracking />} />
                   <Route path="/trips" element={<TripDashboard />} />
@@ -436,6 +613,11 @@ function App() {
                   <Route path="/shipments/:id/operations" element={<OperationsManagement />} />
                   <Route path="/shipments/:id/timeline" element={<ShipmentTimeline />} />
                   <Route path="/shipments/:id/tracking" element={<TrackingDashboard />} />
+                  <Route path="/shipments/:id/route" element={<RouteProgress />} />
+                  <Route path="/shipments/:id/map" element={<TrackingMap />} />
+                  <Route path="/shipments/:id/labels" element={<ShipmentLabels />} />
+                  <Route path="/shipments/analytics" element={<TrackingAnalytics />} />
+                  <Route path="/shipments/:id/tracking-hub" element={<ShipmentTrackingHub />} />
                   <Route path="/fleet" element={<Fleet />} />
                   <Route path="/ocean-freight" element={<OceanFreight />} />
                   <Route path="/air-freight" element={<Navigate to="/air/hub" replace />} />

@@ -1066,9 +1066,10 @@ model Shipment {
   routeAssignment     RouteAssignment?
   dispatchPlan        DispatchPlan?
 
-  pickupRequest        PickupRequest?
-  deliverySchedule     DeliverySchedule?
-  ShipmentLiveTracking ShipmentLiveTracking[]
+  pickupRequest         PickupRequest?
+  deliverySchedule      DeliverySchedule?
+  ShipmentLiveTracking  ShipmentLiveTracking[]
+  ShipmentRouteProgress ShipmentRouteProgress?
 }
 
 model ShipmentCargo {
@@ -8931,4 +8932,26 @@ model ShipmentLiveTracking {
   vehicleStatus String?
 
   timestamp DateTime @default(now())
+}
+
+// ==========================================
+// Phase 6.4: Route Progress
+// ==========================================
+model ShipmentRouteProgress {
+  id         String   @id @default(uuid())
+  shipmentId String   @unique
+  shipment   Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+
+  origin            String
+  destination       String
+  intermediateStops String? // JSON array string of stops
+
+  distanceCovered   Float @default(0)
+  distanceRemaining Float @default(0)
+
+  estimatedArrival DateTime?
+  actualArrival    DateTime?
+  delayMinutes     Int       @default(0)
+
+  updatedAt DateTime @updatedAt
 }
