@@ -42,6 +42,8 @@ import AIHub from './pages/AIHub';
 import DriverApp from './pages/mobile/DriverApp';
 import WarehouseApp from './pages/mobile/WarehouseApp';
 import Reports from './pages/Reports';
+import ForecastDashboard from './pages/ForecastDashboard';
+import NotificationsDashboard from './pages/NotificationsDashboard';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isInitializing } = useAuth();
@@ -121,6 +123,8 @@ function App() {
                   {/* BI & AI */}
                   <Route path="/bi-dashboard" element={<BIDashboard />} />
                   <Route path="/ai-hub" element={<AIHub />} />
+                  <Route path="/ai-forecast" element={<ForecastDashboard />} />
+                  <Route path="/ai-notifications" element={<NotificationsDashboard />} />
 
                   {/* Mobile Apps */}
                   <Route path="/mobile/driver" element={<DriverApp />} />

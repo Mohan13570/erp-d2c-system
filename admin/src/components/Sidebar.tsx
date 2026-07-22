@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
-  LayoutDashboard, Users, UserCog, Settings, Package, Tags, Briefcase, Handshake, Mail, Map, Link as LinkIcon, Database, TrendingUp, Anchor, Plane, Truck, Globe, Car, Building2, ShieldCheck, FileText, Box, ShoppingCart, Landmark, ReceiptText, Shield, Crosshair, DollarSign, Command, RotateCcw, Megaphone, UserCheck, BarChart3, FolderKanban, Cpu, LogOut, Layers, UserCircle, UsersRound, BrainCircuit, Smartphone
+  LayoutDashboard, Users, UserCog, Settings, Package, Tags, Briefcase, Handshake, Mail, Map, Link as LinkIcon, Database, TrendingUp, Anchor, Plane, Truck, Globe, Car, Building2, ShieldCheck, FileText, Box, ShoppingCart, Landmark, ReceiptText, Shield, Crosshair, DollarSign, Command, RotateCcw, Megaphone, UserCheck, BarChart3, FolderKanban, Cpu, LogOut, Layers, UserCircle, UsersRound, BrainCircuit, Smartphone, Bell, LineChart
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -13,6 +13,8 @@ const navSections = [
       { name: 'BI Dashboard', path: '/bi-dashboard', icon: TrendingUp },
       { name: 'Reports', path: '/reports', icon: FileText },
       { name: 'AI Operations Hub', path: '/ai-hub', icon: BrainCircuit },
+      { name: 'AI Forecast', path: '/ai-forecast', icon: LineChart },
+      { name: 'AI Notifications', path: '/ai-notifications', icon: Bell },
       { name: 'CRM & Sales', path: '/crm', icon: Users },
       { name: 'Quotations', path: '/quotations', icon: FolderKanban },
     ]

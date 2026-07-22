@@ -106,4 +106,47 @@ manager.addDocument('en', 'Finance report', 'finance.summary');
   manager.addDocument('en', 'view customer records', 'customers.list');
 
   // You can extend with more utterances as needed.
+
+  // ---------- Road Transport & Fleet Additions ----------
+  manager.addDocument('en', 'road transport', 'roadTransport.list');
+  manager.addDocument('en', 'show road transport', 'roadTransport.list');
+  manager.addDocument('en', 'road transport summary', 'roadTransport.list');
+  manager.addDocument('en', 'overview of road transport', 'roadTransport.list');
+  manager.addDocument('en', 'road transport dashboard', 'roadTransport.list');
+  manager.addDocument('en', 'how is road transport doing', 'roadTransport.list');
+  manager.addDocument('en', 'road transport stats', 'roadTransport.list');
+
+  // roadTransport.trips
+  manager.addDocument('en', 'show active trips', 'roadTransport.trips');
+  manager.addDocument('en', 'list road trips', 'roadTransport.trips');
+  manager.addDocument('en', 'what trips are scheduled', 'roadTransport.trips');
+  manager.addDocument('en', 'display transport trips', 'roadTransport.trips');
+  manager.addDocument('en', 'show me all trips', 'roadTransport.trips');
+
+  // roadTransport.drivers
+  manager.addDocument('en', 'show our drivers', 'roadTransport.drivers');
+  manager.addDocument('en', 'list all drivers', 'roadTransport.drivers');
+  manager.addDocument('en', 'driver availability', 'roadTransport.drivers');
+  manager.addDocument('en', 'who are the drivers', 'roadTransport.drivers');
+  manager.addDocument('en', 'truck drivers list', 'roadTransport.drivers');
+
+  // fleet.maintenance
+  manager.addDocument('en', 'show vehicle maintenance', 'fleet.maintenance');
+  manager.addDocument('en', 'fleet repair logs', 'fleet.maintenance');
+  manager.addDocument('en', 'maintenance records', 'fleet.maintenance');
+  manager.addDocument('en', 'vehicle repairs', 'fleet.maintenance');
+
+  // fleet.fuel
+  manager.addDocument('en', 'show fleet fuel consumption', 'fleet.fuel');
+  manager.addDocument('en', 'fuel logs', 'fleet.fuel');
+  manager.addDocument('en', 'how much are we spending on fuel', 'fleet.fuel');
+  manager.addDocument('en', 'fleet fuel costs', 'fleet.fuel');
+
+  // conversational and documents fallback
+  manager.addDocument('en', 'document assistant', 'ai.documents');
+  manager.addDocument('en', 'extract information from file', 'ai.documents');
+  manager.addDocument('en', 'hello', 'None');
+  manager.addDocument('en', 'hi', 'None');
+  manager.addDocument('en', 'who are you', 'None');
+
 };

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { NlpManager } from 'node-nlp';
 import { deepTrain } from '../utils/ai-trainer';
+import { ProviderFactory } from '../ai/ProviderFactory';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -291,8 +292,72 @@ router.post('/query', async (req, res) => {
         module = "Finance";
                 }
         break;
+      case 'roadTransport.list': {
+        const totalTrips = await prisma.trip.count();
+        const totalDrivers = await prisma.driver.count();
+        const activeVehicles = await prisma.vehicle.count({ where: { status: 'Available' } });
+        response = formatHeader('Road Transport Summary') + `* Total Trips: ${totalTrips}\n* Total Drivers: ${totalDrivers}\n* Available Vehicles: ${activeVehicles}`;
+        module = "RoadTransport";
+        }
+        break;
+      case 'roadTransport.trips': {
+        const activeTrips = await prisma.trip.findMany({
+          where: { status: { in: ['Scheduled', 'In Transit'] } },
+          include: { driver: true, vehicle: true }
+        });
+        const tripCount = activeTrips.length;
+        response = tripCount 
+          ? formatHeader('Active Trips') + `Total Active: ${tripCount}\n\n${activeTrips.map(t => `- Trip: ${t.id}\n  Origin: ${t.origin}\n  Dest: ${t.destination}\n  Driver: ${t.driver.name} (${t.driver.licenseNo})\n  Vehicle: ${t.vehicle.plateNumber}`).join('\n\n')}`
+          : formatHeader('Active Trips') + 'No active or scheduled trips found.';
+        module = "RoadTransport";
+        }
+        break;
+      case 'roadTransport.drivers': {
+        const drivers = await prisma.driver.findMany();
+        const driverCount = drivers.length;
+        response = driverCount
+          ? formatHeader('Drivers') + `Total Drivers: ${driverCount}\n\n${drivers.map(d => `- ${d.name} (License: ${d.licenseNo}) | Status: ${d.status}`).join('\n')}`
+          : formatHeader('Drivers') + 'No drivers found.';
+        module = "RoadTransport";
+        }
+        break;
+      case 'fleet.maintenance': {
+        const maintenance = await prisma.vehicleMaintenance.findMany({
+          include: { vehicle: true },
+          orderBy: { date: 'desc' },
+          take: 10
+        });
+        response = maintenance.length
+          ? formatHeader('Recent Maintenance Records') + `${maintenance.map(m => `- Vehicle: ${m.vehicle.plateNumber}\n  Date: ${m.date.toISOString().split('T')[0]}\n  Task: ${m.description}\n  Cost: $${m.cost.toFixed(2)}`).join('\n\n')}`
+          : formatHeader('Maintenance Records') + 'No maintenance records found.';
+        module = "Fleet";
+        }
+        break;
+      case 'fleet.fuel': {
+        const fuelLogs = await prisma.fuelLog.findMany({
+          include: { vehicle: true },
+          orderBy: { date: 'desc' },
+          take: 10
+        });
+        const totalCostObj = await prisma.fuelLog.aggregate({ _sum: { cost: true } });
+        const totalCost = totalCostObj._sum.cost || 0;
+        response = fuelLogs.length
+          ? formatHeader('Fuel Logs') + `Total Fleet Fuel Cost: $${totalCost.toFixed(2)}\n\nRecent Logs:\n${fuelLogs.map(f => `- Vehicle: ${f.vehicle.plateNumber} | Date: ${f.date.toISOString().split('T')[0]} | Liters: ${f.liters} | Cost: $${f.cost.toFixed(2)}`).join('\n')}`
+          : formatHeader('Fuel Logs') + 'No fuel logs found.';
+        module = "Fleet";
+        }
+        break;
       default:
-        // keep generic fallback response
+        if (intent === 'None') {
+          try {
+            const provider = ProviderFactory.getProvider();
+            response = await provider.generateResponse(query);
+            module = "Conversational";
+          } catch (e) {
+            response = "I couldn't process your conversational query right now.";
+            module = "System";
+          }
+        }
         break;
     }
     const log = await prisma.aIQueryLog.create({ data: { query, response, module } });
