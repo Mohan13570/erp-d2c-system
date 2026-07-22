@@ -1066,8 +1066,9 @@ model Shipment {
   routeAssignment     RouteAssignment?
   dispatchPlan        DispatchPlan?
 
-  pickupRequest    PickupRequest?
-  deliverySchedule DeliverySchedule?
+  pickupRequest        PickupRequest?
+  deliverySchedule     DeliverySchedule?
+  ShipmentLiveTracking ShipmentLiveTracking[]
 }
 
 model ShipmentCargo {
@@ -8910,4 +8911,24 @@ model DeliveryPhoto {
   photoType          String // PROOF, DAMAGE, LOCATION
   uploadedBy         String?
   createdAt          DateTime         @default(now())
+}
+
+// ==========================================
+// Phase 6.3: Live Tracking Engine
+// ==========================================
+model ShipmentLiveTracking {
+  id         String   @id @default(uuid())
+  shipmentId String
+  shipment   Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+
+  latitude  Float
+  longitude Float
+  speed     Float?
+  heading   Float?
+  altitude  Float?
+
+  driverStatus  String?
+  vehicleStatus String?
+
+  timestamp DateTime @default(now())
 }
