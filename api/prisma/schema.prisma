@@ -723,6 +723,8 @@ model Shipment {
   milestones     ShipmentMilestone[]
   trackingEvents TrackingEvent[]
   statuses       ShipmentStatus[]
+  transportPlanId String?
+  transportPlan   TransportPlan?      @relation(fields: [transportPlanId], references: [id])
 }
 
 model ShipmentItem {
@@ -869,6 +871,20 @@ model Trip {
   startTime   DateTime?
   endTime     DateTime?
   events      TripEvent[]
+  transportPlan TransportPlan?
+}
+
+model TransportPlan {
+  id               String     @id @default(uuid())
+  pickupLocation   String
+  deliveryLocation String
+  vehicleReq       String
+  priority         String     @default("Medium")
+  status           String     @default("Planned")
+  shipments        Shipment[]
+  tripId           String?    @unique
+  trip             Trip?      @relation(fields: [tripId], references: [id])
+  createdAt        DateTime   @default(now())
 }
 
 model VehicleMaintenance {

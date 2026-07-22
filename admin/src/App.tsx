@@ -44,6 +44,9 @@ import WarehouseApp from './pages/mobile/WarehouseApp';
 import Reports from './pages/Reports';
 import ForecastDashboard from './pages/ForecastDashboard';
 import NotificationsDashboard from './pages/NotificationsDashboard';
+import RoadTransportDashboard from './pages/RoadTransportDashboard';
+import TransportPlanning from './pages/TransportPlanning';
+import TripManagement from './pages/TripManagement';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isInitializing } = useAuth();
@@ -114,6 +117,11 @@ function App() {
                   <Route path="/insurance" element={<Insurance />} />
                   <Route path="/tracking" element={<Tracking />} />
                   <Route path="/reports" element={<Reports />} />
+
+                  {/* Road Transport */}
+                  <Route path="/road-transport" element={<RoadTransportDashboard />} />
+                  <Route path="/road-transport/planning" element={<TransportPlanning />} />
+                  <Route path="/road-transport/trips" element={<TripManagement />} />
 
                   {/* Portals */}
                   <Route path="/customer-portal" element={<CustomerPortal />} />

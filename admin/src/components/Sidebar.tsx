@@ -25,10 +25,17 @@ const navSections = [
       { name: 'Shipments', path: '/shipments', icon: Globe },
       { name: 'Ocean Freight', path: '/ocean-freight', icon: Anchor },
       { name: 'Air Freight', path: '/air-freight', icon: Plane },
-      { name: 'Road Transport', path: '/road-transport', icon: Truck },
       { name: 'Fleet Maintenance', path: '/fleet-management', icon: Car },
       { name: 'Container Management', path: '/containers', icon: Box },
       { name: 'Real-Time Tracking', path: '/tracking', icon: Crosshair },
+    ]
+  },
+  {
+    label: 'Road Transport',
+    items: [
+      { name: 'Dashboard', path: '/road-transport', icon: LayoutDashboard },
+      { name: 'Transport Planning', path: '/road-transport/planning', icon: Map },
+      { name: 'Trip Management', path: '/road-transport/trips', icon: Truck },
     ]
   },
   {
