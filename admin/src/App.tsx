@@ -112,6 +112,7 @@ import ShipmentLabels from './pages/shipments/ShipmentLabels';
 import TrackingAnalytics from './pages/shipments/TrackingAnalytics';
 import ShipmentTrackingHub from './pages/shipments/ShipmentTrackingHub';
 import ShipmentDocuments from './pages/shipments/ShipmentDocuments';
+import ShipmentBilling from './pages/shipments/ShipmentBilling';
 import CompanyManagement from './pages/CompanyManagement';
 import Quotations from './pages/Quotations';
 import OceanFreight from './pages/OceanFreight';
@@ -620,6 +621,7 @@ function App() {
                   <Route path="/shipments/analytics" element={<TrackingAnalytics />} />
                   <Route path="/shipments/:id/tracking-hub" element={<ShipmentTrackingHub />} />
                   <Route path="/shipments/:id/documents" element={<ShipmentDocuments />} />
+                  <Route path="/shipments/:id/billing" element={<ShipmentBilling />} />
                   <Route path="/fleet" element={<Fleet />} />
                   <Route path="/ocean-freight" element={<OceanFreight />} />
                   <Route path="/air-freight" element={<Navigate to="/air/hub" replace />} />

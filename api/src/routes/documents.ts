@@ -65,7 +65,7 @@ router.post('/shipments/:id/documents', upload.single('file'), async (req, res) 
 
     // MOCK S3 UPLOAD
     // In production: const s3Url = await s3Service.upload(file.buffer, file.originalname);
-    const mockS3Url = \`https://s3.lizome.dev/bucket/\${Date.now()}-\${file.originalname}\`;
+    const mockS3Url = "https://s3.lizome.dev/bucket/" + Date.now() + "-" + file.originalname;
 
     // Ensure category exists
     let dbCategory = await prisma.documentCategory.findUnique({ where: { name: category } });
@@ -123,7 +123,7 @@ router.put('/shipments/:id/documents/:docId/approve', async (req, res) => {
       }
     });
 
-    res.json({ message: \`Document \${status}\`, document: doc });
+    res.json({ message: "Document " + status, document: doc });
   } catch (error) {
     console.error('Error approving document:', error);
     res.status(500).json({ error: 'Failed to process document approval' });
@@ -145,13 +145,13 @@ router.post('/shipments/:id/documents/validate', async (req, res) => {
     // Validation 1: Expired documents
     const expired = documents.filter(d => d.expiryDate && new Date(d.expiryDate) < new Date());
     if (expired.length > 0) {
-      errors.push(...expired.map(d => \`Document '\${d.name}' has expired.\`));
+      errors.push(...expired.map(d => "Document '" + d.name + "' has expired."));
     }
 
     // Validation 2: Pending Mandatory Docs
     const pendingMandatory = documents.filter(d => d.isMandatory && d.status !== 'APPROVED');
     if (pendingMandatory.length > 0) {
-      errors.push(...pendingMandatory.map(d => \`Mandatory document '\${d.name}' is not approved yet.\`));
+      errors.push(...pendingMandatory.map(d => "Mandatory document '" + d.name + "' is not approved yet."));
     }
 
     res.json({
