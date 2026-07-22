@@ -77,6 +77,15 @@ manager.addDocument('en', 'revenue summary', 'reports.revenue');
   manager.addDocument('en', 'list loaded containers', 'container.loaded');
   manager.addDocument('en', 'show containers in transit', 'container.inTransit');
   manager.addDocument('en', 'list containers in transit', 'container.inTransit');
+  // Container AI Insights
+  manager.addDocument('en', 'show containers needing attention', 'container.attention');
+  manager.addDocument('en', 'which containers are at risk', 'container.attention');
+  manager.addDocument('en', 'summarize container operations', 'container.summary');
+  manager.addDocument('en', 'find idle containers', 'container.idle');
+  manager.addDocument('en', 'identify delayed containers', 'container.delayed');
+  manager.addDocument('en', 'predict container delays', 'container.predictDelays');
+  manager.addDocument('en', 'analyze container utilization', 'container.utilization');
+  manager.addDocument('en', 'recommend container allocation', 'container.allocation');
 
   // ---------- Warehouse ----------
   manager.addDocument('en', 'what is the current warehouse stock', 'warehouse.stock');

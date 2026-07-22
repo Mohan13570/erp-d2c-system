@@ -202,6 +202,62 @@ router.post('/query', async (req, res) => {
         module = "Container";
         }
         break;
+      case 'container.attention':
+      case 'container.delayed': {
+        const delayedStatuses = await prisma.containerStatus.findMany({
+          where: {
+            OR: [
+              { status: 'Destuffing', timestamp: { lt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) } },
+              { status: 'Stuffing', timestamp: { lt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) } }
+            ]
+          }
+        });
+        response = delayedStatuses.length
+          ? formatHeader('Containers Needing Attention') + `Total Flagged: ${delayedStatuses.length}\n\n${delayedStatuses.map(s => `- Container: ${s.containerNo}\n  Status: ${s.status} (since ${s.timestamp.toISOString().split('T')[0]})\n  Location: ${s.location}\n  Risk: Demurrage or port congestion delays.`).join('\n\n')}`
+          : formatHeader('Containers Needing Attention') + 'All containers are moving within expected SLAs.';
+        module = "Container";
+        }
+        break;
+      case 'container.summary': {
+        const statusGroups = await prisma.containerStatus.groupBy({
+          by: ['status'],
+          _count: { _all: true }
+        });
+        response = formatHeader('Container Operations Summary') + `Total Active Records: ${statusGroups.reduce((acc, curr) => acc + curr._count._all, 0)}\n\nBreakdown:\n` + statusGroups.map(g => `- ${g.status}: ${g._count._all}`).join('\n');
+        module = "Container";
+        }
+        break;
+      case 'container.idle': {
+        const idle = await prisma.containerStatus.findMany({
+          where: { status: 'Empty', timestamp: { lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } }
+        });
+        response = idle.length
+          ? formatHeader('Idle Containers') + `Total Idle (> 7 days): ${idle.length}\n\n${idle.map(s => `- Container: ${s.containerNo} at ${s.location}`).join('\n')}\n\nRecommendation: Reposition to high-demand origin ports.`
+          : formatHeader('Idle Containers') + 'No long-term idle containers found.';
+        module = "Container";
+        }
+        break;
+      case 'container.utilization': {
+        const total = await prisma.containerStatus.count();
+        const active = await prisma.containerStatus.count({ where: { status: { in: ['Stuffing', 'Destuffing', 'Returned'] } } });
+        const util = total ? Math.round((active / total) * 100) : 0;
+        response = formatHeader('Container Utilization Intelligence') + `Current Fleet Utilization: ${util}%\n\n${util > 80 ? 'Status: Highly Optimized' : 'Status: Underutilized. Consider leasing out excess capacity or optimizing repositioning.'}`;
+        module = "Container";
+        }
+        break;
+      case 'container.predictDelays':
+      case 'container.allocation': {
+        try {
+          const provider = ProviderFactory.getProvider();
+          response = await provider.generateResponse("Analyze container logistics capacity, repositioning strategies, and predict typical port delays based on standard supply chain heuristics. Provide a concise 3-point recommendation.");
+          response = formatHeader('AI Capacity & Risk Prediction') + response;
+          module = "Container";
+        } catch (e) {
+          response = formatHeader('AI Capacity & Risk Prediction') + "Prediction engine is currently unavailable.";
+          module = "System";
+        }
+        }
+        break;
       case 'airFreight.delayedFlights': {
         const delayedFlights = await prisma.flight.findMany();
         const totalDelayed = delayedFlights.length;
