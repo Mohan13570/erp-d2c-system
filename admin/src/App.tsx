@@ -119,6 +119,7 @@ import WarehouseMaster from './pages/warehouse/WarehouseMaster';
 import WarehouseStructure from './pages/warehouse/WarehouseStructure';
 import InboundReceiving from './pages/warehouse/InboundReceiving';
 import PutawayManagement from './pages/warehouse/PutawayManagement';
+import InventoryManagement from './pages/warehouse/InventoryManagement';
 import CompanyManagement from './pages/CompanyManagement';
 import Quotations from './pages/Quotations';
 import OceanFreight from './pages/OceanFreight';
@@ -635,6 +636,7 @@ function App() {
                   <Route path="/warehouse/:id/structure" element={<WarehouseStructure />} />
                   <Route path="/warehouse/:id/inbound" element={<InboundReceiving />} />
                   <Route path="/warehouse/:id/putaway" element={<PutawayManagement />} />
+                  <Route path="/warehouse/:id/inventory" element={<InventoryManagement />} />
                   <Route path="/fleet" element={<Fleet />} />
                   <Route path="/ocean-freight" element={<OceanFreight />} />
                   <Route path="/air-freight" element={<Navigate to="/air/hub" replace />} />
