@@ -31,13 +31,11 @@ export default function Header() {
         </button>
 
         <div className="flex items-center space-x-3 border-l border-gray-200 pl-6 cursor-pointer">
-          <img
-            className="h-8 w-8 rounded-full object-cover"
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-            alt="User avatar"
-          />
+          <div className="flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-700 font-bold text-sm uppercase">
+            {user?.role ? user.role.charAt(0) : 'A'}
+          </div>
           <div className="flex items-center">
-            <span className="text-sm font-medium text-gray-700">{user?.firstName || 'Mohan'} {user?.lastName || 'G'}</span>
+            <span className="text-sm font-medium text-gray-700 capitalize">{user?.role === 'employee' ? 'Employee' : (user?.role || 'Admin')}</span>
             <ChevronDown className="ml-1 h-4 w-4 text-gray-400" />
           </div>
         </div>

@@ -1,26 +1,16 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 
+import { ShipmentController } from '../controllers/shipment.controller';
+
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// GET all shipments (List View)
-router.get('/', async (req, res) => {
-  try {
-    const shipments = await prisma.shipment.findMany({
-      include: {
-        customer: true,
-        locations: true,
-        charges: true
-      },
-      orderBy: { id: 'desc' }
-    });
-    res.json(shipments);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Failed to fetch shipments' });
-  }
-});
+// GET Dashboard KPIs
+router.get('/dashboard', ShipmentController.getDashboardKPIs);
+
+// GET all shipments (Advanced Paginated List)
+router.get('/', ShipmentController.getShipments);
 
 // GET single shipment (Detail View)
 router.get('/:id', async (req, res) => {
@@ -34,6 +24,9 @@ router.get('/:id', async (req, res) => {
         carrier: true,
         charges: true,
         documents: true,
+        parties: true,
+        notes: true,
+        assignments: true,
         timeline: {
           orderBy: { timestamp: 'desc' }
         }
