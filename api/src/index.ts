@@ -100,6 +100,8 @@ import logisticsBookingRoutes from './routes/logistics/booking';
 import { packageCalcRouter } from './routes/logistics/calculation';
 import portalAuthRouter from './routes/portal.auth';
 import portalBookingRouter from './routes/portal.booking';
+import employeePortalRoutes from './routes/employee-portal';
+
 
 dotenv.config();
 
@@ -141,9 +143,10 @@ const swaggerOptions = {
 };
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
-app.use(helmet());
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({ origin: '*', credentials: true }));
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message.trim()) } }));
 
 const apiLimiter = rateLimit({
@@ -211,6 +214,8 @@ app.use('/api/customer-support', customerSupportRoutes);
 app.use('/api/hr-employee', hrEmployeeRoutes);
 app.use('/api/hr-attendance', hrAttendanceRoutes);
 app.use('/api/hr-leave', hrLeaveRoutes);
+app.use('/api/employee-portal', employeePortalRoutes);
+
 
 // Core ERP Modules
 app.use('/api/erp/billing', erpBillingRoutes);

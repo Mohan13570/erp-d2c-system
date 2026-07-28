@@ -43,7 +43,11 @@ export default function Login() {
 
       if (response.ok) {
         login(data.token, data.user);
-        navigate('/');
+        if (data.user?.roles?.includes('Employee') || email === 'employee@aura.com') {
+          navigate('/hr-portal');
+        } else {
+          navigate('/');
+        }
       } else {
         setError(data.error || 'Login failed');
       }
@@ -57,13 +61,15 @@ export default function Login() {
   const handlePortalSelect = (type: string) => {
     if (type === 'Customer') {
       window.location.href = '/'; // Go to the storefront
+    } else if (type === 'Employee') {
+      navigate('/hr-portal/login');
     } else {
       setLoginType(type);
       if (type === 'Admin') {
-        setEmail('admin@lizome.com');
+        setEmail('admin@aura.com');
         setPassword('admin123');
       } else {
-        setEmail('employee@lizome.com');
+        setEmail('employee@aura.com');
         setPassword('employee123');
       }
     }
@@ -86,7 +92,7 @@ export default function Login() {
           <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
             <div className="text-center mb-12">
               <div className="w-full flex items-center justify-center mx-auto mb-8 animate-pulse">
-                <img src="/admin/lizome-icon.svg" className="h-16 w-auto" alt="LIZOME" />
+                <img src="/lizome-icon.svg" className="h-16 w-auto" alt="LIZOME" />
               </div>
               <h2 className="text-5xl font-black tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
                 Lizome Platform

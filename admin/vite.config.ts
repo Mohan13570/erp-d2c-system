@@ -5,7 +5,9 @@ import path from "path"
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/admin/',
+  // No fixed base — both /admin/* and /portal/* are served from root.
+  // BrowserRouter(basename="/admin") and BrowserRouter(basename="/portal")
+  // each handle their own path prefix internally.
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

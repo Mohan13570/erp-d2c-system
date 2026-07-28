@@ -457,6 +457,7 @@ const navSections = [
 ];
 
 import { Hexagon } from 'lucide-react';
+import EmployeeSidebar from './EmployeeSidebar';
 
 export default function Sidebar() {
   const location = useLocation();
@@ -464,6 +465,10 @@ export default function Sidebar() {
   const { logout, user } = useAuth();
   
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
+
+  if ((user as any)?.roles?.includes('Employee') || user?.email === 'employee@aura.com') {
+    return <EmployeeSidebar />;
+  }
 
   const toggleMenu = (name: string) => {
     setOpenMenus(prev => ({ ...prev, [name]: !prev[name] }));
@@ -481,7 +486,7 @@ export default function Sidebar() {
       <div className="h-20 flex items-center px-6 border-b border-slate-800">
         <div className="flex items-center space-x-3 text-white">
           <div className="relative flex items-center justify-center w-full">
-            <img src="/admin/lizome-icon.svg" className="h-10 w-auto" alt="LIZOME" />
+            <img src="/lizome-icon.svg" className="h-10 w-auto" alt="LIZOME" />
           </div>
         </div>
       </div>

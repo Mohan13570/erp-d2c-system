@@ -23,11 +23,13 @@ import {
   Plus,
   LogOut,
   User,
-  Bell
+  Bell,
+  Settings
 } from 'lucide-react';
 
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import PortalNavbar from '../components/PortalNavbar';
 import {
   Table,
   TableBody,
@@ -112,35 +114,7 @@ export default function PortalDashboard() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* Top Navigation */}
-      <header className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Package className="text-white w-5 h-5" />
-            </div>
-            <img src="/lizome-logo.png" alt="LIZOME" className="h-8 object-contain" />
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" className="text-slate-500">
-              <Bell className="w-5 h-5" />
-            </Button>
-            <div className="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
-            <div className="flex items-center gap-3">
-              <div className="hidden md:flex flex-col items-end">
-                <span className="text-sm font-medium leading-none text-slate-900 dark:text-white">Acme Corp</span>
-                <span className="text-xs text-slate-500 dark:text-slate-400">admin@acme.com</span>
-              </div>
-              <div className="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
-                <User className="w-5 h-5 text-slate-500" />
-              </div>
-            </div>
-            <Button variant="ghost" size="icon" onClick={handleLogout} className="text-slate-500 hover:text-red-500 ml-2">
-              <LogOut className="w-5 h-5" />
-            </Button>
-          </div>
-        </div>
-      </header>
+      <PortalNavbar />
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">

@@ -26,7 +26,7 @@ const loginSchema = z.object({
 export const register = asyncHandler(async (req: Request, res: Response) => {
   const validatedData = registerSchema.parse(req.body);
 
-  const existingUser = await prisma.portalUser.findUnique({
+  const existingUser = await prisma.customerUser.findUnique({
     where: { email: validatedData.email },
   });
 
@@ -45,7 +45,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   const salt = await bcrypt.genSalt(10);
   const passwordHash = await bcrypt.hash(validatedData.password, salt);
 
-  const user = await prisma.portalUser.create({
+  const user = await prisma.customerUser.create({
     data: {
       email: validatedData.email,
       passwordHash,
@@ -71,7 +71,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const validatedData = loginSchema.parse(req.body);
 
-  const user = await prisma.portalUser.findUnique({
+  const user = await prisma.customerUser.findUnique({
     where: { email: validatedData.email },
   });
 
@@ -89,9 +89,9 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     return res.status(403).json({ success: false, error: 'Account is deactivated' });
   }
 
-  await prisma.portalUser.update({
+  await prisma.customerUser.update({
     where: { id: user.id },
-    data: { lastLoginAt: new Date() },
+    data: { lastLogin: new Date() },
   });
 
   const token = jwt.sign(
@@ -111,20 +111,18 @@ export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {
     return res.status(401).json({ success: false, error: 'Not authenticated' });
   }
 
-  const user = await prisma.portalUser.findUnique({
+  const user = await prisma.customerUser.findUnique({
     where: { id: req.user.id },
     select: {
       id: true,
       email: true,
       firstName: true,
       lastName: true,
-      phone: true,
       customerId: true,
       role: true,
       isActive: true,
-      lastLoginAt: true,
+      lastLogin: true,
       createdAt: true,
-      updatedAt: true,
     },
   });
 

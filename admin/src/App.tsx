@@ -13,6 +13,15 @@ import CustomerList from './pages/customer/CustomerList';
 import CustomerProfileView from './pages/customer/CustomerProfileView';
 import CustomerRegistrationWizard from './pages/customer/CustomerRegistrationWizard';
 
+// Employee Workspace specific pages
+import EmployeeWorkspaceDashboard from './pages/employee/EmployeeDashboard';
+import MyAttendance from './pages/employee/MyAttendance';
+import MyLeave from './pages/employee/MyLeave';
+import MyPayslips from './pages/employee/MyPayslips';
+import MyProfile from './pages/employee/MyProfile';
+import EmployeePortalRouter from './employee-portal/EmployeePortalRouter';
+
+
 // Customer Logistics Portal
 import CustomerLogisticsDashboard from './pages/customer/logistics/BookingDashboard';
 import CustomerBookingWizard from './pages/customer/logistics/BookingWizard';
@@ -345,10 +354,12 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
+  const { user } = useAuth();
   return (
     <Router basename="/admin">
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/hr-portal/*" element={<EmployeePortalRouter />} />
         <Route path="/*" element={
           <RequireAuth>
             <div className="flex h-screen bg-[#F8FAFC] text-slate-900 font-sans selection:bg-blue-100">
@@ -357,7 +368,8 @@ function App() {
                 <Header />
                 <main className="flex-1 overflow-y-auto p-6 scroll-smooth">
                   <Routes>
-                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/" element={((user as any)?.roles?.includes('Employee') || user?.email === 'employee@aura.com') ? <Navigate to="/hr-portal" replace /> : <Dashboard />} />
+                  <Route path="/employee/*" element={<Navigate to="/hr-portal" replace />} />
                   <Route path="/inventory" element={<Inventory />} />
                   <Route path="/orders" element={<SalesOrders />} />
                   <Route path="/hr" element={<HR />} />
